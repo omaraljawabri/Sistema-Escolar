@@ -1,7 +1,5 @@
 package com.sistema_escolar.services;
 
-import com.sistema_escolar.dtos.request.LoginRequestDTO;
-import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -20,18 +18,16 @@ public class MailService {
     private final JavaMailSender javaMailSender;
 
     @Transactional
-    public void sendVerificationEmail(RegisterRequestDTO registerRequestDTO, String verificationCode){
-        String verificationLink = "http://localhost:8080/api/v1/auth/verify?code=" + verificationCode;
+    public void sendEmail(String email, String verificationCode, String subject, String textMessage){
         try{
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
             simpleMailMessage.setFrom(emailFrom);
-            simpleMailMessage.setTo(registerRequestDTO.getEmail());
-            simpleMailMessage.setSubject("Validação de cadastro");
-            simpleMailMessage.setText("Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. \nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: \n"+verificationLink);
+            simpleMailMessage.setTo(email);
+            simpleMailMessage.setSubject(subject);
+            simpleMailMessage.setText(textMessage);
             javaMailSender.send(simpleMailMessage);
         } catch (MailException exception){
             throw new RuntimeException(exception);
         }
     }
-
 }

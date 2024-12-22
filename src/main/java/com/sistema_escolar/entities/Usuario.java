@@ -40,6 +40,9 @@ public class Usuario implements UserDetails {
 
     private String verificationCode;
 
+    @OneToMany(mappedBy = "usuario")
+    private List<RedefinirSenha> redefinirSenha;
+
     @Override
     public String getUsername(){
         return this.email;

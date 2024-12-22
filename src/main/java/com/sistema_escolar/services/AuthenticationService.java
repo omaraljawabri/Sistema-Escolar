@@ -1,18 +1,15 @@
 package com.sistema_escolar.services;
 
+import com.sistema_escolar.dtos.request.ChangePasswordEmailRequestDTO;
+import com.sistema_escolar.dtos.request.ChangePasswordRequestDTO;
 import com.sistema_escolar.dtos.request.LoginRequestDTO;
 import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
-import com.sistema_escolar.entities.Admin;
-import com.sistema_escolar.entities.Estudante;
-import com.sistema_escolar.entities.Professor;
-import com.sistema_escolar.entities.Usuario;
+import com.sistema_escolar.entities.*;
 import com.sistema_escolar.enums.UserRole;
-import com.sistema_escolar.repositories.AdminRepository;
-import com.sistema_escolar.repositories.EstudanteRepository;
-import com.sistema_escolar.repositories.ProfessorRepository;
-import com.sistema_escolar.repositories.UsuarioRepository;
+import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +26,7 @@ public class AuthenticationService {
     private final EstudanteRepository estudanteRepository;
     private final ProfessorRepository professorRepository;
     private final AdminRepository adminRepository;
+    private final RedefinirSenhaRepository redefinirSenhaRepository;
     private final MailService mailService;
 
     @Transactional
@@ -52,7 +50,10 @@ public class AuthenticationService {
                     = new Estudante(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode, expirationCodeTime, false);
             estudanteRepository.save(estudante);
         }
-        mailService.sendVerificationEmail(registerRequestDTO, verificationCode);
+        String verificationLink = "http://localhost:8080/api/v1/auth/verify?code=" + verificationCode;
+        String subject = "Validação de cadastro";
+        String textMessage = "Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. \nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: \n"+verificationLink;
+        mailService.sendEmail(registerRequestDTO.getEmail(), verificationCode, subject, textMessage);
     }
 
     public void verifyCode(String code){
@@ -67,6 +68,38 @@ public class AuthenticationService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO, String token){
+        Usuario usuario
+                = usuarioRepository.findByEmail(loginRequestDTO.getEmail()).orElseThrow(() -> new RuntimeException("Email enviado não existe!"));
+        if (Boolean.FALSE.equals(usuario.getIsVerified())){
+            throw new RuntimeException("Conta não foi validada!");
+        }
         return LoginResponseDTO.builder().email(loginRequestDTO.getEmail()).token(token).build();
+    }
+
+    @Transactional
+    public void changePassword(ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
+        Usuario usuario
+                = usuarioRepository.findByEmail(changePasswordEmailRequestDTO.getEmail()).orElseThrow(() -> new RuntimeException("Email enviado não está cadastrado"));
+        String verificationCode = UUID.randomUUID().toString();
+        RedefinirSenha redefinirSenha = RedefinirSenha.builder().verificationCode(verificationCode).expirationCodeTime(LocalDateTime.now().plusHours(24))
+                .usuario(usuario).build();
+        redefinirSenhaRepository.save(redefinirSenha);
+        String verificationLink = "http://localhost:8080/api/v1/auth/change-password/verify?code="+verificationCode;
+        String subject = "Redefinição de senha";
+        String textMessage = "Olá, recebemos seu pedido para redefinição de senha!\nClique no link abaixo para prosseguir com o processo!\n"+verificationLink;
+        mailService.sendEmail(changePasswordEmailRequestDTO.getEmail(), verificationCode, subject, textMessage);
+    }
+
+    @Transactional
+    public void verifyChangePassword(String code, ChangePasswordRequestDTO changePasswordRequestDTO){
+        Optional<RedefinirSenha> redefinirSenha = redefinirSenhaRepository.findByVerificationCode(code);
+        if (redefinirSenha.isEmpty() || redefinirSenha.orElseThrow().getExpirationCodeTime().isBefore(LocalDateTime.now())){
+            throw new RuntimeException("Código de validação inválido!");
+        }
+        Usuario usuario = redefinirSenha.orElseThrow().getUsuario();
+        String newPassword = new BCryptPasswordEncoder().encode(changePasswordRequestDTO.getNewPassword());
+        usuario.setPassword(newPassword);
+        usuarioRepository.save(usuario);
+        redefinirSenhaRepository.deleteById(redefinirSenha.get().getId());
     }
 }

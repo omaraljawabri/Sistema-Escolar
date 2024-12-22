@@ -1,5 +1,7 @@
 package com.sistema_escolar.controllers;
 
+import com.sistema_escolar.dtos.request.ChangePasswordEmailRequestDTO;
+import com.sistema_escolar.dtos.request.ChangePasswordRequestDTO;
 import com.sistema_escolar.dtos.request.LoginRequestDTO;
 import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
@@ -43,6 +45,18 @@ public class AuthenticationController {
     @GetMapping("/verify")
     public ResponseEntity<Void> verifyCode(@RequestParam("code") String code){
         authenticationService.verifyCode(code);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/change-password/request")
+    public ResponseEntity<Void> requestChangePassword(@RequestBody ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
+        authenticationService.changePassword(changePasswordEmailRequestDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/change-password/verify")
+    public ResponseEntity<Void> verifyChangePassword(@RequestParam("code") String code, @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO){
+        authenticationService.verifyChangePassword(code, changePasswordRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
