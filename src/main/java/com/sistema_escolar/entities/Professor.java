@@ -1,5 +1,6 @@
 package com.sistema_escolar.entities;
 
+import com.sistema_escolar.enums.UserRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -24,4 +25,9 @@ public class Professor extends Usuario{
     @JoinColumn(name = "professor_disciplina_id")
     private Disciplina disciplina;
 
+    public Professor(String email, String password, UserRole userRole){
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setRole(userRole);
+    }
 }

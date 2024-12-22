@@ -30,6 +30,7 @@ public class Usuario implements UserDetails {
     @NotNull(message = "senha deve ser preenchida")
     private String password;
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "role deve ser preenchida")
     private UserRole role;
 
     @Override

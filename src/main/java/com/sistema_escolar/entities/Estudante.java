@@ -1,5 +1,6 @@
 package com.sistema_escolar.entities;
 
+import com.sistema_escolar.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,4 +25,10 @@ public class Estudante extends Usuario{
 
     @ManyToMany(mappedBy = "estudantes")
     private List<Disciplina> disciplinas;
+
+    public Estudante(String email, String password, UserRole userRole){
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setRole(userRole);
+    }
 }
