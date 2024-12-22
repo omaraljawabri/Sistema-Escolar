@@ -18,28 +18,25 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
 
-    private final UsuarioRepository usuarioRepository;
     private final TokenService tokenService;
-
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = this.recoverToken(request);
-        if (token != null){
-            String validatedToken = tokenService.validateToken(token);
-            UserDetails user =
-                    usuarioRepository.findByEmail(validatedToken).orElseThrow(() -> new RuntimeException("Email não foi encontrado"));
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        if(token != null){
+            String email = tokenService.validateToken(token);
+            UserDetails user = usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Email não foi encontrado"));
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request){
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null){
-            return null;
-        }
+        var authHeader = request.getHeader("Authorization");
+        if(authHeader == null) return null;
         return authHeader.replace("Bearer ", "");
     }
 }

@@ -16,7 +16,6 @@ import java.time.ZoneOffset;
 public class TokenService {
     @Value("${api.sistema-escolar.auth.token.secret}")
     private String secret;
-
     public String generateToken(Usuario usuario){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -33,14 +32,14 @@ public class TokenService {
     }
 
     public String validateToken(String token){
-        try{
+        try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     .withIssuer("login-auth-sistema-escolar-api")
                     .build()
                     .verify(token)
                     .getSubject();
-        } catch (JWTVerificationException exception){
+        } catch (JWTVerificationException exception) {
             return null;
         }
     }
