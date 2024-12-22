@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -26,9 +27,12 @@ public class Estudante extends Usuario{
     @ManyToMany(mappedBy = "estudantes")
     private List<Disciplina> disciplinas;
 
-    public Estudante(String email, String password, UserRole userRole){
+    public Estudante(String email, String password, UserRole userRole, String verificationCode, LocalDateTime expirationCodeTime, boolean isVerified){
         this.setEmail(email);
         this.setPassword(password);
         this.setRole(userRole);
+        this.setVerificationCode(verificationCode);
+        this.setExpirationCodeTime(expirationCodeTime);
+        this.setIsVerified(isVerified);
     }
 }

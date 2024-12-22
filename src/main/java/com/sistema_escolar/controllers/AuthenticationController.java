@@ -5,7 +5,7 @@ import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.infra.security.TokenService;
-import com.sistema_escolar.services.UsuarioService;
+import com.sistema_escolar.services.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,23 +13,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final UsuarioService usuarioService;
+    private final AuthenticationService authenticationService;
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO){
-        usuarioService.registerUser(registerRequestDTO);
+        authenticationService.registerUser(registerRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -40,6 +37,12 @@ public class AuthenticationController {
         Authentication auth = this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
         String token = tokenService.generateToken((Usuario) auth.getPrincipal());
-        return ResponseEntity.ok(usuarioService.login(loginRequestDTO, token));
+        return ResponseEntity.ok(authenticationService.login(loginRequestDTO, token));
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<Void> verifyCode(@RequestParam("code") String code){
+        authenticationService.verifyCode(code);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

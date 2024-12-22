@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +33,12 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "role deve ser preenchida")
     private UserRole role;
+
+    private Boolean isVerified;
+
+    private LocalDateTime expirationCodeTime;
+
+    private String verificationCode;
 
     @Override
     public String getUsername(){
