@@ -24,7 +24,8 @@ public class Turma {
     @NotNull(message = "nome da turma deve ser preenchido")
     private String name;
 
-    @OneToOne(mappedBy = "turma")
+    @ManyToOne
+    @JoinColumn(name = "professor_id")
     private Professor professor;
 
     @ManyToMany(mappedBy = "turmas")
