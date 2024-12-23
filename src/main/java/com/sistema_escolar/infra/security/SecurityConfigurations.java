@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfigurations {
 
     private final SecurityFilter securityFilter;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,6 +38,8 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/verify").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/change-password/request").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/change-password/verify").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/turma").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/disciplina").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
