@@ -17,9 +17,10 @@ import java.util.List;
 @Data
 public class Estudante extends Usuario{
 
-    @ManyToOne
-    @JoinColumn(name = "estudante_turma_id")
-    private Turma turma;
+    @ManyToMany
+    @JoinTable(name = "estudante_turma", joinColumns = @JoinColumn(name = "estudante_id"),
+    inverseJoinColumns = @JoinColumn(name = "turma_id"))
+    private List<Turma> turmas;
 
     @OneToMany(mappedBy = "estudante")
     private List<Nota> notas;

@@ -27,7 +27,7 @@ public class Turma {
     @OneToOne(mappedBy = "turma")
     private Professor professor;
 
-    @OneToMany(mappedBy = "turma")
+    @ManyToMany(mappedBy = "turmas")
     private List<Estudante> estudantes;
 
     @ManyToOne
