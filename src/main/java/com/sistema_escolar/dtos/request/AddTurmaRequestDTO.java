@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AddEstudanteTurmaRequestDTO {
+public class AddTurmaRequestDTO {
     @NotNull
     private String email;
 

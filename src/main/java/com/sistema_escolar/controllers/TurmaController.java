@@ -1,6 +1,6 @@
 package com.sistema_escolar.controllers;
 
-import com.sistema_escolar.dtos.request.AddEstudanteTurmaRequestDTO;
+import com.sistema_escolar.dtos.request.AddTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
 import com.sistema_escolar.services.TurmaService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,14 @@ public class TurmaController {
     }
 
     @PostMapping("/estudante")
-    public ResponseEntity<Void> addEstudante(@RequestBody AddEstudanteTurmaRequestDTO addEstudanteTurmaRequestDTO){
-        turmaService.addEstudante(addEstudanteTurmaRequestDTO);
+    public ResponseEntity<Void> addEstudante(@RequestBody AddTurmaRequestDTO addTurmaRequestDTO){
+        turmaService.addEstudante(addTurmaRequestDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/professor")
+    public ResponseEntity<Void> addProfessor(@RequestBody AddTurmaRequestDTO addTurmaRequestDTO){
+        turmaService.addProfessor(addTurmaRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
