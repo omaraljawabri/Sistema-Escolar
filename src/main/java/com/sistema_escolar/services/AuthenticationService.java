@@ -39,15 +39,18 @@ public class AuthenticationService {
         String password = new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword());
         if (registerRequestDTO.getRole() == UserRole.ADMIN){
             Admin admin
-                    = new Admin(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode, expirationCodeTime, false);
+                    = new Admin(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
+                    expirationCodeTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
             adminRepository.save(admin);
         } else if (registerRequestDTO.getRole() == UserRole.PROFESSOR){
             Professor professor
-                    = new Professor(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode, expirationCodeTime, false);
+                    = new Professor(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
+                    expirationCodeTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
             professorRepository.save(professor);
         } else{
             Estudante estudante
-                    = new Estudante(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode, expirationCodeTime, false);
+                    = new Estudante(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
+                    expirationCodeTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
             estudanteRepository.save(estudante);
         }
         String verificationLink = "http://localhost:8080/api/v1/auth/verify?code=" + verificationCode;

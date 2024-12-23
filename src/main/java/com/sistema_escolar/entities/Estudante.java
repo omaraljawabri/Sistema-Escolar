@@ -27,12 +27,14 @@ public class Estudante extends Usuario{
     @ManyToMany(mappedBy = "estudantes")
     private List<Disciplina> disciplinas;
 
-    public Estudante(String email, String password, UserRole userRole, String verificationCode, LocalDateTime expirationCodeTime, boolean isVerified){
+    public Estudante(String email, String password, UserRole userRole, String verificationCode, LocalDateTime expirationCodeTime, boolean isVerified, String firstName, String lastName){
         this.setEmail(email);
         this.setPassword(password);
         this.setRole(userRole);
         this.setVerificationCode(verificationCode);
         this.setExpirationCodeTime(expirationCodeTime);
         this.setIsVerified(isVerified);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
     }
 }

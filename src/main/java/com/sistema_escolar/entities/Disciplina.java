@@ -2,6 +2,7 @@ package com.sistema_escolar.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,13 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_disciplina")
+@Builder
 public class Disciplina {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    private String name;
 
     @ManyToMany
     @JoinTable(name = "estudante_disciplina", joinColumns = @JoinColumn(name = "disciplina_id"),

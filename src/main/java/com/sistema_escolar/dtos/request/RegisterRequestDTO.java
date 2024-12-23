@@ -21,5 +21,11 @@ public class RegisterRequestDTO {
     private String password;
 
     @NotNull
+    private String firstName;
+
+    @NotNull
+    private String lastName;
+
+    @NotNull
     private UserRole role;
 }

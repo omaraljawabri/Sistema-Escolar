@@ -26,10 +26,19 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull(message = "primeiro nome deve ser preenchido")
+    private String firstName;
+
+    @NotNull(message = "sobrenome deve ser preenchido")
+    private String lastName;
+
     @NotNull(message = "email deve ser preenchido")
     private String email;
+
     @NotNull(message = "senha deve ser preenchida")
     private String password;
+
     @Enumerated(EnumType.STRING)
     @NotNull(message = "role deve ser preenchida")
     private UserRole role;

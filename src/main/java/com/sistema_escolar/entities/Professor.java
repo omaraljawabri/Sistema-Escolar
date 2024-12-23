@@ -27,12 +27,14 @@ public class Professor extends Usuario{
     @JoinColumn(name = "professor_disciplina_id")
     private Disciplina disciplina;
 
-    public Professor(String email, String password, UserRole userRole, String verificationCode, LocalDateTime expirationCodeTime, boolean isVerified){
+    public Professor(String email, String password, UserRole userRole, String verificationCode, LocalDateTime expirationCodeTime, boolean isVerified, String firstName, String lastName){
         this.setEmail(email);
         this.setPassword(password);
         this.setRole(userRole);
         this.setVerificationCode(verificationCode);
         this.setExpirationCodeTime(expirationCodeTime);
         this.setIsVerified(isVerified);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
     }
 }
