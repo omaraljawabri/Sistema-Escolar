@@ -1,6 +1,6 @@
 package com.sistema_escolar.entities;
 
-import com.sistema_escolar.enums.UserRole;
+import com.sistema_escolar.utils.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,7 @@ public class Usuario implements UserDetails {
 
     private Boolean isVerified;
 
-    private LocalDateTime expirationCodeTime;
+    private LocalDateTime codeExpirationTime;
 
     private String verificationCode;
 

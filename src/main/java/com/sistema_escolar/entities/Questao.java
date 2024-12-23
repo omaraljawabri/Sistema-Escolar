@@ -1,6 +1,6 @@
 package com.sistema_escolar.entities;
 
-import com.sistema_escolar.enums.TipoQuestao;
+import com.sistema_escolar.utils.TipoQuestao;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

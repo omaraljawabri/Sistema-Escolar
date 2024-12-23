@@ -12,4 +12,5 @@ public interface TurmaRepository extends JpaRepository<Turma, Long> {
     Optional<Turma> findByNameAndDisciplina(String name, Disciplina disciplina);
     Optional<Turma> findByEstudantes(Estudante estudante);
     Optional<Turma> findByIdAndProfessor(Long id, Professor professor);
+    Optional<Turma> findByProfessorId(Long id);
 }

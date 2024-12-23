@@ -1,6 +1,6 @@
 package com.sistema_escolar.dtos.request;
 
-import com.sistema_escolar.enums.UserRole;
+import com.sistema_escolar.utils.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

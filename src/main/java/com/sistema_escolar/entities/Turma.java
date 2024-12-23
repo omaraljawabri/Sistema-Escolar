@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,6 +24,10 @@ public class Turma {
 
     @NotNull(message = "nome da turma deve ser preenchido")
     private String name;
+
+    private String turmaCode;
+
+    private LocalDateTime codeExpirationTime;
 
     @ManyToOne
     @JoinColumn(name = "professor_id")

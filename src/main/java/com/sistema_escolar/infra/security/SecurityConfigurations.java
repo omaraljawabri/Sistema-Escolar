@@ -41,6 +41,8 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/disciplina").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/turma/generate-code/admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/turma/generate-code/professor").hasRole("PROFESSOR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);

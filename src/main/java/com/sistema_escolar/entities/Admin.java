@@ -1,6 +1,6 @@
 package com.sistema_escolar.entities;
 
-import com.sistema_escolar.enums.UserRole;
+import com.sistema_escolar.utils.UserRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,12 +20,12 @@ public class Admin extends Usuario{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Admin(String email, String password, UserRole userRole, String verificationCode, LocalDateTime expirationCodeTime, boolean isVerified, String firstName, String lastName){
+    public Admin(String email, String password, UserRole userRole, String verificationCode, LocalDateTime codeExpirationTime, boolean isVerified, String firstName, String lastName){
         this.setEmail(email);
         this.setPassword(password);
         this.setRole(userRole);
         this.setVerificationCode(verificationCode);
-        this.setExpirationCodeTime(expirationCodeTime);
+        this.setCodeExpirationTime(codeExpirationTime);
         this.setIsVerified(isVerified);
         this.setFirstName(firstName);
         this.setLastName(lastName);

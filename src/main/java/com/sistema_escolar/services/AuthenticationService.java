@@ -6,10 +6,9 @@ import com.sistema_escolar.dtos.request.LoginRequestDTO;
 import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.*;
-import com.sistema_escolar.enums.UserRole;
+import com.sistema_escolar.utils.UserRole;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,22 +34,22 @@ public class AuthenticationService {
             throw new RuntimeException("Email enviado já existe"); //Do custom exception
         }
         String verificationCode = UUID.randomUUID().toString();
-        LocalDateTime expirationCodeTime = LocalDateTime.now().plusHours(24);
+        LocalDateTime codeExpirationTime = LocalDateTime.now().plusHours(24);
         String password = new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword());
         if (registerRequestDTO.getRole() == UserRole.ADMIN){
             Admin admin
                     = new Admin(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
-                    expirationCodeTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
+                    codeExpirationTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
             adminRepository.save(admin);
         } else if (registerRequestDTO.getRole() == UserRole.PROFESSOR){
             Professor professor
                     = new Professor(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
-                    expirationCodeTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
+                    codeExpirationTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
             professorRepository.save(professor);
         } else{
             Estudante estudante
                     = new Estudante(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
-                    expirationCodeTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
+                    codeExpirationTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
             estudanteRepository.save(estudante);
         }
         String verificationLink = "http://localhost:8080/api/v1/auth/verify?code=" + verificationCode;
@@ -61,12 +60,12 @@ public class AuthenticationService {
 
     public void verifyCode(String code){
         Optional<Usuario> usuario = usuarioRepository.findByVerificationCode(code);
-        if (usuario.isEmpty() || usuario.orElseThrow().getExpirationCodeTime().isBefore(LocalDateTime.now())){
+        if (usuario.isEmpty() || usuario.orElseThrow().getCodeExpirationTime().isBefore(LocalDateTime.now())){
             throw new RuntimeException("Código de verificação inválido"); //Make customized exception
         }
         usuario.orElseThrow().setIsVerified(true);
         usuario.orElseThrow().setVerificationCode(null);
-        usuario.orElseThrow().setExpirationCodeTime(null);
+        usuario.orElseThrow().setCodeExpirationTime(null);
         usuarioRepository.save(usuario.get());
     }
 

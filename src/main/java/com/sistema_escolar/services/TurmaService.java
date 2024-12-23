@@ -2,18 +2,19 @@ package com.sistema_escolar.services;
 
 import com.sistema_escolar.dtos.request.AddTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
-import com.sistema_escolar.entities.Disciplina;
-import com.sistema_escolar.entities.Estudante;
-import com.sistema_escolar.entities.Professor;
-import com.sistema_escolar.entities.Turma;
+import com.sistema_escolar.dtos.request.TurmaRequestDTO;
+import com.sistema_escolar.dtos.response.CodeResponseDTO;
+import com.sistema_escolar.entities.*;
 import com.sistema_escolar.repositories.DisciplinaRepository;
 import com.sistema_escolar.repositories.EstudanteRepository;
 import com.sistema_escolar.repositories.ProfessorRepository;
 import com.sistema_escolar.repositories.TurmaRepository;
+import com.sistema_escolar.utils.CodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -62,5 +63,25 @@ public class TurmaService {
         turma.setProfessor(professor);
         professorRepository.save(professor);
         turmaRepository.save(turma);
+    }
+
+    public CodeResponseDTO generateCode(TurmaRequestDTO turmaRequestDTO) {
+        String generatedCode = CodeGenerator.generateCode();
+        Turma turma = turmaRepository.findById(turmaRequestDTO.getTurmaId())
+                .orElseThrow(() -> new RuntimeException("Turma selecionada não existe"));
+        turma.setTurmaCode(generatedCode);
+        turma.setCodeExpirationTime(LocalDateTime.now().plusDays(7));
+        turmaRepository.save(turma);
+        return CodeResponseDTO.builder().code(generatedCode).build();
+    }
+
+    public CodeResponseDTO generateCode(Usuario usuario){
+        Turma turma = turmaRepository.findByProfessorId(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("Professor não esta vinculado a nenhuma turma"));
+        String generatedCode = CodeGenerator.generateCode();
+        turma.setTurmaCode(generatedCode);
+        turma.setCodeExpirationTime(LocalDateTime.now().plusHours(7));
+        turmaRepository.save(turma);
+        return CodeResponseDTO.builder().code(generatedCode).build();
     }
 }
