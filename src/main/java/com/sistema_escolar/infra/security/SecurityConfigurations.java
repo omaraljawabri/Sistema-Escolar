@@ -40,9 +40,10 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/change-password/verify").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/disciplina").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/turma/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/turma/professor", "/api/v1/turma/estudante").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma/generate-code/admin").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/turma/generate-code/professor").hasRole("PROFESSOR")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/turma/join").hasAnyRole("PROFESSOR", "ESTUDANTE")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);

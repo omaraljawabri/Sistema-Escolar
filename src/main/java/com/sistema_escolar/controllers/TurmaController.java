@@ -1,6 +1,7 @@
 package com.sistema_escolar.controllers;
 
 import com.sistema_escolar.dtos.request.AddTurmaRequestDTO;
+import com.sistema_escolar.dtos.request.CodeRequestDTO;
 import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.TurmaRequestDTO;
 import com.sistema_escolar.dtos.response.CodeResponseDTO;
@@ -49,4 +50,13 @@ public class TurmaController {
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(turmaService.generateCode(usuario));
     }
+
+    @PostMapping("/join")
+    public ResponseEntity<Void> joinTurma(@RequestBody CodeRequestDTO codeRequestDTO){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+        turmaService.joinTurma(codeRequestDTO, usuario);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

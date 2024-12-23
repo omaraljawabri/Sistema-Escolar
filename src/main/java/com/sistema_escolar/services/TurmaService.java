@@ -1,6 +1,7 @@
 package com.sistema_escolar.services;
 
 import com.sistema_escolar.dtos.request.AddTurmaRequestDTO;
+import com.sistema_escolar.dtos.request.CodeRequestDTO;
 import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.TurmaRequestDTO;
 import com.sistema_escolar.dtos.response.CodeResponseDTO;
@@ -10,11 +11,13 @@ import com.sistema_escolar.repositories.EstudanteRepository;
 import com.sistema_escolar.repositories.ProfessorRepository;
 import com.sistema_escolar.repositories.TurmaRepository;
 import com.sistema_escolar.utils.CodeGenerator;
+import com.sistema_escolar.utils.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -83,5 +86,36 @@ public class TurmaService {
         turma.setCodeExpirationTime(LocalDateTime.now().plusHours(7));
         turmaRepository.save(turma);
         return CodeResponseDTO.builder().code(generatedCode).build();
+    }
+
+    public void joinTurma(CodeRequestDTO codeRequestDTO, Usuario usuario){
+        Turma turma = turmaRepository.findByTurmaCode(codeRequestDTO.getCode())
+                .orElseThrow(() -> new RuntimeException("Código de turma não existe!"));
+        if (turma.getCodeExpirationTime().isBefore(LocalDateTime.now())){
+            throw new RuntimeException("Código de turma está expirado!");
+        }
+        if (usuario.getRole() == UserRole.PROFESSOR ){
+            if (turmaRepository.findByProfessorId(usuario.getId()).isPresent()) {
+                throw new RuntimeException("Professor já está vinculado a uma turma");
+            } else{
+                turma.setProfessor(professorRepository.findById(usuario.getId()).get());
+                turmaRepository.save(turma);
+            }
+        } else if (usuario.getRole() == UserRole.ESTUDANTE){
+            Disciplina disciplina = turma.getDisciplina();
+            Estudante estudante = estudanteRepository.findById(usuario.getId()).get();
+            for (Disciplina disciplinas : estudante.getDisciplinas()){
+                if (Objects.equals(disciplinas.getId(), disciplina.getId())){
+                    throw new RuntimeException("Estudante já está vinculado a uma turma desta disciplina!");
+                }
+            }
+            turma.getEstudantes().add(estudante);
+            estudante.getTurmas().add(turma);
+            disciplina.getEstudantes().add(estudante);
+            estudante.getDisciplinas().add(disciplina);
+            estudanteRepository.save(estudante);
+            turmaRepository.save(turma);
+            disciplinaRepository.save(disciplina);
+        }
     }
 }
