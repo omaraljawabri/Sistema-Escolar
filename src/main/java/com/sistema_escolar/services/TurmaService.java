@@ -11,7 +11,7 @@ import com.sistema_escolar.repositories.EstudanteRepository;
 import com.sistema_escolar.repositories.ProfessorRepository;
 import com.sistema_escolar.repositories.TurmaRepository;
 import com.sistema_escolar.utils.CodeGenerator;
-import com.sistema_escolar.utils.UserRole;
+import com.sistema_escolar.utils.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

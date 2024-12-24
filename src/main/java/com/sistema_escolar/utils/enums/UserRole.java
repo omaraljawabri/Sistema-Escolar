@@ -1,4 +1,4 @@
-package com.sistema_escolar.utils;
+package com.sistema_escolar.utils.enums;
 
 public enum UserRole {
     ADMIN("admin"),

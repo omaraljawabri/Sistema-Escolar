@@ -6,7 +6,7 @@ import com.sistema_escolar.dtos.request.LoginRequestDTO;
 import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.*;
-import com.sistema_escolar.utils.UserRole;
+import com.sistema_escolar.utils.enums.UserRole;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

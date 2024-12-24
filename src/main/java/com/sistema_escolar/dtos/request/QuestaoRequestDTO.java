@@ -1,37 +1,30 @@
-package com.sistema_escolar.entities;
+package com.sistema_escolar.dtos.request;
 
 import com.sistema_escolar.utils.enums.TipoQuestao;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tb_questao")
-@Builder
-public class Questao {
+@Data
+public class QuestaoRequestDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Enumerated(EnumType.STRING)
+    @NotNull
     private TipoQuestao tipoQuestao;
 
+    @NotNull
     private String pergunta;
 
+    @Size(min = 1)
     private List<String> alternativas;
 
+    @NotNull
     private BigDecimal valor;
 
-    @ManyToOne
-    @JoinColumn(name = "prova_id")
-    private Prova prova;
 }

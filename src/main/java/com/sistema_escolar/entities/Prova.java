@@ -2,6 +2,7 @@ package com.sistema_escolar.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,15 +14,14 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Prova {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
-    @JoinTable(name = "prova_questao", joinColumns = @JoinColumn(name = "prova_id"),
-            inverseJoinColumns = @JoinColumn(name = "questao_id"))
+    @OneToMany(mappedBy = "prova")
     private List<Questao> questoes;
 
     private BigDecimal valorTotal;

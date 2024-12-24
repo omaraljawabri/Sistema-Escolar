@@ -1,6 +1,6 @@
 package com.sistema_escolar.entities;
 
-import com.sistema_escolar.utils.UserRole;
+import com.sistema_escolar.utils.enums.UserRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
