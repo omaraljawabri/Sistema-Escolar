@@ -28,6 +28,9 @@ public class Estudante extends Usuario{
     @ManyToMany(mappedBy = "estudantes")
     private List<Disciplina> disciplinas;
 
+    @OneToMany(mappedBy = "estudante")
+    private List<RespostaProva> respostasProva;
+
     public Estudante(String email, String password, UserRole userRole, String verificationCode, LocalDateTime codeExpirationTime, boolean isVerified, String firstName, String lastName){
         this.setEmail(email);
         this.setPassword(password);

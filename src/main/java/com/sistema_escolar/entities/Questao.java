@@ -26,6 +26,9 @@ public class Questao {
     @NotNull
     private String pergunta;
 
+    @ElementCollection
+    @CollectionTable(name = "alternativas_questao", joinColumns = @JoinColumn(name = "questao_id"))
+    @Column(name = "alternativas")
     private List<String> alternativas;
 
     @NotNull
@@ -35,6 +38,11 @@ public class Questao {
 
     private String atualizadoPor;
 
+    private String respostaCorreta;
+
     @ManyToMany(mappedBy = "questoes")
     private List<Prova> provas;
+
+    @OneToMany(mappedBy = "questao")
+    private List<RespostaProva> respostasProva;
 }
