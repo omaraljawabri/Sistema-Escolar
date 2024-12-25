@@ -40,4 +40,7 @@ public class Prova {
     @ManyToOne
     @JoinColumn(name = "disciplina_id")
     private Disciplina disciplina;
+
+    @OneToMany(mappedBy = "prova")
+    private List<RespostaProva> respostasProva;
 }

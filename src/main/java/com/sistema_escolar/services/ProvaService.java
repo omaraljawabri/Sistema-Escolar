@@ -78,18 +78,13 @@ public class ProvaService {
             questoes.get(i).setPergunta(provaPutRequestDTO.getQuestoes().get(i).getPergunta());
             questoes.get(i).setTipoQuestao(provaPutRequestDTO.getQuestoes().get(i).getTipoQuestao());
             questoes.get(i).setAtualizadoPor(usuario.getEmail());
+            questoes.get(i).setRespostaCorreta(provaPutRequestDTO.getQuestoes().get(i).getRespostaCorreta());
         }
         prova.setValorTotal(provaPutRequestDTO.getValorTotal());
         prova.setQuestoes(questoes);
         Prova savedProva = provaRepository.save(prova);
         List<Questao> savedQuestoes = questaoRepository.saveAll(questoes);
-        List<QuestaoResponseDTO> questaoResponseDTOS = new ArrayList<>();
-        for (Questao questao : savedQuestoes) {
-            questaoResponseDTOS.add(QuestaoResponseDTO.builder().tipoQuestao(questao.getTipoQuestao())
-                    .valor(questao.getValor()).alternativas(questao.getAlternativas())
-                    .pergunta(questao.getPergunta()).id(questao.getId()).criadoPor(questao.getCriadoPor())
-                    .atualizadoPor(questao.getAtualizadoPor()).build());
-        }
+        List<QuestaoResponseDTO> questaoResponseDTOS = savedQuestoes.stream().map(QuestaoMapper.INSTANCE::toQuestaoResponseDTO).toList();
         return ProvaResponseDTO.builder().id(savedProva.getId()).valorTotal(savedProva.getValorTotal())
                 .questoes(questaoResponseDTOS).emailProfessor(savedProva.getEmailProfessor()).build();
     }

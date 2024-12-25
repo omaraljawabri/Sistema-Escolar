@@ -32,4 +32,6 @@ public class QuestaoPutRequestDTO {
 
     private String atualizadoPor;
 
+    private String respostaCorreta;
+
 }

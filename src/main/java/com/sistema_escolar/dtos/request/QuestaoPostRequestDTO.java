@@ -29,4 +29,6 @@ public class QuestaoPostRequestDTO {
 
     private String criadoPor;
 
+    private String respostaCorreta;
+
 }

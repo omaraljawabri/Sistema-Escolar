@@ -27,4 +27,6 @@ public class QuestaoResponseDTO {
     private String criadoPor;
 
     private String atualizadoPor;
+
+    private String respostaCorreta;
 }
