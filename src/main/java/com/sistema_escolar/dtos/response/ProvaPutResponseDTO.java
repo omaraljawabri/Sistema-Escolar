@@ -10,8 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ProvaResponseDTO {
-    private List<QuestaoResponseDTO> questoes;
+public class ProvaPutResponseDTO {
+
+    private Long provaId;
+
+    private List<QuestaoPutResponseDTO> questoes;
 
     private BigDecimal valorTotal;
 }

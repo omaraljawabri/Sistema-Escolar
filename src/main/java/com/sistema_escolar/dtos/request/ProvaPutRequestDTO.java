@@ -11,10 +11,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ProvaRequestDTO {
+public class ProvaPutRequestDTO {
 
     @NotNull
-    private List<QuestaoRequestDTO> questoes;
+    private Long provaId;
+
+    @NotNull
+    private List<QuestaoPutRequestDTO> questoes;
 
     @NotNull
     private BigDecimal valorTotal;

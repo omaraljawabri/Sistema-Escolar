@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class QuestaoRequestDTO {
+public class QuestaoPostRequestDTO {
 
     @NotNull
     private TipoQuestao tipoQuestao;

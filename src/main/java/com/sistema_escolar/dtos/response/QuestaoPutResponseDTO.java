@@ -13,7 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class QuestaoResponseDTO {
+public class QuestaoPutResponseDTO {
+    private Long questaoId;
+
     private TipoQuestao tipoQuestao;
 
     private String pergunta;
