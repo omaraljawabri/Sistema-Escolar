@@ -2,6 +2,7 @@ package com.sistema_escolar.entities;
 
 import com.sistema_escolar.utils.enums.TipoQuestao;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,13 +26,18 @@ public class Questao {
     @Enumerated(EnumType.STRING)
     private TipoQuestao tipoQuestao;
 
+    @NotNull
     private String pergunta;
 
     private List<String> alternativas;
 
+    @NotNull
     private BigDecimal valor;
 
-    @ManyToOne
-    @JoinColumn(name = "prova_id")
-    private Prova prova;
+    private String criadoPor;
+
+    private String atualizadoPor;
+
+    @ManyToMany(mappedBy = "questoes")
+    private List<Prova> provas;
 }

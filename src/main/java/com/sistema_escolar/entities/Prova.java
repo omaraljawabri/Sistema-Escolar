@@ -1,12 +1,14 @@
 package com.sistema_escolar.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,10 +23,19 @@ public class Prova {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "prova")
+    @ManyToMany
+    @JoinTable(name = "prova_questao", joinColumns = @JoinColumn(name = "prova_id"),
+    inverseJoinColumns = @JoinColumn(name = "questao_id"))
     private List<Questao> questoes;
 
+    @NotNull
     private BigDecimal valorTotal;
+
+    private Boolean isPublished;
+
+    private LocalDateTime expirationTime;
+
+    private String emailProfessor;
 
     @ManyToOne
     @JoinColumn(name = "disciplina_id")
