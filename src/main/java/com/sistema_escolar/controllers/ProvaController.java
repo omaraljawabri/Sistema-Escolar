@@ -3,8 +3,7 @@ package com.sistema_escolar.controllers;
 import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
 import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
-import com.sistema_escolar.dtos.response.ProvaPostResponseDTO;
-import com.sistema_escolar.dtos.response.ProvaPutResponseDTO;
+import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.ProvaService;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +22,14 @@ public class ProvaController {
     private final ProvaService provaService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProvaPostResponseDTO> createProva(@RequestBody ProvaPostRequestDTO provaPostRequestDTO){
+    public ResponseEntity<ProvaResponseDTO> createProva(@RequestBody ProvaPostRequestDTO provaPostRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(provaService.createProva(provaPostRequestDTO, usuario));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProvaPutResponseDTO> updateProva(@PathVariable Long id, @RequestBody ProvaPutRequestDTO provaPutRequestDTO){
+    public ResponseEntity<ProvaResponseDTO> updateProva(@PathVariable Long id, @RequestBody ProvaPutRequestDTO provaPutRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(provaService.updateProva(id, provaPutRequestDTO, usuario));

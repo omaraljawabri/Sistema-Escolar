@@ -1,8 +1,6 @@
 package com.sistema_escolar.services;
 
-import com.sistema_escolar.dtos.response.QuestaoPutResponseDTO;
 import com.sistema_escolar.dtos.response.QuestaoResponseDTO;
-import com.sistema_escolar.entities.Questao;
 import com.sistema_escolar.repositories.QuestaoRepository;
 import com.sistema_escolar.utils.mappers.QuestaoMapper;
 import lombok.RequiredArgsConstructor;

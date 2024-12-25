@@ -1,6 +1,5 @@
 package com.sistema_escolar.controllers;
 
-import com.sistema_escolar.dtos.response.QuestaoPutResponseDTO;
 import com.sistema_escolar.dtos.response.QuestaoResponseDTO;
 import com.sistema_escolar.services.QuestaoService;
 import lombok.RequiredArgsConstructor;

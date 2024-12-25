@@ -3,10 +3,7 @@ package com.sistema_escolar.entities;
 import com.sistema_escolar.utils.enums.TipoQuestao;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;

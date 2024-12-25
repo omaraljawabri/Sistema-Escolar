@@ -16,7 +16,7 @@ import java.util.List;
 public class QuestaoPutRequestDTO {
 
     @NotNull
-    private Long questaoId;
+    private Long id;
 
     @NotNull
     private TipoQuestao tipoQuestao;
