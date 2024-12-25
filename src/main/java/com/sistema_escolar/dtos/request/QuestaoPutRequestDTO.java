@@ -30,4 +30,6 @@ public class QuestaoPutRequestDTO {
     @NotNull
     private BigDecimal valor;
 
+    private String atualizadoPor;
+
 }

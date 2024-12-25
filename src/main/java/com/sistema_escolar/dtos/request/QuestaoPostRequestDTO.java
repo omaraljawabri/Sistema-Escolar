@@ -27,4 +27,6 @@ public class QuestaoPostRequestDTO {
     @NotNull
     private BigDecimal valor;
 
+    private String criadoPor;
+
 }

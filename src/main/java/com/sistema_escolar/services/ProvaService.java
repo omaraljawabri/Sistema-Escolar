@@ -42,26 +42,37 @@ public class ProvaService {
         for (int i = 0; i < provaPostRequestDTO.getQuestoes().size(); i++) {
             questoes.add(Questao.builder().alternativas(provaPostRequestDTO.getQuestoes().get(i).getAlternativas())
                     .valor(provaPostRequestDTO.getQuestoes().get(i).getValor()).tipoQuestao(provaPostRequestDTO.getQuestoes().get(i).getTipoQuestao())
-                    .pergunta(provaPostRequestDTO.getQuestoes().get(i).getPergunta()).build());
-            questoes.get(i).setProva(prova);
+                    .pergunta(provaPostRequestDTO.getQuestoes().get(i).getPergunta()).criadoPor(provaPostRequestDTO.getQuestoes().get(i).getCriadoPor())
+                    .build());
+            if (questoes.get(i).getProvas() != null){
+                questoes.get(i).getProvas().add(prova);
+            } else{
+                questoes.get(i).setProvas(List.of(prova));
+            }
+            if (questoes.get(i).getCriadoPor() == null){
+                questoes.get(i).setCriadoPor(professor.getEmail());
+            }
         }
         prova.setQuestoes(questoes);
         prova.setDisciplina(professor.getDisciplina());
+        prova.setEmailProfessor(professor.getEmail());
         Prova savedProva = provaRepository.save(prova);
         List<Questao> savedQuestoes = questaoRepository.saveAll(questoes);
         List<QuestaoPostResponseDTO> questaoPostResponseDTOS = new ArrayList<>();
         for (Questao questao : savedQuestoes) {
             questaoPostResponseDTOS.add(QuestaoPostResponseDTO.builder().tipoQuestao(questao.getTipoQuestao())
                     .valor(questao.getValor()).alternativas(questao.getAlternativas())
-                    .pergunta(questao.getPergunta()).build());
+                    .pergunta(questao.getPergunta()).criadoPor(questao.getCriadoPor())
+                    .atualizadoPor(questao.getAtualizadoPor()).build());
         }
-        return ProvaPostResponseDTO.builder().valorTotal(savedProva.getValorTotal()).questoes(questaoPostResponseDTOS).build();
+        return ProvaPostResponseDTO.builder().valorTotal(savedProva.getValorTotal())
+                .questoes(questaoPostResponseDTOS).emailProfessor(savedProva.getEmailProfessor()).build();
     }
 
     @Transactional
-    public ProvaPutResponseDTO updateProva(ProvaPutRequestDTO provaPutRequestDTO) {
-        Prova prova = provaRepository.findById(provaPutRequestDTO.getProvaId())
-                .orElseThrow(() -> new RuntimeException("Id da prova não existe"));
+    public ProvaPutResponseDTO updateProva(Long id, ProvaPutRequestDTO provaPutRequestDTO, Usuario usuario) {
+        Prova prova = provaRepository.findByIdAndEmailProfessor(id, usuario.getEmail())
+                .orElseThrow(() -> new RuntimeException("Prova não pertence a esse professor ou id da prova não existe"));
         List<Questao> questoes = new ArrayList<>();
         for (int i = 0; i < provaPutRequestDTO.getQuestoes().size(); i++) {
             Questao questao = questaoRepository.findById(provaPutRequestDTO.getQuestoes().get(i).getQuestaoId())
@@ -71,6 +82,7 @@ public class ProvaService {
             questoes.get(i).setAlternativas(provaPutRequestDTO.getQuestoes().get(i).getAlternativas());
             questoes.get(i).setPergunta(provaPutRequestDTO.getQuestoes().get(i).getPergunta());
             questoes.get(i).setTipoQuestao(provaPutRequestDTO.getQuestoes().get(i).getTipoQuestao());
+            questoes.get(i).setAtualizadoPor(usuario.getEmail());
         }
         prova.setValorTotal(provaPutRequestDTO.getValorTotal());
         prova.setQuestoes(questoes);
@@ -80,9 +92,10 @@ public class ProvaService {
         for (Questao questao : savedQuestoes) {
             questaoPutResponseDTOS.add(QuestaoPutResponseDTO.builder().tipoQuestao(questao.getTipoQuestao())
                     .valor(questao.getValor()).alternativas(questao.getAlternativas())
-                    .pergunta(questao.getPergunta()).questaoId(questao.getId()).build());
+                    .pergunta(questao.getPergunta()).questaoId(questao.getId()).criadoPor(questao.getCriadoPor())
+                    .atualizadoPor(questao.getAtualizadoPor()).build());
         }
         return ProvaPutResponseDTO.builder().provaId(savedProva.getId()).valorTotal(savedProva.getValorTotal())
-                .questoes(questaoPutResponseDTOS).build();
+                .questoes(questaoPutResponseDTOS).emailProfessor(savedProva.getEmailProfessor()).build();
     }
 }

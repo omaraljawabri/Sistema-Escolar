@@ -27,9 +27,11 @@ public class ProvaController {
         return ResponseEntity.ok(provaService.createProva(provaPostRequestDTO, usuario));
     }
 
-    @PutMapping
-    public ResponseEntity<ProvaPutResponseDTO> updateProva(@RequestBody ProvaPutRequestDTO provaPutRequestDTO){
-        return ResponseEntity.ok(provaService.updateProva(provaPutRequestDTO));
+    @PutMapping("/{id}")
+    public ResponseEntity<ProvaPutResponseDTO> updateProva(@PathVariable Long id, @RequestBody ProvaPutRequestDTO provaPutRequestDTO){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+        return ResponseEntity.ok(provaService.updateProva(id, provaPutRequestDTO, usuario));
     }
 
 }

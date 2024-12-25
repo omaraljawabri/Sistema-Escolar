@@ -14,9 +14,6 @@ import java.util.List;
 public class ProvaPutRequestDTO {
 
     @NotNull
-    private Long provaId;
-
-    @NotNull
     private List<QuestaoPutRequestDTO> questoes;
 
     @NotNull

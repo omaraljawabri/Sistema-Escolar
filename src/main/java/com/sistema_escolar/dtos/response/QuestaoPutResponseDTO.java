@@ -23,4 +23,8 @@ public class QuestaoPutResponseDTO {
     private List<String> alternativas;
 
     private BigDecimal valor;
+
+    private String criadoPor;
+
+    private String atualizadoPor;
 }

@@ -17,4 +17,6 @@ public class ProvaPutResponseDTO {
     private List<QuestaoPutResponseDTO> questoes;
 
     private BigDecimal valorTotal;
+
+    private String emailProfessor;
 }
