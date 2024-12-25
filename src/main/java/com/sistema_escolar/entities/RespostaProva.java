@@ -44,4 +44,6 @@ public class RespostaProva {
 
     private Boolean avaliada;
 
+    private Boolean respondida;
+
 }

@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface QuestaoRepository extends JpaRepository<Questao, Long> {
     Page<Questao> findAll(Pageable pageable);
+    boolean existsByIdAndProvasId(Long id, Long provasId);
 }

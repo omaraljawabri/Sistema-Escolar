@@ -48,6 +48,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/prova").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/v1/prova/**").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/questao").hasRole("PROFESSOR")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/resposta-prova").hasRole("ESTUDANTE")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
