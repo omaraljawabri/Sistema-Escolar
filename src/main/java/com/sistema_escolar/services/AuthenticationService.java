@@ -52,9 +52,9 @@ public class AuthenticationService {
                     codeExpirationTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
             estudanteRepository.save(estudante);
         }
-        String verificationLink = "http://localhost:8080/api/v1/auth/verify?code=" + verificationCode;
+        String verificationLink = String.format("http://localhost:8080/api/v1/auth/verify?code=%s", verificationCode);
         String subject = "Validação de cadastro";
-        String textMessage = "Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. \nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: \n"+verificationLink;
+        String textMessage = String.format("Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. %nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: %n%s", verificationLink);
         mailService.sendEmail(registerRequestDTO.getEmail(), subject, textMessage);
     }
 
@@ -86,9 +86,9 @@ public class AuthenticationService {
         RedefinirSenha redefinirSenha = RedefinirSenha.builder().verificationCode(verificationCode).expirationCodeTime(LocalDateTime.now().plusHours(24))
                 .usuario(usuario).build();
         redefinirSenhaRepository.save(redefinirSenha);
-        String verificationLink = "http://localhost:8080/api/v1/auth/change-password/verify?code="+verificationCode;
+        String verificationLink = String.format("http://localhost:8080/api/v1/auth/change-password/verify?code=%s",verificationCode);
         String subject = "Redefinição de senha";
-        String textMessage = "Olá, recebemos seu pedido para redefinição de senha!\nClique no link abaixo para prosseguir com o processo!\n"+verificationLink;
+        String textMessage = String.format("Olá, recebemos seu pedido para redefinição de senha!%nClique no link abaixo para prosseguir com o processo!%n%s",verificationLink);
         mailService.sendEmail(changePasswordEmailRequestDTO.getEmail(), subject, textMessage);
     }
 

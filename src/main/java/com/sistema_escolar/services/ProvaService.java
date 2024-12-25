@@ -110,8 +110,18 @@ public class ProvaService {
         provaRepository.save(prova);
         Turma turma = turmaRepository.findByProfessorId(professor.getId())
                 .orElseThrow(() -> new RuntimeException("Professor não está vinculado a uma turma"));
-        for (Estudante estudante : turma.getEstudantes()){
-            mailService.sendEmail(estudante.getEmail(), "Postagem de prova", "Olá, "+estudante.getFirstName()+ ", uma nova prova foi postada na turma "+turma.getName()+ " da disciplina "+turma.getDisciplina().getName()+"!");
+        String turmaName = turma.getName();
+        String disciplinaName = turma.getDisciplina().getName();
+        for (Estudante estudante : turma.getEstudantes()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Olá, ")
+                    .append(estudante.getFirstName())
+                    .append(", uma nova prova foi postada na turma ")
+                    .append(turmaName)
+                    .append(" da disciplina ")
+                    .append(disciplinaName)
+                    .append("!");
+            mailService.sendEmail(estudante.getEmail(), "Postagem de prova", message.toString());
         }
     }
 }
