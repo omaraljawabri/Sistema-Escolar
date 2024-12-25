@@ -113,15 +113,9 @@ public class ProvaService {
         String turmaName = turma.getName();
         String disciplinaName = turma.getDisciplina().getName();
         for (Estudante estudante : turma.getEstudantes()) {
-            StringBuilder message = new StringBuilder();
-            message.append("Olá, ")
-                    .append(estudante.getFirstName())
-                    .append(", uma nova prova foi postada na turma ")
-                    .append(turmaName)
-                    .append(" da disciplina ")
-                    .append(disciplinaName)
-                    .append("!");
-            mailService.sendEmail(estudante.getEmail(), "Postagem de prova", message.toString());
+            String mensagem = "Olá, " + estudante.getFirstName() + ", uma nova prova foi postada na turma " +
+                    turmaName + " da disciplina " + disciplinaName + "!";
+            mailService.sendEmail(estudante.getEmail(), "Postagem de prova", mensagem);
         }
     }
 }
