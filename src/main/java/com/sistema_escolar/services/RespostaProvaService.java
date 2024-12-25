@@ -26,6 +26,7 @@ public class RespostaProvaService {
     private final EstudanteRepository estudanteRepository;
     private final ProvaRepository provaRepository;
     private final QuestaoRepository questaoRepository;
+    private final MailService mailService;
 
     @Transactional
     public void responderProva(Long id, RespostaProvaRequestDTO respostaProvaRequestDTO, Usuario usuario) {
@@ -50,5 +51,7 @@ public class RespostaProvaService {
                     .respondida(true).build());
         }
         respostaProvaRepository.saveAll(respostaProva);
+        String mensagem = String.format("O aluno %s enviou a prova da disciplina de %s, entre na plataforma para começar a correção!", estudante.getFirstName(), prova.getDisciplina().getName());
+        mailService.sendEmail(prova.getEmailProfessor(), "Envio de prova", mensagem);
     }
 }
