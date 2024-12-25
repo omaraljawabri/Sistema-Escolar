@@ -2,11 +2,13 @@ package com.sistema_escolar.controllers;
 
 import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
+import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaPostResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaPutResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.ProvaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -34,4 +36,11 @@ public class ProvaController {
         return ResponseEntity.ok(provaService.updateProva(id, provaPutRequestDTO, usuario));
     }
 
+    @PostMapping("/publish/{id}")
+    public ResponseEntity<Void> publishProva(@PathVariable Long id, @RequestBody PublishProvaRequestDTO publishProvaRequestDTO){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+        provaService.publishProva(publishProvaRequestDTO, id, usuario);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

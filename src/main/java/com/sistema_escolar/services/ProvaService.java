@@ -2,14 +2,12 @@ package com.sistema_escolar.services;
 
 import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
+import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaPostResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaPutResponseDTO;
 import com.sistema_escolar.dtos.response.QuestaoPostResponseDTO;
 import com.sistema_escolar.dtos.response.QuestaoPutResponseDTO;
-import com.sistema_escolar.entities.Professor;
-import com.sistema_escolar.entities.Prova;
-import com.sistema_escolar.entities.Questao;
-import com.sistema_escolar.entities.Usuario;
+import com.sistema_escolar.entities.*;
 import com.sistema_escolar.repositories.ProfessorRepository;
 import com.sistema_escolar.repositories.ProvaRepository;
 import com.sistema_escolar.repositories.QuestaoRepository;
@@ -18,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +28,7 @@ public class ProvaService {
     private final ProfessorRepository professorRepository;
     private final TurmaRepository turmaRepository;
     private final QuestaoRepository questaoRepository;
+    private final MailService mailService;
 
     @Transactional
     public ProvaPostResponseDTO createProva(ProvaPostRequestDTO provaPostRequestDTO, Usuario usuario) {
@@ -56,6 +56,7 @@ public class ProvaService {
         prova.setQuestoes(questoes);
         prova.setDisciplina(professor.getDisciplina());
         prova.setEmailProfessor(professor.getEmail());
+        prova.setIsPublished(false);
         Prova savedProva = provaRepository.save(prova);
         List<Questao> savedQuestoes = questaoRepository.saveAll(questoes);
         List<QuestaoPostResponseDTO> questaoPostResponseDTOS = new ArrayList<>();
@@ -97,5 +98,20 @@ public class ProvaService {
         }
         return ProvaPutResponseDTO.builder().provaId(savedProva.getId()).valorTotal(savedProva.getValorTotal())
                 .questoes(questaoPutResponseDTOS).emailProfessor(savedProva.getEmailProfessor()).build();
+    }
+
+    public void publishProva(PublishProvaRequestDTO publishProvaRequestDTO, Long id, Usuario usuario) {
+        Professor professor = professorRepository.findById(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("Usuário não foi cadastrado"));
+        Prova prova = provaRepository.findByIdAndEmailProfessor(id, professor.getEmail())
+                .orElseThrow(() -> new RuntimeException("Prova não pertence a esse professor ou id da prova não existe"));
+        prova.setIsPublished(true);
+        prova.setExpirationTime(LocalDateTime.now().plusHours(publishProvaRequestDTO.getExpirationHours()).plusMinutes(publishProvaRequestDTO.getExpirationMinutes()));
+        provaRepository.save(prova);
+        Turma turma = turmaRepository.findByProfessorId(professor.getId())
+                .orElseThrow(() -> new RuntimeException("Professor não está vinculado a uma turma"));
+        for (Estudante estudante : turma.getEstudantes()){
+            mailService.sendEmail(estudante.getEmail(), "Postagem de prova", "Olá, "+estudante.getFirstName()+ ", uma nova prova foi postada na turma "+turma.getName()+ " da disciplina "+turma.getDisciplina().getName()+"!");
+        }
     }
 }

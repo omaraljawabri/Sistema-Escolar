@@ -55,7 +55,7 @@ public class AuthenticationService {
         String verificationLink = "http://localhost:8080/api/v1/auth/verify?code=" + verificationCode;
         String subject = "Validação de cadastro";
         String textMessage = "Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. \nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: \n"+verificationLink;
-        mailService.sendEmail(registerRequestDTO.getEmail(), verificationCode, subject, textMessage);
+        mailService.sendEmail(registerRequestDTO.getEmail(), subject, textMessage);
     }
 
     public void verifyCode(String code){
@@ -89,7 +89,7 @@ public class AuthenticationService {
         String verificationLink = "http://localhost:8080/api/v1/auth/change-password/verify?code="+verificationCode;
         String subject = "Redefinição de senha";
         String textMessage = "Olá, recebemos seu pedido para redefinição de senha!\nClique no link abaixo para prosseguir com o processo!\n"+verificationLink;
-        mailService.sendEmail(changePasswordEmailRequestDTO.getEmail(), verificationCode, subject, textMessage);
+        mailService.sendEmail(changePasswordEmailRequestDTO.getEmail(), subject, textMessage);
     }
 
     @Transactional
