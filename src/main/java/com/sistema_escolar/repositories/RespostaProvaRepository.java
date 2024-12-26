@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface RespostaProvaRepository extends JpaRepository<RespostaProva, Long> {
     List<RespostaProva> findByEstudanteIdAndProvaId(Long estudanteId, Long provaId);
+    List<RespostaProva> findAllByProvaIdAndRespondidaTrue(Long id);
 }

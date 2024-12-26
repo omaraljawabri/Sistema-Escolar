@@ -1,6 +1,7 @@
 package com.sistema_escolar.controllers;
 
 import com.sistema_escolar.dtos.request.RespostaProvaRequestDTO;
+import com.sistema_escolar.dtos.response.ProvaRespondidaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.RespostaProvaService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/resposta-prova")
@@ -23,5 +26,12 @@ public class RespostaProvaController {
         Usuario usuario = (Usuario) authentication.getPrincipal();
         respostaProvaService.responderProva(id, respostaProvaRequestDTO, usuario);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{provaId}")
+    public ResponseEntity<List<ProvaRespondidaResponseDTO>> provasRespondidas(@PathVariable Long provaId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+        return ResponseEntity.ok(respostaProvaService.provasRespondidas(usuario, provaId));
     }
 }
