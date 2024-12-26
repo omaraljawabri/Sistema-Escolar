@@ -1,6 +1,7 @@
 package com.sistema_escolar.controllers;
 
 import com.sistema_escolar.dtos.response.EstatisticasEstudanteResponseDTO;
+import com.sistema_escolar.dtos.response.EstatisticasGeraisResponseDTO;
 import com.sistema_escolar.dtos.response.EstatisticasTurmaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.EstatisticasService;
@@ -32,5 +33,10 @@ public class EstatisticasController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(estatisticasService.estatisticasDoEstudante(usuario));
+    }
+
+    @GetMapping("/geral")
+    public ResponseEntity<EstatisticasGeraisResponseDTO> estatisticasGerais(){
+        return ResponseEntity.ok(estatisticasService.estatisticasGerais());
     }
 }

@@ -1,14 +1,8 @@
 package com.sistema_escolar.services;
 
-import com.sistema_escolar.dtos.response.EstatisticasEstudanteProvaResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasEstudanteResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasProvaResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasTurmaResponseDTO;
+import com.sistema_escolar.dtos.response.*;
 import com.sistema_escolar.entities.*;
-import com.sistema_escolar.repositories.NotaRepository;
-import com.sistema_escolar.repositories.ProfessorRepository;
-import com.sistema_escolar.repositories.ProvaRepository;
-import com.sistema_escolar.repositories.TurmaRepository;
+import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +20,8 @@ public class EstatisticasService {
     private final TurmaRepository turmaRepository;
     private final ProvaRepository provaRepository;
     private final NotaRepository notaRepository;
+    private final DisciplinaRepository disciplinaRepository;
+    private final EstudanteRepository estudanteRepository;
 
     public EstatisticasTurmaResponseDTO estatisticasDaTurma(Long id, Usuario usuario) {
         Turma turma = turmaRepository.findByIdAndProfessorId(id, usuario.getId())
@@ -50,6 +46,14 @@ public class EstatisticasService {
         return EstatisticasEstudanteResponseDTO.builder().mediaGeral(mediaGeral)
                 .porcentagemAproveitamento(BigDecimal.valueOf((mediaGeral.doubleValue()/valorTotal.doubleValue())*100))
                 .estatisticasPorProva(mapearEstatisticasEstudanteProva(notasEstudante))
+                .build();
+    }
+
+    public EstatisticasGeraisResponseDTO estatisticasGerais() {
+        return EstatisticasGeraisResponseDTO.builder().qtdDisciplinasGeral(disciplinaRepository.count())
+                .estatisticasDisciplinas(mapearEstatisticasDisciplinas())
+                .qtdEstudantesGeral(estudanteRepository.count())
+                .qtdTurmasGeral(turmaRepository.count()).estatisticasTurmas(mapearEstatisticasTurmas())
                 .build();
     }
 
@@ -118,5 +122,26 @@ public class EstatisticasService {
                     .nota(nota.getValor()).build());
         }
         return estatisticasProvaResponseDTOS;
+    }
+
+    private List<EstatisticasDisciplinasResponseDTO> mapearEstatisticasDisciplinas(){
+        List<Disciplina> disciplinas = disciplinaRepository.findAll();
+        List<EstatisticasDisciplinasResponseDTO> estatisticasDisciplinasResponseDTOS = new ArrayList<>();
+        for (Disciplina disciplina : disciplinas){
+            estatisticasDisciplinasResponseDTOS.add(EstatisticasDisciplinasResponseDTO.builder()
+                    .disciplinaId(disciplina.getId()).qtdEstudantes(estudanteRepository.countByDisciplinasId(disciplina.getId()))
+                    .qtdTurmas(turmaRepository.countByDisciplinaId(disciplina.getId())).build());
+        }
+        return estatisticasDisciplinasResponseDTOS;
+    }
+
+    private List<EstatisticasTurmasResponseDTO> mapearEstatisticasTurmas(){
+        List<Turma> turmas = turmaRepository.findAll();
+        List<EstatisticasTurmasResponseDTO> estatisticasTurmasResponseDTOS = new ArrayList<>();
+        for (Turma turma : turmas){
+            estatisticasTurmasResponseDTOS.add(EstatisticasTurmasResponseDTO.builder().turmaId(turma.getId())
+                    .qtdEstudantes(estudanteRepository.countByTurmasId(turma.getId())).build());
+        }
+        return estatisticasTurmasResponseDTOS;
     }
 }
