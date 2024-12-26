@@ -43,4 +43,7 @@ public class Prova {
 
     @OneToMany(mappedBy = "prova")
     private List<RespostaProva> respostasProva;
+
+    @OneToMany(mappedBy = "prova")
+    private List<Nota> notas;
 }
