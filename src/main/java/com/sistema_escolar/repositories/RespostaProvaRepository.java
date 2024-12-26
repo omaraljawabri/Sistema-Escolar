@@ -10,4 +10,5 @@ public interface RespostaProvaRepository extends JpaRepository<RespostaProva, Lo
     List<RespostaProva> findByEstudanteIdAndProvaId(Long estudanteId, Long provaId);
     List<RespostaProva> findAllByProvaIdAndRespondidaTrue(Long id);
     Optional<RespostaProva> findByQuestaoIdAndProvaIdAndEstudanteId(Long questaoId, Long provaId, Long estudanteId);
+    List<RespostaProva> findByEstudanteIdAndProvaIdAndAvaliadaTrue(Long estudanteId, Long provaId);
 }

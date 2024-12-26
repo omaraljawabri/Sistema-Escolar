@@ -47,6 +47,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/v1/prova").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/prova").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/v1/prova/**").hasRole("PROFESSOR")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/prova/avaliada/**").hasRole("ESTUDANTE")
                         .requestMatchers(HttpMethod.GET, "/api/v1/questao").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/v1/resposta-prova").hasRole("ESTUDANTE")
                         .requestMatchers(HttpMethod.GET, "/api/v1/resposta-prova").hasRole("PROFESSOR")
