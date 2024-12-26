@@ -3,7 +3,6 @@ package com.sistema_escolar.controllers;
 import com.sistema_escolar.dtos.request.NotaRequestDTO;
 import com.sistema_escolar.dtos.response.NotaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
-import com.sistema_escolar.infra.security.SecurityConfigurations;
 import com.sistema_escolar.services.NotaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

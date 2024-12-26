@@ -25,7 +25,6 @@ public class NotaService {
     private final RespostaProvaService respostaProvaService;
     private final EstudanteService estudanteService;
     private final MailService mailService;
-    private final NotaService notaSelf;
 
     @Transactional
     public NotaResponseDTO avaliarProva(Long id, List<NotaRequestDTO> notaRequestDTO, Usuario usuario, Long estudanteId) {
@@ -34,7 +33,7 @@ public class NotaService {
         Prova prova = provaService.buscarPorIdEEmailDoProfessor(id, professor.getEmail());
         List<NotaRequestDTO> notasOrdenadas
                 = notaRequestDTO.stream().sorted(Comparator.comparing(NotaRequestDTO::getQuestaoId)).toList();
-        Double notaTotal = notaSelf.adicionarRespostasProva(prova, notasOrdenadas, estudante);
+        Double notaTotal = adicionarRespostasProva(prova, notasOrdenadas, estudante);
         mailService.sendEmail(estudante.getEmail(), "Recebimento de nota",
                 String.format("Olá, uma nova nota sua foi publicada na disciplina %s pelo professor %s %s", professor.getDisciplina().getName(), professor.getFirstName(), professor.getLastName()));
         return NotaResponseDTO.builder().notaProva(notaTotal).build();
@@ -45,8 +44,7 @@ public class NotaService {
         notaRepository.save(nota);
     }
 
-    @Transactional
-    public Double adicionarRespostasProva(Prova prova, List<NotaRequestDTO> notasOrdenadas, Estudante estudante){
+    private Double adicionarRespostasProva(Prova prova, List<NotaRequestDTO> notasOrdenadas, Estudante estudante){
         Double notaTotal = 0d;
         List<RespostaProva> respostasProva = new ArrayList<>();
         for (int i = 0; i < prova.getQuestoes().size(); i++) {

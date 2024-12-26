@@ -42,7 +42,4 @@ public class ProvaController {
         provaService.publishProva(publishProvaRequestDTO, id, usuario);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @GetMapping("/{id}")
-    public
 }
