@@ -45,7 +45,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build());
     }
 
-    @ExceptionHandler(EntityAlreadyExistsException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     private ResponseEntity<ErrorMessage> entityNotFoundException(EntityNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.builder()
                 .timestamp(LocalDateTime.now())
