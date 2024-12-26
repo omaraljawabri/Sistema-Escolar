@@ -8,6 +8,7 @@ import com.sistema_escolar.dtos.response.ProvaRespondidaResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.ProvaService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/prova")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "securityConfig")
 public class ProvaController {
 
     private final ProvaService provaService;

@@ -2,6 +2,7 @@ package com.sistema_escolar.controllers;
 
 import com.sistema_escolar.dtos.request.CreateDisciplinaRequestDTO;
 import com.sistema_escolar.services.DisciplinaService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/disciplina")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "securityConfig")
 public class DisciplinaController {
 
     private final DisciplinaService disciplinaService;
