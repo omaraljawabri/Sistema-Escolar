@@ -5,6 +5,10 @@ import com.sistema_escolar.dtos.request.RespostaQuestaoRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaRespondidaResponseDTO;
 import com.sistema_escolar.dtos.response.QuestaoRespondidaResponseDTO;
 import com.sistema_escolar.entities.*;
+import com.sistema_escolar.infra.exceptions.EntityDoesntBelongToUserException;
+import com.sistema_escolar.infra.exceptions.EntityNotFoundException;
+import com.sistema_escolar.infra.exceptions.TestErrorException;
+import com.sistema_escolar.infra.exceptions.UserAlreadyBelongsToAnEntityException;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,11 +36,11 @@ public class RespostaProvaService {
         Estudante estudante = estudanteService.buscarPorId(usuario.getId());
         Prova prova = provaService.buscarPorId(id);
         if (!prova.getIsPublished() || prova.getExpirationTime().isBefore(LocalDateTime.now())){
-            throw new RuntimeException("O tempo de prova já foi encerrado ou a prova não foi publicada ainda");
+            throw new TestErrorException("O tempo de prova já foi encerrado ou a prova não foi publicada ainda");
         }
         if (!respostaProvaRepository.findByEstudanteIdAndProvaId(estudante.getId(), id).isEmpty() &&
                 Boolean.TRUE.equals(respostaProvaRepository.findByEstudanteIdAndProvaId(estudante.getId(), id).getFirst().getRespondida())){
-            throw new RuntimeException("Estudante já respondeu a esta prova");
+            throw new UserAlreadyBelongsToAnEntityException("Estudante já respondeu a esta prova");
         }
         adicionarRespostasProva(respostaProvaRequestDTO, estudante, prova, id);
         String mensagem = String.format("O aluno %s enviou a prova da disciplina de %s, entre na plataforma para começar a correção!", estudante.getFirstName(), prova.getDisciplina().getName());
@@ -46,7 +50,7 @@ public class RespostaProvaService {
     public List<ProvaRespondidaResponseDTO> provasRespondidas(Usuario usuario, Long provaId) {
         Professor professor = professorService.buscarPorId(usuario.getId());
         if (provaRepository.findByIdAndEmailProfessor(provaId, professor.getEmail()).isEmpty()){
-            throw new RuntimeException("Prova não pertence a esse usuário");
+            throw new EntityDoesntBelongToUserException("Prova não pertence a esse usuário");
         }
         return adicionarProvasRespondidas(respostaProvaRepository.findAllByProvaIdAndRespondidaTrue(provaId));
     }
@@ -61,7 +65,7 @@ public class RespostaProvaService {
         for(RespostaQuestaoRequestDTO questao: respostaProvaRequestDTO.getRespostasQuestoes()){
             if (questaoRepository.findById(questao.getQuestaoId()).isEmpty()
                     || !questaoRepository.existsByIdAndProvasId(questao.getQuestaoId(), id)){
-                throw new RuntimeException("Id da questão não existe ou questão não pertence a esta prova");
+                throw new EntityNotFoundException("Id da questão não existe ou questão não pertence a esta prova");
             }
             respostaProva.add(RespostaProva.builder().resposta(questao.getResposta()).estudante(estudante)
                     .questao(questaoRepository.findById(questao.getQuestaoId()).get()).prova(prova)

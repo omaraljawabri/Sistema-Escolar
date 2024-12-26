@@ -1,6 +1,7 @@
 package com.sistema_escolar.services;
 
 import com.sistema_escolar.entities.Professor;
+import com.sistema_escolar.infra.exceptions.UserNotFoundException;
 import com.sistema_escolar.repositories.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,6 @@ public class ProfessorService {
 
     public Professor buscarPorId(Long id){
         return professorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Professor não foi encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Professor não foi encontrado"));
     }
 }

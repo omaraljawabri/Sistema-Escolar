@@ -3,6 +3,8 @@ package com.sistema_escolar.services;
 import com.sistema_escolar.dtos.request.NotaRequestDTO;
 import com.sistema_escolar.dtos.response.NotaResponseDTO;
 import com.sistema_escolar.entities.*;
+import com.sistema_escolar.infra.exceptions.EntityNotFoundException;
+import com.sistema_escolar.infra.exceptions.QuestionErrorException;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,13 +51,13 @@ public class NotaService {
         List<RespostaProva> respostasProva = new ArrayList<>();
         for (int i = 0; i < prova.getQuestoes().size(); i++) {
             if (prova.getQuestoes().get(i).getValor().compareTo(BigDecimal.valueOf(notasOrdenadas.get(i).getNotaQuestao())) < 0) {
-                throw new RuntimeException("Nota da questão é maior do que seu valor máximo");
+                throw new QuestionErrorException("Nota da questão é maior do que seu valor máximo");
             }
             notaTotal += notasOrdenadas.get(i).getNotaQuestao();
             Questao questao = questaoRepository.findById(notasOrdenadas.get(i).getQuestaoId())
-                    .orElseThrow(() -> new RuntimeException("Id da questão não existe"));
+                    .orElseThrow(() -> new EntityNotFoundException("Id da questão não existe"));
             RespostaProva respostaProva = respostaProvaRepository.findByQuestaoIdAndProvaIdAndEstudanteId(questao.getId(), prova.getId(), estudante.getId())
-                    .orElseThrow(() -> new RuntimeException("Questão não foi respondida pelo estudante na prova com id passado"));
+                    .orElseThrow(() -> new QuestionErrorException("Questão não foi respondida pelo estudante na prova com id passado"));
             respostaProva.setNota(BigDecimal.valueOf(notasOrdenadas.get(i).getNotaQuestao()));
             respostaProva.setAvaliada(true);
             respostasProva.add(respostaProva);

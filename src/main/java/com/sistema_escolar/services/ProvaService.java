@@ -5,6 +5,8 @@ import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
 import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
 import com.sistema_escolar.dtos.response.*;
 import com.sistema_escolar.entities.*;
+import com.sistema_escolar.infra.exceptions.EntityNotFoundException;
+import com.sistema_escolar.infra.exceptions.UserDoesntBelongException;
 import com.sistema_escolar.repositories.*;
 import com.sistema_escolar.utils.mappers.ProvaMapper;
 import com.sistema_escolar.utils.mappers.QuestaoMapper;
@@ -36,7 +38,7 @@ public class ProvaService {
     public ProvaResponseDTO createProva(ProvaPostRequestDTO provaPostRequestDTO, Usuario usuario) {
         Professor professor = professorService.buscarPorId(usuario.getId());
         if (turmaRepository.findByProfessorId(professor.getId()).isEmpty()){
-            throw new RuntimeException("Professor deve estar vinculado a uma turma para criar uma prova");
+            throw new UserDoesntBelongException("Professor deve estar vinculado a uma turma para criar uma prova");
         }
         Prova prova = Prova.builder().disciplina(professor.getDisciplina()).valorTotal(provaPostRequestDTO.getValorTotal()).build();
         List<Questao> questoes = adicionarQuestoes(prova, professor, provaPostRequestDTO);
@@ -72,7 +74,7 @@ public class ProvaService {
         prova.setExpirationTime(LocalDateTime.now().plusHours(publishProvaRequestDTO.getExpirationHours()).plusMinutes(publishProvaRequestDTO.getExpirationMinutes()));
         provaRepository.save(prova);
         Turma turma = turmaRepository.findByProfessorId(professor.getId())
-                .orElseThrow(() -> new RuntimeException("Professor não está vinculado a uma turma"));
+                .orElseThrow(() -> new UserDoesntBelongException("Professor não está vinculado a uma turma"));
         String turmaName = turma.getName();
         String disciplinaName = turma.getDisciplina().getName();
         for (Estudante estudante : turma.getEstudantes()) {
@@ -84,12 +86,12 @@ public class ProvaService {
 
     public Prova buscarPorId(Long id){
         return provaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Id da prova não existe"));
+                .orElseThrow(() -> new EntityNotFoundException("Id da prova não existe"));
     }
 
     public Prova buscarPorIdEEmailDoProfessor(Long id, String email){
         return provaRepository.findByIdAndEmailProfessor(id, email)
-                .orElseThrow(() -> new RuntimeException("Prova não pertence a esse professor ou id da prova não existe"));
+                .orElseThrow(() -> new EntityNotFoundException("Prova não pertence a esse professor ou id da prova não existe"));
     }
 
     public ProvaAvaliadaResponseDTO getProvaAvaliada(Long id, Usuario usuario) {
@@ -98,7 +100,7 @@ public class ProvaService {
         List<RespostaProva> respostasProva
                 = respostaProvaRepository.findByEstudanteIdAndProvaIdAndAvaliadaTrue(estudante.getId(), prova.getId());
         if (respostasProva.isEmpty()){
-            throw new RuntimeException("Estudante não fez esta prova");
+            throw new UserDoesntBelongException("Estudante não fez esta prova");
         }
         List<QuestaoAvaliadaResponseDTO> questaoAvaliadaResponseDTOS = mapearQuestaoAvaliadaResponseDTO(respostasProva);
         return mapearProvaAvaliadaResponseDTO(questaoAvaliadaResponseDTOS, prova, estudante);
@@ -108,7 +110,7 @@ public class ProvaService {
         List<Questao> questoes = new ArrayList<>();
         for (int i = 0; i < provaPutRequestDTO.getQuestoes().size(); i++) {
             Questao questao = questaoRepository.findById(provaPutRequestDTO.getQuestoes().get(i).getId())
-                    .orElseThrow(() -> new RuntimeException("Id da questão não existe"));
+                    .orElseThrow(() -> new EntityNotFoundException("Id da questão não existe"));
             questoes.add(questao);
             questoes.get(i).setValor(provaPutRequestDTO.getQuestoes().get(i).getValor());
             questoes.get(i).setAlternativas(provaPutRequestDTO.getQuestoes().get(i).getAlternativas());

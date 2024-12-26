@@ -2,6 +2,7 @@ package com.sistema_escolar.services;
 
 import com.sistema_escolar.dtos.response.*;
 import com.sistema_escolar.entities.*;
+import com.sistema_escolar.infra.exceptions.UserNotFoundException;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class EstatisticasService {
 
     public EstatisticasTurmaResponseDTO estatisticasDaTurma(Long id, Usuario usuario) {
         Turma turma = turmaRepository.findByIdAndProfessorId(id, usuario.getId())
-                .orElseThrow(() -> new RuntimeException("Professor não faz parte dessa turma ou turma não existe"));
+                .orElseThrow(() -> new UserNotFoundException("Professor não faz parte dessa turma ou turma não existe"));
         List<Prova> provas
                 = provaRepository.findByDisciplinaIdAndEmailProfessorAndIsPublishedTrue(turma.getDisciplina().getId(), turma.getProfessor().getEmail());
         List<Prova> provasExpiradas = provas.stream().filter(prova -> prova.getExpirationTime().isBefore(LocalDateTime.now())).toList();

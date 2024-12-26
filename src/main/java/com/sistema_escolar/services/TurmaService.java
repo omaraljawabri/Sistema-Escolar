@@ -6,6 +6,7 @@ import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.TurmaRequestDTO;
 import com.sistema_escolar.dtos.response.CodeResponseDTO;
 import com.sistema_escolar.entities.*;
+import com.sistema_escolar.infra.exceptions.*;
 import com.sistema_escolar.repositories.DisciplinaRepository;
 import com.sistema_escolar.repositories.EstudanteRepository;
 import com.sistema_escolar.repositories.ProfessorRepository;
@@ -31,10 +32,11 @@ public class TurmaService {
 
     public void createTurma(CreateTurmaRequestDTO createTurmaRequestDTO){
         Disciplina disciplina
-                = disciplinaRepository.findById(createTurmaRequestDTO.getDisciplinaId()).orElseThrow(() -> new RuntimeException("Disciplina passada não existe"));
+                = disciplinaRepository.findById(createTurmaRequestDTO.getDisciplinaId())
+                .orElseThrow(() -> new EntityNotFoundException("Disciplina passada não existe"));
         Optional<Turma> turmaOptional = turmaRepository.findByNameAndDisciplina(createTurmaRequestDTO.getName(), disciplina);
         if (turmaOptional.isPresent()){
-            throw new RuntimeException("A turma que está sendo criada já existe");
+            throw new EntityAlreadyExistsException("A turma que está sendo criada já existe");
         }
         Turma turmaToSave = Turma.builder().name(createTurmaRequestDTO.getName()).disciplina(disciplina).build();
         turmaRepository.save(turmaToSave);
@@ -42,11 +44,11 @@ public class TurmaService {
 
     public void addEstudante(AddTurmaRequestDTO addTurmaRequestDTO){
         Estudante estudante = estudanteRepository.findByEmail(addTurmaRequestDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email do estudante que deseja adicionar não existe"));
+                .orElseThrow(() -> new UserNotFoundException("Email do estudante que deseja adicionar não existe"));
         Turma turma = turmaRepository.findById(addTurmaRequestDTO.getTurmaId())
-                .orElseThrow(() -> new RuntimeException("Turma selecionada não existe"));
+                .orElseThrow(() -> new EntityNotFoundException("Turma selecionada não existe"));
         if (turmaRepository.findByEstudantes(estudante).isPresent()){
-            throw new RuntimeException("Estudante já está cadastrado nesta turma!");
+            throw new UserAlreadyBelongsToAnEntityException("Estudante já está cadastrado nesta turma!");
         }
         turma.getEstudantes().add(estudante);
         estudante.getTurmas().add(turma);
@@ -56,11 +58,11 @@ public class TurmaService {
     @Transactional
     public void addProfessor(AddTurmaRequestDTO addTurmaRequestDTO){
         Professor professor = professorRepository.findByEmail(addTurmaRequestDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email do professor que deseja adicionar não existe"));
+                .orElseThrow(() -> new UserNotFoundException("Email do professor que deseja adicionar não existe"));
         Turma turma = turmaRepository.findById(addTurmaRequestDTO.getTurmaId())
-                .orElseThrow(() -> new RuntimeException("Turma selecionada não existe"));
+                .orElseThrow(() -> new EntityNotFoundException("Turma selecionada não existe"));
         if (turmaRepository.findByIdAndProfessor(turma.getId(), professor).isPresent()){
-            throw new RuntimeException("Professor já está cadastrado nesta turma!");
+            throw new UserAlreadyBelongsToAnEntityException("Professor já está cadastrado nesta turma!");
         }
         professor.setDisciplina(turma.getDisciplina());
         turma.setProfessor(professor);
@@ -71,7 +73,7 @@ public class TurmaService {
     public CodeResponseDTO generateCode(TurmaRequestDTO turmaRequestDTO) {
         String generatedCode = CodeGenerator.generateCode();
         Turma turma = turmaRepository.findById(turmaRequestDTO.getTurmaId())
-                .orElseThrow(() -> new RuntimeException("Turma selecionada não existe"));
+                .orElseThrow(() -> new EntityNotFoundException("Turma selecionada não existe"));
         turma.setTurmaCode(generatedCode);
         turma.setCodeExpirationTime(LocalDateTime.now().plusDays(7));
         turmaRepository.save(turma);
@@ -80,7 +82,7 @@ public class TurmaService {
 
     public CodeResponseDTO generateCode(Usuario usuario){
         Turma turma = turmaRepository.findByProfessorId(usuario.getId())
-                .orElseThrow(() -> new RuntimeException("Professor não esta vinculado a nenhuma turma"));
+                .orElseThrow(() -> new UserDoesntBelongException("Professor não esta vinculado a nenhuma turma"));
         String generatedCode = CodeGenerator.generateCode();
         turma.setTurmaCode(generatedCode);
         turma.setCodeExpirationTime(LocalDateTime.now().plusHours(7));
@@ -90,13 +92,13 @@ public class TurmaService {
 
     public void joinTurma(CodeRequestDTO codeRequestDTO, Usuario usuario){
         Turma turma = turmaRepository.findByTurmaCode(codeRequestDTO.getCode())
-                .orElseThrow(() -> new RuntimeException("Código de turma não existe!"));
+                .orElseThrow(() -> new InvalidCodeException("Código de turma não existe!"));
         if (turma.getCodeExpirationTime().isBefore(LocalDateTime.now())){
-            throw new RuntimeException("Código de turma está expirado!");
+            throw new InvalidCodeException("Código de turma está expirado!");
         }
         if (usuario.getRole() == UserRole.PROFESSOR ){
             if (turmaRepository.findByProfessorId(usuario.getId()).isPresent()) {
-                throw new RuntimeException("Professor já está vinculado a uma turma");
+                throw new UserAlreadyBelongsToAnEntityException("Professor já está vinculado a uma turma");
             } else{
                 turma.setProfessor(professorRepository.findById(usuario.getId()).get());
                 turmaRepository.save(turma);
@@ -106,7 +108,7 @@ public class TurmaService {
             Estudante estudante = estudanteRepository.findById(usuario.getId()).get();
             for (Disciplina disciplinas : estudante.getDisciplinas()){
                 if (Objects.equals(disciplinas.getId(), disciplina.getId())){
-                    throw new RuntimeException("Estudante já está vinculado a uma turma desta disciplina!");
+                    throw new UserAlreadyBelongsToAnEntityException("Estudante já está vinculado a uma turma desta disciplina!");
                 }
             }
             turma.getEstudantes().add(estudante);

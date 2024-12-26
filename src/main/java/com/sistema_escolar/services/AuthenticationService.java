@@ -6,6 +6,10 @@ import com.sistema_escolar.dtos.request.LoginRequestDTO;
 import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.*;
+import com.sistema_escolar.infra.exceptions.AccountWasntValidatedException;
+import com.sistema_escolar.infra.exceptions.EntityAlreadyExistsException;
+import com.sistema_escolar.infra.exceptions.InvalidCodeException;
+import com.sistema_escolar.infra.exceptions.UserNotFoundException;
 import com.sistema_escolar.utils.enums.UserRole;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +35,7 @@ public class AuthenticationService {
     @Transactional
     public void registerUser(RegisterRequestDTO registerRequestDTO){
         if (usuarioRepository.findByEmail(registerRequestDTO.getEmail()).isPresent()){
-            throw new RuntimeException("Email enviado já existe"); //Do custom exception
+            throw new EntityAlreadyExistsException("Email "+usuarioRepository.findByEmail(registerRequestDTO.getEmail()).get()+" já existe");
         }
         String verificationCode = UUID.randomUUID().toString();
         LocalDateTime codeExpirationTime = LocalDateTime.now().plusHours(24);
@@ -46,7 +50,7 @@ public class AuthenticationService {
     public void verifyCode(String code){
         Optional<Usuario> usuario = usuarioRepository.findByVerificationCode(code);
         if (usuario.isEmpty() || usuario.orElseThrow().getCodeExpirationTime().isBefore(LocalDateTime.now())){
-            throw new RuntimeException("Código de verificação inválido"); //Make customized exception
+            throw new InvalidCodeException("Código de verificação inválido");
         }
         usuario.orElseThrow().setIsVerified(true);
         usuario.orElseThrow().setVerificationCode(null);
@@ -56,9 +60,9 @@ public class AuthenticationService {
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO, String token){
         Usuario usuario
-                = usuarioRepository.findByEmail(loginRequestDTO.getEmail()).orElseThrow(() -> new RuntimeException("Email enviado não existe!"));
+                = usuarioRepository.findByEmail(loginRequestDTO.getEmail()).orElseThrow(() -> new UserNotFoundException("Email enviado não existe!"));
         if (Boolean.FALSE.equals(usuario.getIsVerified())){
-            throw new RuntimeException("Conta não foi validada!");
+            throw new AccountWasntValidatedException("Conta não foi validada!");
         }
         return LoginResponseDTO.builder().email(loginRequestDTO.getEmail()).token(token).build();
     }
@@ -67,7 +71,7 @@ public class AuthenticationService {
     public void changePassword(ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
         Usuario usuario
                 = usuarioRepository.findByEmail(changePasswordEmailRequestDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email enviado não está cadastrado"));
+                .orElseThrow(() -> new UserNotFoundException("Email enviado não está cadastrado"));
         String verificationCode = UUID.randomUUID().toString();
         RedefinirSenha redefinirSenha = RedefinirSenha.builder().verificationCode(verificationCode).expirationCodeTime(LocalDateTime.now().plusHours(24))
                 .usuario(usuario).build();
@@ -82,7 +86,7 @@ public class AuthenticationService {
     public void verifyChangePassword(String code, ChangePasswordRequestDTO changePasswordRequestDTO){
         Optional<RedefinirSenha> redefinirSenha = redefinirSenhaRepository.findByVerificationCode(code);
         if (redefinirSenha.isEmpty() || redefinirSenha.orElseThrow().getExpirationCodeTime().isBefore(LocalDateTime.now())){
-            throw new RuntimeException("Código de validação inválido!");
+            throw new InvalidCodeException("Código de validação inválido!");
         }
         Usuario usuario = redefinirSenha.orElseThrow().getUsuario();
         String newPassword = new BCryptPasswordEncoder().encode(changePasswordRequestDTO.getNewPassword());
