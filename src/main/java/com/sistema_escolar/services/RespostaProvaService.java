@@ -7,7 +7,6 @@ import com.sistema_escolar.dtos.response.QuestaoRespondidaResponseDTO;
 import com.sistema_escolar.entities.*;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,28 +17,46 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class RespostaProvaService {
 
     private final RespostaProvaRepository respostaProvaRepository;
-    private final EstudanteRepository estudanteRepository;
-    private final ProfessorRepository professorRepository;
+    private final EstudanteService estudanteService;
+    private final ProfessorService professorService;
+    private final ProvaService provaService;
     private final ProvaRepository provaRepository;
     private final QuestaoRepository questaoRepository;
     private final MailService mailService;
 
     @Transactional
     public void responderProva(Long id, RespostaProvaRequestDTO respostaProvaRequestDTO, Usuario usuario) {
-        Estudante estudante = estudanteRepository.findById(usuario.getId())
-                .orElseThrow(() -> new RuntimeException("Estudante não está cadastrado"));
-        Prova prova = provaRepository.findById(id).orElseThrow(() -> new RuntimeException("Id da prova não existe"));
+        Estudante estudante = estudanteService.buscarPorId(usuario.getId());
+        Prova prova = provaService.buscarPorId(id);
         if (!prova.getIsPublished() || prova.getExpirationTime().isBefore(LocalDateTime.now())){
             throw new RuntimeException("O tempo de prova já foi encerrado ou a prova não foi publicada ainda");
         }
         if (!respostaProvaRepository.findByEstudanteIdAndProvaId(estudante.getId(), id).isEmpty() &&
-        respostaProvaRepository.findByEstudanteIdAndProvaId(estudante.getId(), id).getFirst().getRespondida()){
+                Boolean.TRUE.equals(respostaProvaRepository.findByEstudanteIdAndProvaId(estudante.getId(), id).getFirst().getRespondida())){
             throw new RuntimeException("Estudante já respondeu a esta prova");
         }
+        adicionarRespostasProva(respostaProvaRequestDTO, estudante, prova, id);
+        String mensagem = String.format("O aluno %s enviou a prova da disciplina de %s, entre na plataforma para começar a correção!", estudante.getFirstName(), prova.getDisciplina().getName());
+        mailService.sendEmail(prova.getEmailProfessor(), "Envio de prova", mensagem);
+    }
+
+    public List<ProvaRespondidaResponseDTO> provasRespondidas(Usuario usuario, Long provaId) {
+        Professor professor = professorService.buscarPorId(usuario.getId());
+        if (provaRepository.findByIdAndEmailProfessor(provaId, professor.getEmail()).isEmpty()){
+            throw new RuntimeException("Prova não pertence a esse usuário");
+        }
+        return adicionarProvasRespondidas(respostaProvaRepository.findAllByProvaIdAndRespondidaTrue(provaId));
+    }
+
+    public void salvarRespostasProva(List<RespostaProva> respostasProva){
+        respostaProvaRepository.saveAll(respostasProva);
+    }
+
+    private void adicionarRespostasProva(RespostaProvaRequestDTO respostaProvaRequestDTO,
+                                                        Estudante estudante, Prova prova, Long id){
         List<RespostaProva> respostaProva = new ArrayList<>();
         for(RespostaQuestaoRequestDTO questao: respostaProvaRequestDTO.getRespostasQuestoes()){
             if (questaoRepository.findById(questao.getQuestaoId()).isEmpty()
@@ -51,17 +68,9 @@ public class RespostaProvaService {
                     .respondida(true).build());
         }
         respostaProvaRepository.saveAll(respostaProva);
-        String mensagem = String.format("O aluno %s enviou a prova da disciplina de %s, entre na plataforma para começar a correção!", estudante.getFirstName(), prova.getDisciplina().getName());
-        mailService.sendEmail(prova.getEmailProfessor(), "Envio de prova", mensagem);
     }
 
-    public List<ProvaRespondidaResponseDTO> provasRespondidas(Usuario usuario, Long provaId) {
-        Professor professor = professorRepository.findById(usuario.getId())
-                .orElseThrow(() -> new RuntimeException("Professor não está cadastrado"));
-        if (provaRepository.findByIdAndEmailProfessor(provaId, professor.getEmail()).isEmpty()){
-            throw new RuntimeException("Prova não pertence a esse usuário");
-        }
-        List<RespostaProva> respostasProva = respostaProvaRepository.findAllByProvaIdAndRespondidaTrue(provaId);
+    private List<ProvaRespondidaResponseDTO> adicionarProvasRespondidas(List<RespostaProva> respostasProva){
         List<ProvaRespondidaResponseDTO> provaRespondidaResponseDTOS = new ArrayList<>();
         List<QuestaoRespondidaResponseDTO> questaoRespondidaResponseDTOS = new ArrayList<>();
         for (int i = 0; i < respostasProva.size(); i++) {
