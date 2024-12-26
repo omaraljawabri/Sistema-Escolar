@@ -24,7 +24,8 @@ public class DisciplinaController {
 
     private final DisciplinaService disciplinaService;
 
-    @Operation(summary = "Endpoint responsável por fazer a criação de uma disciplina, com autorização apenas do ADMIN",
+    @Operation(summary = "Endpoint responsável por fazer a criação de uma disciplina",
+            description = "Necessita da ROLE_ADMIN para ser acessado",
             method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Operação realizada com sucesso!"),
