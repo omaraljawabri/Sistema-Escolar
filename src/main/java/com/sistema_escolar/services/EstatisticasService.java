@@ -1,12 +1,14 @@
 package com.sistema_escolar.services;
 
+import com.sistema_escolar.dtos.response.EstatisticasEstudanteProvaResponseDTO;
+import com.sistema_escolar.dtos.response.EstatisticasEstudanteResponseDTO;
 import com.sistema_escolar.dtos.response.EstatisticasProvaResponseDTO;
 import com.sistema_escolar.dtos.response.EstatisticasTurmaResponseDTO;
-import com.sistema_escolar.entities.Estudante;
-import com.sistema_escolar.entities.Prova;
-import com.sistema_escolar.entities.Turma;
-import com.sistema_escolar.entities.Usuario;
-import com.sistema_escolar.repositories.*;
+import com.sistema_escolar.entities.*;
+import com.sistema_escolar.repositories.NotaRepository;
+import com.sistema_escolar.repositories.ProfessorRepository;
+import com.sistema_escolar.repositories.ProvaRepository;
+import com.sistema_escolar.repositories.TurmaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,17 @@ public class EstatisticasService {
                 .estatisticasProva(calcularEstatisticasPorProva(provas, turma)).build();
     }
 
+    public EstatisticasEstudanteResponseDTO estatisticasDoEstudante(Usuario usuario) {
+        List<Nota> notasEstudante = notaRepository.findAllByEstudanteId(usuario.getId());
+        BigDecimal mediaGeral = notasEstudante.stream().map(Nota::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<Prova> provas = provaRepository.findByNotas(notasEstudante);
+        BigDecimal valorTotal = provas.stream().map(Prova::getValorTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return EstatisticasEstudanteResponseDTO.builder().mediaGeral(mediaGeral)
+                .porcentagemAproveitamento(BigDecimal.valueOf((mediaGeral.doubleValue()/valorTotal.doubleValue())*100))
+                .estatisticasPorProva(mapearEstatisticasEstudanteProva(notasEstudante))
+                .build();
+    }
+
     private Double calcularMediaGeral(List<Prova> provas, Turma turma){
         double mediaGeral = 0D;
         int numeroTotal = 0;
@@ -51,7 +64,7 @@ public class EstatisticasService {
         }
         return mediaGeral/numeroTotal;
     }
-    
+
     private Double calcularPorcentagemGeralAcimaDeSeis(List<Prova> provas, Turma turma){
         double numeroAcimaDeSeis = 0;
         double numeroTotal = 0;
@@ -96,5 +109,14 @@ public class EstatisticasService {
         } else{
             return 0D;
         }
+    }
+
+    private List<EstatisticasEstudanteProvaResponseDTO> mapearEstatisticasEstudanteProva(List<Nota> notas){
+        List<EstatisticasEstudanteProvaResponseDTO> estatisticasProvaResponseDTOS = new ArrayList<>();
+        for (Nota nota: notas){
+            estatisticasProvaResponseDTOS.add(EstatisticasEstudanteProvaResponseDTO.builder().provaId(nota.getProva().getId())
+                    .nota(nota.getValor()).build());
+        }
+        return estatisticasProvaResponseDTOS;
     }
 }
