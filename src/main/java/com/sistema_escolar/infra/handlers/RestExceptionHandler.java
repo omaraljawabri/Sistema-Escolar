@@ -1,6 +1,6 @@
 package com.sistema_escolar.infra.handlers;
 
-import com.sistema_escolar.infra.exceptions.*;
+import com.sistema_escolar.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

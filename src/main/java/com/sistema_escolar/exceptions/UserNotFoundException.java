@@ -1,4 +1,4 @@
-package com.sistema_escolar.infra.exceptions;
+package com.sistema_escolar.exceptions;
 
 public class UserNotFoundException extends RuntimeException{
 

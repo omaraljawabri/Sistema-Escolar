@@ -6,7 +6,7 @@ import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.TurmaRequestDTO;
 import com.sistema_escolar.dtos.response.CodeResponseDTO;
 import com.sistema_escolar.entities.*;
-import com.sistema_escolar.infra.exceptions.*;
+import com.sistema_escolar.exceptions.*;
 import com.sistema_escolar.repositories.DisciplinaRepository;
 import com.sistema_escolar.repositories.EstudanteRepository;
 import com.sistema_escolar.repositories.ProfessorRepository;

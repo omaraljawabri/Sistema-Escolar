@@ -2,7 +2,7 @@ package com.sistema_escolar.services;
 
 import com.sistema_escolar.dtos.response.*;
 import com.sistema_escolar.entities.*;
-import com.sistema_escolar.infra.exceptions.UserNotFoundException;
+import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

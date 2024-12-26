@@ -5,10 +5,9 @@ import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
 import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
 import com.sistema_escolar.dtos.response.*;
 import com.sistema_escolar.entities.*;
-import com.sistema_escolar.infra.exceptions.EntityNotFoundException;
-import com.sistema_escolar.infra.exceptions.UserDoesntBelongException;
+import com.sistema_escolar.exceptions.EntityNotFoundException;
+import com.sistema_escolar.exceptions.UserDoesntBelongException;
 import com.sistema_escolar.repositories.*;
-import com.sistema_escolar.utils.mappers.ProvaMapper;
 import com.sistema_escolar.utils.mappers.QuestaoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +18,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor

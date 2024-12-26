@@ -2,7 +2,7 @@ package com.sistema_escolar.services;
 
 import com.sistema_escolar.dtos.request.CreateDisciplinaRequestDTO;
 import com.sistema_escolar.entities.Disciplina;
-import com.sistema_escolar.infra.exceptions.EntityAlreadyExistsException;
+import com.sistema_escolar.exceptions.EntityAlreadyExistsException;
 import com.sistema_escolar.repositories.DisciplinaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
