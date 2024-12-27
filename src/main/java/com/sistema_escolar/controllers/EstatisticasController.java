@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +40,7 @@ public class EstatisticasController {
             @ApiResponse(responseCode = "403", description = "Usuário não tem permissão necessária para realizar operação"),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @GetMapping("/turma/{id}")
+    @GetMapping(value = "/turma/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EstatisticasTurmaResponseDTO> estatisticasDaTurma(@PathVariable Long id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();

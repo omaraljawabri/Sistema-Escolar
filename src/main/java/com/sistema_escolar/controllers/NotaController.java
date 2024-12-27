@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,7 +37,7 @@ public class NotaController {
             @ApiResponse(responseCode = "403", description = "Usuário não tem permissão necessária para realizar operação"),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @PostMapping("/prova/{id}/{estudanteId}")
+    @PostMapping(value = "/prova/{id}/{estudanteId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NotaResponseDTO> avaliarProva(@PathVariable Long id, @PathVariable Long estudanteId, @RequestBody List<NotaRequestDTO> notaRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();

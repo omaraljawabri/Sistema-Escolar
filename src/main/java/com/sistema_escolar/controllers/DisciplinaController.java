@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +35,7 @@ public class DisciplinaController {
             @ApiResponse(responseCode = "403", description = "Usuário não tem permissão necessária para realizar operação"),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> createDisciplina(@RequestBody CreateDisciplinaRequestDTO createDisciplinaRequestDTO){
         disciplinaService.createDisciplina(createDisciplinaRequestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
