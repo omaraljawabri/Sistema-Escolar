@@ -64,7 +64,7 @@ public class ProvaController {
         return ResponseEntity.ok(provaService.updateProva(id, provaPutRequestDTO, usuario));
     }
 
-    @Operation(summary = "Endpoint responsável por publicar uma prova pelo seu id, passando o tempo até expirar",
+    @Operation(summary = "Endpoint responsável por publicar uma prova pelo seu id e seu tempo até que expire",
             description = "Necessita da ROLE_PROFESSOR para ser acessado",
             method = "POST")
     @ApiResponses(value = {

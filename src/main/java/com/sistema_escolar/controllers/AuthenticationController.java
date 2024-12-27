@@ -32,7 +32,7 @@ public class AuthenticationController {
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
 
-    @Operation(summary = "Endpoint resolver por fazer o registro do usuário e enviar um e-mail de validação da conta",
+    @Operation(summary = "Endpoint responsável por fazer o registro do usuário e enviar um e-mail de validação da conta",
     method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso!"),
@@ -45,7 +45,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "Endpoint resolver por fazer o login do usuário e retornar um token JWT para acesso aos demais endpoints",
+    @Operation(summary = "Endpoint responsável por fazer o login do usuário e retornar um token JWT para acesso aos demais endpoints",
             method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso!"),
