@@ -67,6 +67,9 @@ public class EstatisticasService {
                 numeroTotal++;
             }
         }
+        if (numeroTotal == 0){
+            numeroTotal = 1;
+        }
         return mediaGeral/numeroTotal;
     }
 
@@ -80,6 +83,9 @@ public class EstatisticasService {
                 }
                 numeroTotal++;
             }
+        }
+        if (numeroTotal == 0){
+            numeroTotal = 1;
         }
         return (numeroAcimaDeSeis/numeroTotal)*100;
     }
@@ -96,6 +102,9 @@ public class EstatisticasService {
                 }
                 mediaPorProva+= buscarNotaProvaParaEstatisticas(provas.get(i), turma.getEstudantes().get(i));
                 numeroPorProva++;
+            }
+            if (numeroPorProva == 0){
+                numeroPorProva = 1;
             }
             estatisticasProvaResponseDTOS.add(EstatisticasProvaResponseDTO.builder().provaId(provas.get(i).getId())
                     .mediaTurma(BigDecimal.valueOf(mediaPorProva/numeroPorProva))
