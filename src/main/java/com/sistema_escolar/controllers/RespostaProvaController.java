@@ -5,6 +5,8 @@ import com.sistema_escolar.dtos.response.ProvaRespondidaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.RespostaProvaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,7 +40,16 @@ public class RespostaProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping("/{id}")
-    public ResponseEntity<Void> responderProva(@PathVariable Long id, @RequestBody RespostaProvaRequestDTO respostaProvaRequestDTO){
+    public ResponseEntity<Void> responderProva(
+            @Parameter(
+                    name = "id",
+                    description = "Identificador único da prova",
+                    required = true,
+                    schema = @Schema(example = "1", type = "Long")
+            )
+            @PathVariable Long id,
+            @RequestBody RespostaProvaRequestDTO respostaProvaRequestDTO
+    ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         respostaProvaService.responderProva(id, respostaProvaRequestDTO, usuario);
@@ -56,7 +67,15 @@ public class RespostaProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @GetMapping("/{provaId}")
-    public ResponseEntity<List<ProvaRespondidaResponseDTO>> provasRespondidas(@PathVariable Long provaId){
+    public ResponseEntity<List<ProvaRespondidaResponseDTO>> provasRespondidas(
+            @Parameter(
+                    name = "provaId",
+                    description = "Identificador único da prova",
+                    required = true,
+                    schema = @Schema(example = "1", type = "Long")
+            )
+            @PathVariable Long provaId
+    ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(respostaProvaService.provasRespondidas(usuario, provaId));

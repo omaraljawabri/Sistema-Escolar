@@ -4,11 +4,12 @@ import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
 import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaAvaliadaResponseDTO;
-import com.sistema_escolar.dtos.response.ProvaRespondidaResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.ProvaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -58,7 +59,16 @@ public class ProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProvaResponseDTO> updateProva(@PathVariable Long id, @RequestBody ProvaPutRequestDTO provaPutRequestDTO){
+    public ResponseEntity<ProvaResponseDTO> updateProva(
+            @Parameter(
+                    name = "id",
+                    description = "Identificador único da prova",
+                    required = true,
+                    schema = @Schema(type = "Long", example = "1")
+            )
+            @PathVariable Long id,
+            @RequestBody ProvaPutRequestDTO provaPutRequestDTO
+    ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(provaService.updateProva(id, provaPutRequestDTO, usuario));
@@ -75,7 +85,16 @@ public class ProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/publish/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> publishProva(@PathVariable Long id, @RequestBody PublishProvaRequestDTO publishProvaRequestDTO){
+    public ResponseEntity<Void> publishProva(
+            @Parameter(
+                    description = "Identificador único da prova",
+                    name = "id",
+                    required = true,
+                    schema = @Schema(example = "1", type = "Long")
+            )
+            @PathVariable Long id,
+            @RequestBody PublishProvaRequestDTO publishProvaRequestDTO
+    ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         provaService.publishProva(publishProvaRequestDTO, id, usuario);
@@ -93,7 +112,15 @@ public class ProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @GetMapping(value = "/avaliada/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProvaAvaliadaResponseDTO> getProvaAvaliada(@PathVariable Long id){
+    public ResponseEntity<ProvaAvaliadaResponseDTO> getProvaAvaliada(
+            @Parameter(
+                    name = "id",
+                    description = "Identificador único da prova",
+                    required = true,
+                    schema = @Schema(example = "1", type = "Long")
+            )
+            @PathVariable Long id
+    ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(provaService.getProvaAvaliada(id, usuario));

@@ -6,6 +6,8 @@ import com.sistema_escolar.dtos.response.EstatisticasTurmaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.EstatisticasService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -41,7 +43,15 @@ public class EstatisticasController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @GetMapping(value = "/turma/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EstatisticasTurmaResponseDTO> estatisticasDaTurma(@PathVariable Long id){
+    public ResponseEntity<EstatisticasTurmaResponseDTO> estatisticasDaTurma(
+            @Parameter(
+                    name = "id",
+                    description = "Identificador único do usuário",
+                    required = true,
+                    schema = @Schema(example = "1", type = "Long")
+            )
+            @PathVariable Long id
+    ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(estatisticasService.estatisticasDaTurma(id, usuario));

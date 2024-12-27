@@ -9,6 +9,8 @@ import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.infra.security.TokenService;
 import com.sistema_escolar.services.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,7 +73,15 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @GetMapping("/verify")
-    public ResponseEntity<Void> verifyCode(@RequestParam("code") String code){
+    public ResponseEntity<Void> verifyCode(
+            @Parameter(
+                    name = "code",
+                    description = "Código único para identificação",
+                    required = true,
+                    schema = @Schema(type = "String", example = "acde070d-8c4c-4f0d-9d8a-162843c10333")
+            )
+            @RequestParam("code") String code
+    ){
         authenticationService.verifyCode(code);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -97,7 +107,16 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/change-password/verify", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> verifyChangePassword(@RequestParam("code") String code, @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO){
+    public ResponseEntity<Void> verifyChangePassword(
+            @Parameter(
+                    name = "code",
+                    description = "Código único para identificação",
+                    required = true,
+                    schema = @Schema(type = "String", example = "acde070d-8c4c-4f0d-9d8a-162843c10333")
+            )
+            @RequestParam("code") String code,
+            @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO
+    ){
         authenticationService.verifyChangePassword(code, changePasswordRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }

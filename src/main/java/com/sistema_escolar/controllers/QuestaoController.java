@@ -3,6 +3,8 @@ package com.sistema_escolar.controllers;
 import com.sistema_escolar.dtos.response.QuestaoResponseDTO;
 import com.sistema_escolar.services.QuestaoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,8 +39,22 @@ public class QuestaoController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<QuestaoResponseDTO>> findQuestoes(@RequestParam int pagina,
-                                                                 @RequestParam int quantidade){
+    public ResponseEntity<Page<QuestaoResponseDTO>> findQuestoes(
+            @Parameter(
+                    name = "pagina",
+                    description = "Número da página que será acessada",
+                    required = true,
+                    schema = @Schema(example = "1", type = "int")
+            )
+            @RequestParam int pagina,
+            @Parameter(
+                    name = "quantidade",
+                    description = "Quantidade de questões que serão acessadas",
+                    required = true,
+                    schema = @Schema(example = "10", type = "int")
+            )
+            @RequestParam int quantidade
+    ){
         return ResponseEntity.ok(questaoService.findQuestoes(pagina, quantidade));
     }
 }

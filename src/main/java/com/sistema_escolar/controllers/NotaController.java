@@ -5,6 +5,8 @@ import com.sistema_escolar.dtos.response.NotaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.NotaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,7 +40,23 @@ public class NotaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/prova/{id}/{estudanteId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<NotaResponseDTO> avaliarProva(@PathVariable Long id, @PathVariable Long estudanteId, @RequestBody List<NotaRequestDTO> notaRequestDTO){
+    public ResponseEntity<NotaResponseDTO> avaliarProva(
+            @Parameter(
+                    name = "id",
+                    description = "Identificador único da prova",
+                    required = true,
+                    schema = @Schema(example = "1", type = "Long")
+            )
+            @PathVariable Long id,
+            @Parameter(
+                    name = "estudanteId",
+                    description = "Identificador único do estudante",
+                    required = true,
+                    schema = @Schema(example = "1", type = "Long")
+            )
+            @PathVariable Long estudanteId,
+            @RequestBody List<NotaRequestDTO> notaRequestDTO
+    ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(notaService.avaliarProva(id, notaRequestDTO, usuario, estudanteId));
