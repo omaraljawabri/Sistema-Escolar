@@ -33,7 +33,7 @@ public class ProvaService {
     private final EstudanteService estudanteService;
 
     @Transactional
-    public ProvaResponseDTO createProva(ProvaPostRequestDTO provaPostRequestDTO, Usuario usuario) {
+    public ProvaResponseDTO criarProva(ProvaPostRequestDTO provaPostRequestDTO, Usuario usuario) {
         Professor professor = professorService.buscarPorId(usuario.getId());
         if (turmaRepository.findByProfessorId(professor.getId()).isEmpty()){
             throw new UserDoesntBelongException("Professor deve estar vinculado a uma turma para criar uma prova");
@@ -53,7 +53,7 @@ public class ProvaService {
     }
 
     @Transactional
-    public ProvaResponseDTO updateProva(Long id, ProvaPutRequestDTO provaPutRequestDTO, Usuario usuario) {
+    public ProvaResponseDTO atualizarProva(Long id, ProvaPutRequestDTO provaPutRequestDTO, Usuario usuario) {
         Prova prova = buscarPorIdEEmailDoProfessor(id, usuario.getEmail());
         List<Questao> questoes = adicionarQuestoes(provaPutRequestDTO, usuario);
         prova.setValorTotal(provaPutRequestDTO.getValorTotal());
@@ -65,7 +65,7 @@ public class ProvaService {
                 .questoes(questaoResponseDTOS).emailProfessor(savedProva.getEmailProfessor()).build();
     }
 
-    public void publishProva(PublishProvaRequestDTO publishProvaRequestDTO, Long id, Usuario usuario) {
+    public void publicarProva(PublishProvaRequestDTO publishProvaRequestDTO, Long id, Usuario usuario) {
         Professor professor = professorService.buscarPorId(usuario.getId());
         Prova prova = buscarPorIdEEmailDoProfessor(id, professor.getEmail());
         prova.setIsPublished(true);
@@ -78,7 +78,7 @@ public class ProvaService {
         for (Estudante estudante : turma.getEstudantes()) {
             String mensagem = "Olá, " + estudante.getFirstName() + ", uma nova prova foi postada na turma " +
                     turmaName + " da disciplina " + disciplinaName + "!";
-            mailService.sendEmail(estudante.getEmail(), "Postagem de prova", mensagem);
+            mailService.enviarEmail(estudante.getEmail(), "Postagem de prova", mensagem);
         }
     }
 

@@ -45,8 +45,8 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO){
-        authenticationService.registerUser(registerRequestDTO);
+    public ResponseEntity<Void> registrar(@RequestBody @Valid RegisterRequestDTO registerRequestDTO){
+        authenticationService.registrarUsuario(registerRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -80,7 +80,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @GetMapping("/verify")
-    public ResponseEntity<Void> verifyCode(
+    public ResponseEntity<Void> verificarCodigo(
             @Parameter(
                     name = "code",
                     description = "Código único para identificação",
@@ -89,7 +89,7 @@ public class AuthenticationController {
             )
             @RequestParam("code") String code
     ){
-        authenticationService.verifyCode(code);
+        authenticationService.verificarCodigo(code);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -103,8 +103,8 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/change-password/request", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> requestChangePassword(@RequestBody ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
-        authenticationService.changePassword(changePasswordEmailRequestDTO);
+    public ResponseEntity<Void> pedirMudancaDeSenha(@RequestBody ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
+        authenticationService.mudarSenha(changePasswordEmailRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -117,7 +117,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/change-password/verify", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> verifyChangePassword(
+    public ResponseEntity<Void> verificarMudancaDeSenha(
             @Parameter(
                     name = "code",
                     description = "Código único para identificação",
@@ -127,7 +127,7 @@ public class AuthenticationController {
             @RequestParam("code") String code,
             @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO
     ){
-        authenticationService.verifyChangePassword(code, changePasswordRequestDTO);
+        authenticationService.verificarMudarSenha(code, changePasswordRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

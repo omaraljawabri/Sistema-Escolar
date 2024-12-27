@@ -14,7 +14,7 @@ public class QuestaoService {
 
     private final QuestaoRepository questaoRepository;
 
-    public Page<QuestaoResponseDTO> findQuestoes(int pagina, int quantidade) {
+    public Page<QuestaoResponseDTO> buscarQuestoes(int pagina, int quantidade) {
         return questaoRepository.findAll(PageRequest.of(pagina, quantidade)).map(QuestaoMapper.INSTANCE::toQuestaoResponseDTO);
     }
 }

@@ -50,7 +50,7 @@ public class ProvaController {
     public ResponseEntity<ProvaResponseDTO> createProva(@RequestBody ProvaPostRequestDTO provaPostRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        return ResponseEntity.ok(provaService.createProva(provaPostRequestDTO, usuario));
+        return ResponseEntity.ok(provaService.criarProva(provaPostRequestDTO, usuario));
     }
 
     @Operation(summary = "Endpoint responsável por atualizar uma prova e suas questões",
@@ -78,7 +78,7 @@ public class ProvaController {
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        return ResponseEntity.ok(provaService.updateProva(id, provaPutRequestDTO, usuario));
+        return ResponseEntity.ok(provaService.atualizarProva(id, provaPutRequestDTO, usuario));
     }
 
     @Operation(summary = "Endpoint responsável por publicar uma prova pelo seu id e seu tempo até que expire",
@@ -107,7 +107,7 @@ public class ProvaController {
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        provaService.publishProva(publishProvaRequestDTO, id, usuario);
+        provaService.publicarProva(publishProvaRequestDTO, id, usuario);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -18,7 +18,7 @@ public class MailService {
     private final JavaMailSender javaMailSender;
 
     @Transactional
-    public void sendEmail(String email, String subject, String textMessage){
+    public void enviarEmail(String email, String subject, String textMessage){
         try{
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
             simpleMailMessage.setFrom(emailFrom);

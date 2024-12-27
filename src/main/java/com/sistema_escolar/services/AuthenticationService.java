@@ -33,9 +33,9 @@ public class AuthenticationService {
     private final MailService mailService;
 
     @Transactional
-    public void registerUser(RegisterRequestDTO registerRequestDTO){
+    public void registrarUsuario(RegisterRequestDTO registerRequestDTO){
         if (usuarioRepository.findByEmail(registerRequestDTO.getEmail()).isPresent()){
-            throw new EntityAlreadyExistsException("Email "+usuarioRepository.findByEmail(registerRequestDTO.getEmail()).get()+" já existe");
+            throw new EntityAlreadyExistsException("Email "+usuarioRepository.findByEmail(registerRequestDTO.getEmail()).get().getEmail()+" já existe");
         }
         String verificationCode = UUID.randomUUID().toString();
         LocalDateTime codeExpirationTime = LocalDateTime.now().plusHours(24);
@@ -44,10 +44,10 @@ public class AuthenticationService {
         String verificationLink = String.format("http://localhost:8080/api/v1/auth/verify?code=%s", verificationCode);
         String subject = "Validação de cadastro";
         String textMessage = String.format("Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. %nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: %n%s", verificationLink);
-        mailService.sendEmail(registerRequestDTO.getEmail(), subject, textMessage);
+        mailService.enviarEmail(registerRequestDTO.getEmail(), subject, textMessage);
     }
 
-    public void verifyCode(String code){
+    public void verificarCodigo(String code){
         Optional<Usuario> usuario = usuarioRepository.findByVerificationCode(code);
         if (usuario.isEmpty() || usuario.orElseThrow().getCodeExpirationTime().isBefore(LocalDateTime.now())){
             throw new InvalidCodeException("Código de verificação inválido");
@@ -68,7 +68,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void changePassword(ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
+    public void mudarSenha(ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
         Usuario usuario
                 = usuarioRepository.findByEmail(changePasswordEmailRequestDTO.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Email enviado não está cadastrado"));
@@ -79,11 +79,11 @@ public class AuthenticationService {
         String verificationLink = String.format("http://localhost:8080/api/v1/auth/change-password/verify?code=%s",verificationCode);
         String subject = "Redefinição de senha";
         String textMessage = String.format("Olá, recebemos seu pedido para redefinição de senha!%nClique no link abaixo para prosseguir com o processo!%n%s",verificationLink);
-        mailService.sendEmail(changePasswordEmailRequestDTO.getEmail(), subject, textMessage);
+        mailService.enviarEmail(changePasswordEmailRequestDTO.getEmail(), subject, textMessage);
     }
 
     @Transactional
-    public void verifyChangePassword(String code, ChangePasswordRequestDTO changePasswordRequestDTO){
+    public void verificarMudarSenha(String code, ChangePasswordRequestDTO changePasswordRequestDTO){
         Optional<RedefinirSenha> redefinirSenha = redefinirSenhaRepository.findByVerificationCode(code);
         if (redefinirSenha.isEmpty() || redefinirSenha.orElseThrow().getExpirationCodeTime().isBefore(LocalDateTime.now())){
             throw new InvalidCodeException("Código de validação inválido!");

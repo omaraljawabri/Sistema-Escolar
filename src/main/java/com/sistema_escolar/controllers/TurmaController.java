@@ -46,7 +46,7 @@ public class TurmaController {
     })
     @PostMapping
     public ResponseEntity<Void> createTurma(@RequestBody CreateTurmaRequestDTO createTurmaRequestDTO){
-        turmaService.createTurma(createTurmaRequestDTO);
+        turmaService.criarTurma(createTurmaRequestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -102,7 +102,7 @@ public class TurmaController {
     })
     @PostMapping("/generate-code/admin")
     public ResponseEntity<CodeResponseDTO> generateCode(@RequestBody TurmaRequestDTO turmaRequestDTO){
-        return ResponseEntity.ok(turmaService.generateCode(turmaRequestDTO));
+        return ResponseEntity.ok(turmaService.gerarCodigo(turmaRequestDTO));
     }
 
     @Operation(summary = "Endpoint responsável por gerar um código para que estudantes entrem na turma do professor",
@@ -120,7 +120,7 @@ public class TurmaController {
     public ResponseEntity<CodeResponseDTO> generateCode(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        return ResponseEntity.ok(turmaService.generateCode(usuario));
+        return ResponseEntity.ok(turmaService.gerarCodigo(usuario));
     }
 
     @Operation(summary = "Endpoint responsável por adicionar um estudante ou professor em uma turma de acordo com o código da turma passado",
@@ -138,7 +138,7 @@ public class TurmaController {
     public ResponseEntity<Void> joinTurma(@RequestBody CodeRequestDTO codeRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        turmaService.joinTurma(codeRequestDTO, usuario);
+        turmaService.entrarTurma(codeRequestDTO, usuario);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -15,7 +15,7 @@ public class DisciplinaService {
 
     private final DisciplinaRepository disciplinaRepository;
 
-    public void createDisciplina(CreateDisciplinaRequestDTO createDisciplinaRequestDTO){
+    public void criarDisciplina(CreateDisciplinaRequestDTO createDisciplinaRequestDTO){
         Optional<Disciplina> disciplinaOptional = disciplinaRepository.findByName(createDisciplinaRequestDTO.getName());
         if (disciplinaOptional.isPresent()){
             throw new EntityAlreadyExistsException("Nome da disciplina já existe");

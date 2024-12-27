@@ -44,7 +44,7 @@ public class RespostaProvaService {
         }
         adicionarRespostasProva(respostaProvaRequestDTO, estudante, prova, id);
         String mensagem = String.format("O aluno %s enviou a prova da disciplina de %s, entre na plataforma para começar a correção!", estudante.getFirstName(), prova.getDisciplina().getName());
-        mailService.sendEmail(prova.getEmailProfessor(), "Envio de prova", mensagem);
+        mailService.enviarEmail(prova.getEmailProfessor(), "Envio de prova", mensagem);
     }
 
     public List<ProvaRespondidaResponseDTO> provasRespondidas(Usuario usuario, Long provaId) {

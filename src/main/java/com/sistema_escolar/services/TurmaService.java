@@ -30,7 +30,7 @@ public class TurmaService {
     private final EstudanteRepository estudanteRepository;
     private final ProfessorRepository professorRepository;
 
-    public void createTurma(CreateTurmaRequestDTO createTurmaRequestDTO){
+    public void criarTurma(CreateTurmaRequestDTO createTurmaRequestDTO){
         Disciplina disciplina
                 = disciplinaRepository.findById(createTurmaRequestDTO.getDisciplinaId())
                 .orElseThrow(() -> new EntityNotFoundException("Disciplina passada não existe"));
@@ -70,7 +70,7 @@ public class TurmaService {
         turmaRepository.save(turma);
     }
 
-    public CodeResponseDTO generateCode(TurmaRequestDTO turmaRequestDTO) {
+    public CodeResponseDTO gerarCodigo(TurmaRequestDTO turmaRequestDTO) {
         String generatedCode = CodeGenerator.generateCode();
         Turma turma = turmaRepository.findById(turmaRequestDTO.getTurmaId())
                 .orElseThrow(() -> new EntityNotFoundException("Turma selecionada não existe"));
@@ -80,7 +80,7 @@ public class TurmaService {
         return CodeResponseDTO.builder().code(generatedCode).build();
     }
 
-    public CodeResponseDTO generateCode(Usuario usuario){
+    public CodeResponseDTO gerarCodigo(Usuario usuario){
         Turma turma = turmaRepository.findByProfessorId(usuario.getId())
                 .orElseThrow(() -> new UserDoesntBelongException("Professor não esta vinculado a nenhuma turma"));
         String generatedCode = CodeGenerator.generateCode();
@@ -90,7 +90,7 @@ public class TurmaService {
         return CodeResponseDTO.builder().code(generatedCode).build();
     }
 
-    public void joinTurma(CodeRequestDTO codeRequestDTO, Usuario usuario){
+    public void entrarTurma(CodeRequestDTO codeRequestDTO, Usuario usuario){
         Turma turma = turmaRepository.findByTurmaCode(codeRequestDTO.getCode())
                 .orElseThrow(() -> new InvalidCodeException("Código de turma não existe!"));
         if (turma.getCodeExpirationTime().isBefore(LocalDateTime.now())){

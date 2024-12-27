@@ -41,7 +41,7 @@ public class DisciplinaController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> createDisciplina(@RequestBody CreateDisciplinaRequestDTO createDisciplinaRequestDTO){
-        disciplinaService.createDisciplina(createDisciplinaRequestDTO);
+        disciplinaService.criarDisciplina(createDisciplinaRequestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
