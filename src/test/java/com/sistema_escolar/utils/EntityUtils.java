@@ -3,6 +3,7 @@ package com.sistema_escolar.utils;
 import com.sistema_escolar.dtos.request.LoginRequestDTO;
 import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
+import com.sistema_escolar.entities.Disciplina;
 import com.sistema_escolar.entities.RedefinirSenha;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.utils.enums.UserRole;
@@ -38,4 +39,9 @@ public class EntityUtils {
                 .expirationCodeTime(LocalDateTime.now().plusHours(2)).usuario(criarUsuario())
                 .build();
     }
+
+    public static Disciplina criarDisciplina(){
+        return Disciplina.builder().id(1L).name("Geografia").build();
+    }
+
 }

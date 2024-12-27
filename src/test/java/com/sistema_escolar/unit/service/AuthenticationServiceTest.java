@@ -22,15 +22,14 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.sistema_escolar.utils.EntityUtils.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static com.sistema_escolar.utils.EntityUtils.*;
 
 @ExtendWith(SpringExtension.class)
 class AuthenticationServiceTest {
