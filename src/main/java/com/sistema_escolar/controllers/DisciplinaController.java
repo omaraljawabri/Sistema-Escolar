@@ -1,8 +1,11 @@
 package com.sistema_escolar.controllers;
 
 import com.sistema_escolar.dtos.request.CreateDisciplinaRequestDTO;
+import com.sistema_escolar.infra.handlers.ErrorMessage;
 import com.sistema_escolar.services.DisciplinaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,7 +33,8 @@ public class DisciplinaController {
             method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Operação realizada com sucesso!"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "400", description = "Bad request",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "401", description = "Usuário não foi autorizado"),
             @ApiResponse(responseCode = "403", description = "Usuário não tem permissão necessária para realizar operação"),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
