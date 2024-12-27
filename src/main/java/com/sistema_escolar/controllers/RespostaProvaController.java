@@ -4,7 +4,11 @@ import com.sistema_escolar.dtos.request.RespostaProvaRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaRespondidaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.services.RespostaProvaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +22,21 @@ import java.util.List;
 @RequestMapping("/api/v1/resposta-prova")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "securityConfig")
+@Tag(description = "Endpoints responsáveis por realizar operações relacionadas com RespostaProva", name = "Respostas Prova")
 public class RespostaProvaController {
 
     private final RespostaProvaService respostaProvaService;
 
+    @Operation(summary = "Endpoint responsável por cadastrar a resposta do estudante a uma prova",
+            description = "Necessita da ROLE_ESTUDANTE para ser acessado",
+            method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Operação realizada com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Usuário não foi autorizado"),
+            @ApiResponse(responseCode = "403", description = "Usuário não tem permissão necessária para realizar operação"),
+            @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
+    })
     @PostMapping("/{id}")
     public ResponseEntity<Void> responderProva(@PathVariable Long id, @RequestBody RespostaProvaRequestDTO respostaProvaRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -30,6 +45,16 @@ public class RespostaProvaController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "Endpoint responsável por buscar as provas respondidas pelos estudantes de acordo com o id da prova",
+            description = "Necessita da ROLE_PROFESSOR para ser acessado",
+            method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Operação realizada com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Usuário não foi autorizado"),
+            @ApiResponse(responseCode = "403", description = "Usuário não tem permissão necessária para realizar operação"),
+            @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
+    })
     @GetMapping("/{provaId}")
     public ResponseEntity<List<ProvaRespondidaResponseDTO>> provasRespondidas(@PathVariable Long provaId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
