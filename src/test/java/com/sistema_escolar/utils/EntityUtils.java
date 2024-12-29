@@ -1,8 +1,6 @@
 package com.sistema_escolar.utils;
 
-import com.sistema_escolar.dtos.request.LoginRequestDTO;
-import com.sistema_escolar.dtos.request.NotaRequestDTO;
-import com.sistema_escolar.dtos.request.RegisterRequestDTO;
+import com.sistema_escolar.dtos.request.*;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.*;
 import com.sistema_escolar.utils.enums.TipoQuestao;
@@ -64,7 +62,7 @@ public class EntityUtils {
 
     public static Prova criarProva(){
         return Prova.builder().id(1L).valorTotal(BigDecimal.TEN).isPublished(true).expirationTime(LocalDateTime.now().plusHours(2))
-                .emailProfessor("professor@gmail.com").questoes(List.of(criarQuestao())).build();
+                .emailProfessor("professor@gmail.com").questoes(List.of(criarQuestao())).disciplina(criarDisciplina()).build();
     }
 
     public static Questao criarQuestao(){
@@ -84,6 +82,37 @@ public class EntityUtils {
 
     public static Nota criarNota(){
         return Nota.builder().id(1L).valor(BigDecimal.TEN).estudante(criarEstudante()).prova(criarProva())
+                .build();
+    }
+
+    public static Turma criarTurma(){
+        return Turma.builder().id(1L).name("Turma A").disciplina(criarDisciplina()).professor(criarProfessor())
+                .estudantes(List.of(criarEstudante())).build();
+    }
+
+    public static QuestaoPostRequestDTO criarQuestaoPostRequestDTO(){
+        return QuestaoPostRequestDTO.builder().tipoQuestao(TipoQuestao.OBJETIVA).pergunta("Qual a capital do Brasil?")
+                .alternativas(List.of("A) Brasília", "B) Goiânia", "C) São Paulo", "D) Manaus")).valor(BigDecimal.TWO)
+                .criadoPor("professor@gmail.com").respostaCorreta("Brasília").build();
+    }
+
+    public static ProvaPostRequestDTO criarProvaPostRequestDTO(){
+        return ProvaPostRequestDTO.builder().questoes(List.of(criarQuestaoPostRequestDTO())).valorTotal(BigDecimal.TEN)
+                .build();
+    }
+
+    public static QuestaoPutRequestDTO criarQuestaoPutRequestDTO(){
+        return QuestaoPutRequestDTO.builder().id(1L).tipoQuestao(TipoQuestao.OBJETIVA).pergunta("Qual a capital do Brasil?")
+                .alternativas(List.of("A) Brasília", "B) Goiânia", "C) São Paulo", "D) Manaus")).valor(BigDecimal.TWO)
+                .atualizadoPor("professor@gmail.com").respostaCorreta("Brasília").build();
+    }
+
+    public static ProvaPutRequestDTO criarProvaPutRequestDTO(){
+        return ProvaPutRequestDTO.builder().valorTotal(BigDecimal.TEN).questoes(List.of(criarQuestaoPutRequestDTO())).build();
+    }
+
+    public static PublishProvaRequestDTO criarPublishProvaRequestDTO(){
+        return PublishProvaRequestDTO.builder().expirationHours(2).expirationMinutes(30)
                 .build();
     }
 
