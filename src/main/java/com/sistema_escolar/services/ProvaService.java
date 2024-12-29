@@ -124,11 +124,7 @@ public class ProvaService {
         List<Questao> questoes = new ArrayList<>();
         for (int i = 0; i < provaPostRequestDTO.getQuestoes().size(); i++) {
             questoes.add(QuestaoMapper.INSTANCE.toQuestao(provaPostRequestDTO.getQuestoes().get(i)));
-            if (questoes.get(i).getProvas() != null){
-                questoes.get(i).getProvas().add(prova);
-            } else{
-                questoes.get(i).setProvas(List.of(prova));
-            }
+            questoes.get(i).setProvas(List.of(prova));
             if (questoes.get(i).getCriadoPor() == null){
                 questoes.get(i).setCriadoPor(professor.getEmail());
             }
