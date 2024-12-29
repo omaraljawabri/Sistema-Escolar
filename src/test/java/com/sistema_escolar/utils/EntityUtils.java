@@ -1,15 +1,16 @@
 package com.sistema_escolar.utils;
 
 import com.sistema_escolar.dtos.request.LoginRequestDTO;
+import com.sistema_escolar.dtos.request.NotaRequestDTO;
 import com.sistema_escolar.dtos.request.RegisterRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
-import com.sistema_escolar.entities.Disciplina;
-import com.sistema_escolar.entities.Estudante;
-import com.sistema_escolar.entities.RedefinirSenha;
-import com.sistema_escolar.entities.Usuario;
+import com.sistema_escolar.entities.*;
+import com.sistema_escolar.utils.enums.TipoQuestao;
 import com.sistema_escolar.utils.enums.UserRole;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class EntityUtils {
 
@@ -46,9 +47,44 @@ public class EntityUtils {
     }
 
     public static Estudante criarEstudante(){
-        return new Estudante("ciclano@gmail.com", "ciclano", UserRole.ESTUDANTE,
+        Estudante estudante = new Estudante("ciclano@gmail.com", "ciclano", UserRole.ESTUDANTE,
                 "acde070d-8c4c-4f0d-9d8a-162843c10334", LocalDateTime.now().plusHours(2),
                 false, "Ciclano", "Sousa");
+        estudante.setId(1L);
+        return estudante;
+    }
+
+    public static Professor criarProfessor(){
+        Professor professor = new Professor("professor@gmail.com", "professor", UserRole.PROFESSOR, "acde070d-8c4c-4f0d-9d8a-162843c10334",
+                LocalDateTime.now().plusHours(2), false, "Professor", "Santos");
+        professor.setDisciplina(criarDisciplina());
+        professor.setId(1L);
+        return professor;
+    }
+
+    public static Prova criarProva(){
+        return Prova.builder().id(1L).valorTotal(BigDecimal.TEN).isPublished(true).expirationTime(LocalDateTime.now().plusHours(2))
+                .emailProfessor("professor@gmail.com").questoes(List.of(criarQuestao())).build();
+    }
+
+    public static Questao criarQuestao(){
+        return Questao.builder().id(1L).tipoQuestao(TipoQuestao.OBJETIVA).pergunta("Qual a capital do Brasil?")
+                .alternativas(List.of("A) Brasília", "B) Goiânia", "C) São Paulo", "D) Manaus")).valor(BigDecimal.TWO)
+                .criadoPor("professor@gmail.com").atualizadoPor(null).respostaCorreta("Brasília").build();
+    }
+
+    public static RespostaProva criarRespostaProva(){
+        return RespostaProva.builder().id(1L).resposta("Brasília").estudante(criarEstudante()).questao(criarQuestao())
+                .prova(criarProva()).nota(BigDecimal.TWO).avaliada(true).respondida(true).build();
+    }
+
+    public static NotaRequestDTO criarNotaRequestDTO(){
+        return NotaRequestDTO.builder().questaoId(1L).notaQuestao(2D).build();
+    }
+
+    public static Nota criarNota(){
+        return Nota.builder().id(1L).valor(BigDecimal.TEN).estudante(criarEstudante()).prova(criarProva())
+                .build();
     }
 
 }
