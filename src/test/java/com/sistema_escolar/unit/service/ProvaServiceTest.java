@@ -1,9 +1,11 @@
 package com.sistema_escolar.unit.service;
 
 import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
+import com.sistema_escolar.dtos.request.QuestaoPostRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaAvaliadaResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.entities.Prova;
+import com.sistema_escolar.entities.Questao;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.exceptions.EntityNotFoundException;
 import com.sistema_escolar.exceptions.UserDoesntBelongException;
@@ -110,6 +112,28 @@ class ProvaServiceTest {
     }
 
     @Test
+    @DisplayName("criarProva deve adicionar uma prova a lista de provas que utilizam a questão quando id da questão existir e retornar ProvaResponseDTO quando o cadastro for bem sucedido")
+    void criarProva_AdicionaProvaALIstaDeProvasQueUtilizamQuestaoERetornaProvaResponseDTO_QuandoQuestaoIdExistirECadastroForBemSucedido(){
+        Prova prova = criarProva();
+        prova.setQuestoes(null);
+        Questao questao = criarQuestao();
+        questao.setProvas(List.of(prova));
+        when(questaoRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(questao));
+        QuestaoPostRequestDTO questaoPostRequestDTO = criarQuestaoPostRequestDTO();
+        questaoPostRequestDTO.setId(1L);
+        ProvaPostRequestDTO provaPostRequestDTO = criarProvaPostRequestDTO();
+        provaPostRequestDTO.setQuestoes(List.of(questaoPostRequestDTO));
+        Usuario usuario = criarUsuario();
+        usuario.setRole(UserRole.ESTUDANTE);
+        ProvaResponseDTO provaResponseDTO = provaService.criarProva(provaPostRequestDTO, usuario);
+        assertThat(provaResponseDTO).isNotNull();
+        assertThat(provaResponseDTO.getId()).isEqualTo(1L);
+        assertThat(provaResponseDTO.getQuestoes()).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(provaResponseDTO.getQuestoes().getFirst().getId()).isEqualTo(1L);
+    }
+
+    @Test
     @DisplayName("criarProva deve lançar uma UserNotFoundException quando o id do Professor não existir")
     void criarProva_LancaUserNotFoundException_QuandoProfessorIdNaoExistir(){
 
@@ -123,6 +147,22 @@ class ProvaServiceTest {
                 .withMessage("Professor não foi encontrado");
         verify(provaRepository, times(0)).save(criarProva());
         verify(questaoRepository, times(0)).saveAll(List.of(criarQuestao()));
+    }
+
+    @Test
+    @DisplayName("criarProva deve lançar uma EntityNotFoundException quando o id da questão passada não existir")
+    void criarProva_LancaEntityNotFoundException_QuandoQuestaoIdNaoExistir(){
+        when(questaoRepository.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+        QuestaoPostRequestDTO questaoPostRequestDTO = criarQuestaoPostRequestDTO();
+        questaoPostRequestDTO.setId(4L);
+        ProvaPostRequestDTO provaPostRequestDTO = criarProvaPostRequestDTO();
+        provaPostRequestDTO.setQuestoes(List.of(questaoPostRequestDTO));
+        Usuario usuario = criarUsuario();
+        usuario.setRole(UserRole.ESTUDANTE);
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> provaService.criarProva(provaPostRequestDTO, usuario))
+                .withMessage("Questão não existe");
     }
 
     @Test
