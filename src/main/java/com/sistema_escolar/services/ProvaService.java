@@ -3,14 +3,19 @@ package com.sistema_escolar.services;
 import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
 import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
-import com.sistema_escolar.dtos.response.*;
+import com.sistema_escolar.dtos.response.ProvaAvaliadaResponseDTO;
+import com.sistema_escolar.dtos.response.ProvaResponseDTO;
+import com.sistema_escolar.dtos.response.QuestaoAvaliadaResponseDTO;
+import com.sistema_escolar.dtos.response.QuestaoResponseDTO;
 import com.sistema_escolar.entities.*;
 import com.sistema_escolar.exceptions.EntityNotFoundException;
 import com.sistema_escolar.exceptions.UserDoesntBelongException;
-import com.sistema_escolar.repositories.*;
+import com.sistema_escolar.repositories.ProvaRepository;
+import com.sistema_escolar.repositories.QuestaoRepository;
+import com.sistema_escolar.repositories.RespostaProvaRepository;
+import com.sistema_escolar.repositories.TurmaRepository;
 import com.sistema_escolar.utils.mappers.QuestaoMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +26,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class ProvaService {
 
     private final ProvaRepository provaRepository;
@@ -124,7 +128,15 @@ public class ProvaService {
         List<Questao> questoes = new ArrayList<>();
         for (int i = 0; i < provaPostRequestDTO.getQuestoes().size(); i++) {
             questoes.add(QuestaoMapper.INSTANCE.toQuestao(provaPostRequestDTO.getQuestoes().get(i)));
-            questoes.get(i).setProvas(List.of(prova));
+            if (questoes.get(i).getId() != null){
+                Questao questao = questaoRepository.findById(questoes.get(i).getId())
+                        .orElseThrow(() -> new EntityNotFoundException("Questão não existe"));
+                List<Prova> provas = new ArrayList<>(questao.getProvas());
+                provas.add(prova);
+                questoes.get(i).setProvas(provas);
+            } else {
+                questoes.get(i).setProvas(List.of(prova));
+            }
             if (questoes.get(i).getCriadoPor() == null){
                 questoes.get(i).setCriadoPor(professor.getEmail());
             }

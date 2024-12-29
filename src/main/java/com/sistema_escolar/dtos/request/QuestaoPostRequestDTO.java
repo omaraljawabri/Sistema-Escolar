@@ -19,6 +19,10 @@ import java.util.List;
 @Builder
 public class QuestaoPostRequestDTO {
 
+    @Schema(description = "Id da questão que será utilizada", example = "1", requiredMode = Schema.RequiredMode.NOT_REQUIRED
+    , type = "Long")
+    private Long id;
+
     @NotNull
     @Schema(description = "Tipo da questão que será criada", allowableValues = {"OBJETIVA", "SUBJETIVA", "VERDADEIRO_FALSO"},
     requiredMode = Schema.RequiredMode.REQUIRED, example = "OBJETIVA")
