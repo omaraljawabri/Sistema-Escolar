@@ -4,6 +4,7 @@ import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.QuestaoPostRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaAvaliadaResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaResponseDTO;
+import com.sistema_escolar.entities.Professor;
 import com.sistema_escolar.entities.Prova;
 import com.sistema_escolar.entities.Questao;
 import com.sistema_escolar.entities.Usuario;
@@ -89,9 +90,7 @@ class ProvaServiceTest {
     @Test
     @DisplayName("criarProva deve retornar um ProvaResponseDTO quando a Prova e suas Questões forem cadastrados com sucesso")
     void criarProva_RetornaProvaResponseDTO_QuandoAProvaECadastradaComSucesso() {
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
-        ProvaResponseDTO provaResponseDTO = provaService.criarProva(criarProvaPostRequestDTO(), usuario);
+        ProvaResponseDTO provaResponseDTO = provaService.criarProva(criarProvaPostRequestDTO(), criarProfessor());
         assertThat(provaResponseDTO).isNotNull();
         assertThat(provaResponseDTO.getId()).isEqualTo(1L);
         assertThat(provaResponseDTO.getQuestoes()).isNotNull().isNotEmpty().hasSize(1);
@@ -102,9 +101,7 @@ class ProvaServiceTest {
     void criarProva_RetornaProvaResponseDTOEAtribuiCriacaoDaQuestaoAoProfessor_QuandoAProvaECadastradaComSucessoECriadoPorENull(){
         ProvaPostRequestDTO provaPostRequestDTO = criarProvaPostRequestDTO();
         provaPostRequestDTO.getQuestoes().get(0).setCriadoPor(null);
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
-        ProvaResponseDTO provaResponseDTO = provaService.criarProva(provaPostRequestDTO, usuario);
+        ProvaResponseDTO provaResponseDTO = provaService.criarProva(provaPostRequestDTO, criarProfessor());
         assertThat(provaResponseDTO).isNotNull();
         assertThat(provaResponseDTO.getId()).isEqualTo(1L);
         assertThat(provaResponseDTO.getQuestoes()).isNotNull().isNotEmpty().hasSize(1);
@@ -124,9 +121,7 @@ class ProvaServiceTest {
         questaoPostRequestDTO.setId(1L);
         ProvaPostRequestDTO provaPostRequestDTO = criarProvaPostRequestDTO();
         provaPostRequestDTO.setQuestoes(List.of(questaoPostRequestDTO));
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.ESTUDANTE);
-        ProvaResponseDTO provaResponseDTO = provaService.criarProva(provaPostRequestDTO, usuario);
+        ProvaResponseDTO provaResponseDTO = provaService.criarProva(provaPostRequestDTO, criarProfessor());
         assertThat(provaResponseDTO).isNotNull();
         assertThat(provaResponseDTO.getId()).isEqualTo(1L);
         assertThat(provaResponseDTO.getQuestoes()).isNotNull().isNotEmpty().hasSize(1);
@@ -139,11 +134,10 @@ class ProvaServiceTest {
 
         doThrow(new UserNotFoundException("Professor não foi encontrado"))
                 .when(professorService).buscarPorId(ArgumentMatchers.anyLong());
-        Usuario usuario = criarUsuario();
-        usuario.setId(7L);
-        usuario.setRole(UserRole.PROFESSOR);
+        Professor professor = criarProfessor();
+        professor.setId(7L);
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> provaService.criarProva(criarProvaPostRequestDTO(), usuario))
+                .isThrownBy(() -> provaService.criarProva(criarProvaPostRequestDTO(), professor))
                 .withMessage("Professor não foi encontrado");
         verify(provaRepository, times(0)).save(criarProva());
         verify(questaoRepository, times(0)).saveAll(List.of(criarQuestao()));
@@ -158,22 +152,18 @@ class ProvaServiceTest {
         questaoPostRequestDTO.setId(4L);
         ProvaPostRequestDTO provaPostRequestDTO = criarProvaPostRequestDTO();
         provaPostRequestDTO.setQuestoes(List.of(questaoPostRequestDTO));
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.ESTUDANTE);
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> provaService.criarProva(provaPostRequestDTO, usuario))
+                .isThrownBy(() -> provaService.criarProva(provaPostRequestDTO, criarProfessor()))
                 .withMessage("Questão não existe");
     }
 
     @Test
     @DisplayName("criarProva deve lançar uma UserDoesntBelongException quando o professor não estiver vinculado a uma turma")
     void criarProva_LancaUserDoesntBelongException_QuandoProfessorNaoEstiverVinculadoAUmaTurma(){
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
         when(turmaRepository.findByProfessorId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(UserDoesntBelongException.class)
-                .isThrownBy(() -> provaService.criarProva(criarProvaPostRequestDTO(), usuario))
+                .isThrownBy(() -> provaService.criarProva(criarProvaPostRequestDTO(), criarProfessor()))
                 .withMessage("Professor deve estar vinculado a uma turma para criar uma prova");
         verify(provaRepository, times(0)).save(criarProva());
         verify(questaoRepository, times(0)).saveAll(List.of(criarQuestao()));
@@ -182,9 +172,7 @@ class ProvaServiceTest {
     @Test
     @DisplayName("atualizarProva deve retornar um ProvaResponseDTO quando a prova for atualizada com sucesso")
     void atualizarProva_RetornaProvaResponseDTO_QuandoProvaEAtualizadaComSucesso() {
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
-        ProvaResponseDTO provaResponseDTO = provaService.atualizarProva(1L, criarProvaPutRequestDTO(), usuario);
+        ProvaResponseDTO provaResponseDTO = provaService.atualizarProva(1L, criarProvaPutRequestDTO(), criarProfessor());
         assertThat(provaResponseDTO).isNotNull();
         assertThat(provaResponseDTO.getId()).isEqualTo(1L);
         assertThat(provaResponseDTO.getQuestoes()).isNotNull().isNotEmpty().hasSize(1);
@@ -194,12 +182,10 @@ class ProvaServiceTest {
     @Test
     @DisplayName("atualizarProva deve lançar uma EntityNotFoundException quando a prova não pertencer ao professor ou o id da prova não existir")
     void atualizarProva_LancaEntityNotFoundException_QuandoProvaNaoPertenceAoProfessorOuProvaIdNaoExistir(){
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
         when(provaRepository.findByIdAndEmailProfessor(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> provaService.atualizarProva(5L, criarProvaPutRequestDTO(), usuario))
+                .isThrownBy(() -> provaService.atualizarProva(5L, criarProvaPutRequestDTO(), criarProfessor()))
                 .withMessage("Prova não pertence a esse professor ou id da prova não existe");
         verify(provaRepository, times(0)).save(criarProva());
         verify(questaoRepository, times(0)).saveAll(List.of(criarQuestao()));
@@ -208,12 +194,10 @@ class ProvaServiceTest {
     @Test
     @DisplayName("atualizarProva deve lançar uma EntityNotFoundException quando o id de alguma questão não existir")
     void atualizarProva_LancaEntityNotFoundException_QuandoQuestaoIdNaoExistir(){
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
         when(questaoRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> provaService.atualizarProva(5L, criarProvaPutRequestDTO(), usuario))
+                .isThrownBy(() -> provaService.atualizarProva(5L, criarProvaPutRequestDTO(), criarProfessor()))
                 .withMessage("Id da questão não existe");
         verify(provaRepository, times(0)).save(criarProva());
         verify(questaoRepository, times(0)).saveAll(List.of(criarQuestao()));
@@ -222,9 +206,7 @@ class ProvaServiceTest {
     @Test
     @DisplayName("publicarProva deve publicar uma Prova quando bem sucedido")
     void publicarProva_PublicaUmaProva_QuandoBemSucedido() {
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
-        assertThatCode(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, usuario))
+        assertThatCode(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, criarProfessor()))
                 .doesNotThrowAnyException();
         verify(mailService, times(1)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
                 Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
@@ -235,11 +217,10 @@ class ProvaServiceTest {
     void publicarProva_LancaUserNotFoundException_QuandoProfessorIdNaoExistir(){
         doThrow(new UserNotFoundException("Professor não foi encontrado"))
                 .when(professorService).buscarPorId(ArgumentMatchers.anyLong());
-        Usuario usuario = criarUsuario();
-        usuario.setId(7L);
-        usuario.setRole(UserRole.PROFESSOR);
+        Professor professor = criarProfessor();
+        professor.setId(7L);
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, usuario))
+                .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, professor))
                 .withMessage("Professor não foi encontrado");
         verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
                 Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
@@ -250,10 +231,8 @@ class ProvaServiceTest {
     void publicarProva_LancaEntityNotFoundException_QuandoProvaNaoPertenceAoProfessorOuProvaIdNaoExistir(){
         when(provaRepository.findByIdAndEmailProfessor(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 5L, usuario))
+                .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 5L, criarProfessor()))
                 .withMessage("Prova não pertence a esse professor ou id da prova não existe");
         verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
                 Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
@@ -264,10 +243,8 @@ class ProvaServiceTest {
     void publicarProva_LancaUserDoesntBelongException_QuandoProfessorNaoEstiverVinculadoATurma(){
         when(turmaRepository.findByProfessorId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.PROFESSOR);
         assertThatExceptionOfType(UserDoesntBelongException.class)
-                .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, usuario))
+                .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, criarProfessor()))
                 .withMessage("Professor não está vinculado a uma turma");
         verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
                 Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
@@ -313,9 +290,7 @@ class ProvaServiceTest {
     @Test
     @DisplayName("getProvaAvaliada deve retornar uma ProvaAvaliadaResponseDTO quando a busca por uma prova avaliada é bem sucedida")
     void getProvaAvaliada_RetornaProvaAvaliadaResponseDTO_QuandoABuscaPorProvaAvaliadaEBemSucedida() {
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.ESTUDANTE);
-        ProvaAvaliadaResponseDTO provaAvaliada = provaService.getProvaAvaliada(1L, usuario);
+        ProvaAvaliadaResponseDTO provaAvaliada = provaService.getProvaAvaliada(1L, criarProfessor());
         assertThat(provaAvaliada).isNotNull();
         assertThat(provaAvaliada.getProvaId()).isEqualTo(1L);
         assertThat(provaAvaliada.getQuestoesAvaliadas()).isNotEmpty().isNotNull().hasSize(1);
@@ -326,11 +301,10 @@ class ProvaServiceTest {
     void getProvaAvaliada_LancaUserNotFoundException_QuandoEstudanteIdNaoExistir(){
         doThrow(new UserNotFoundException("Estudante não encontrado"))
                 .when(estudanteService).buscarPorId(ArgumentMatchers.anyLong());
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.ESTUDANTE);
-        usuario.setId(7L);
+        Professor professor = criarProfessor();
+        professor.setId(7L);
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> provaService.getProvaAvaliada(1L, usuario))
+                .isThrownBy(() -> provaService.getProvaAvaliada(1L, professor))
                 .withMessage("Estudante não encontrado");
     }
 
@@ -339,10 +313,8 @@ class ProvaServiceTest {
     void getProvaAvaliada_LancaEntityNotFoundException_QuandoProvaIdNaoExistir(){
         when(provaRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.ESTUDANTE);
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> provaService.getProvaAvaliada(5L, usuario))
+                .isThrownBy(() -> provaService.getProvaAvaliada(5L, criarProfessor()))
                 .withMessage("Id da prova não existe");
     }
 
@@ -351,10 +323,8 @@ class ProvaServiceTest {
     void getProvaAvaliada_LancaUserDoesntBelongException_QuandoNaoHouveremRespostasDoEstudanteParaAProva(){
         when(respostaProvaRepository.findByEstudanteIdAndProvaIdAndAvaliadaTrue(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
                 .thenReturn(Collections.emptyList());
-        Usuario usuario = criarUsuario();
-        usuario.setRole(UserRole.ESTUDANTE);
         assertThatExceptionOfType(UserDoesntBelongException.class)
-                .isThrownBy(() -> provaService.getProvaAvaliada(1L, usuario))
+                .isThrownBy(() -> provaService.getProvaAvaliada(1L, criarProfessor()))
                 .withMessage("Estudante não fez esta prova");
     }
 }
