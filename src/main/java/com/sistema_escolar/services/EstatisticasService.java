@@ -5,6 +5,7 @@ import com.sistema_escolar.entities.*;
 import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,9 +16,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class EstatisticasService {
 
-    private final ProfessorRepository professorRepository;
     private final TurmaRepository turmaRepository;
     private final ProvaRepository provaRepository;
     private final NotaRepository notaRepository;
@@ -40,12 +41,22 @@ public class EstatisticasService {
     }
 
     public EstatisticasEstudanteResponseDTO estatisticasDoEstudante(Usuario usuario) {
+        double mediaGeral = 0;
         List<Nota> notasEstudante = notaRepository.findAllByEstudanteId(usuario.getId());
-        BigDecimal mediaGeral = notasEstudante.stream().map(Nota::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal somaTotal = notasEstudante.stream().map(Nota::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (!somaTotal.equals(BigDecimal.ZERO)){
+            mediaGeral = somaTotal.doubleValue()/notasEstudante.size();
+        }
         List<Prova> provas = provaRepository.findByNotas(notasEstudante);
         BigDecimal valorTotal = provas.stream().map(Prova::getValorTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
-        return EstatisticasEstudanteResponseDTO.builder().mediaGeral(mediaGeral)
-                .porcentagemAproveitamento(BigDecimal.valueOf((mediaGeral.doubleValue()/valorTotal.doubleValue())*100))
+        if (valorTotal.equals(BigDecimal.ZERO)){
+            return EstatisticasEstudanteResponseDTO.builder().mediaGeral(BigDecimal.valueOf(mediaGeral))
+                    .porcentagemAproveitamento(BigDecimal.ZERO)
+                    .estatisticasPorProva(mapearEstatisticasEstudanteProva(notasEstudante))
+                    .build();
+        }
+        return EstatisticasEstudanteResponseDTO.builder().mediaGeral(BigDecimal.valueOf(mediaGeral))
+                .porcentagemAproveitamento(BigDecimal.valueOf((somaTotal.doubleValue()/valorTotal.doubleValue())*100))
                 .estatisticasPorProva(mapearEstatisticasEstudanteProva(notasEstudante))
                 .build();
     }
