@@ -116,4 +116,13 @@ public class EntityUtils {
                 .build();
     }
 
+    public static RespostaQuestaoRequestDTO criarRespostaQuestaoRequestDTO(){
+        return RespostaQuestaoRequestDTO.builder().questaoId(1L).resposta("Brasília")
+                .build();
+    }
+
+    public static RespostaProvaRequestDTO criarRespostaProvaRequestDTO(){
+        return RespostaProvaRequestDTO.builder().respostasQuestoes(List.of(criarRespostaQuestaoRequestDTO())).build();
+    }
+
 }

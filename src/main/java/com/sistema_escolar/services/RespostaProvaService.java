@@ -9,7 +9,9 @@ import com.sistema_escolar.exceptions.EntityDoesntBelongToUserException;
 import com.sistema_escolar.exceptions.EntityNotFoundException;
 import com.sistema_escolar.exceptions.TestErrorException;
 import com.sistema_escolar.exceptions.UserAlreadyBelongsToAnEntityException;
-import com.sistema_escolar.repositories.*;
+import com.sistema_escolar.repositories.ProvaRepository;
+import com.sistema_escolar.repositories.QuestaoRepository;
+import com.sistema_escolar.repositories.RespostaProvaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +37,7 @@ public class RespostaProvaService {
     public void responderProva(Long id, RespostaProvaRequestDTO respostaProvaRequestDTO, Usuario usuario) {
         Estudante estudante = estudanteService.buscarPorId(usuario.getId());
         Prova prova = provaService.buscarPorId(id);
-        if (!prova.getIsPublished() || prova.getExpirationTime().isBefore(LocalDateTime.now())){
+        if (Boolean.TRUE.equals(!prova.getIsPublished()) || prova.getExpirationTime().isBefore(LocalDateTime.now())){
             throw new TestErrorException("O tempo de prova já foi encerrado ou a prova não foi publicada ainda");
         }
         if (!respostaProvaRepository.findByEstudanteIdAndProvaId(estudante.getId(), id).isEmpty() &&
