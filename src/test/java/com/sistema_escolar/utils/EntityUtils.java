@@ -1,7 +1,7 @@
 package com.sistema_escolar.utils;
 
 import com.sistema_escolar.dtos.request.*;
-import com.sistema_escolar.dtos.response.LoginResponseDTO;
+import com.sistema_escolar.dtos.response.*;
 import com.sistema_escolar.entities.*;
 import com.sistema_escolar.utils.enums.TipoQuestao;
 import com.sistema_escolar.utils.enums.UserRole;
@@ -123,6 +123,24 @@ public class EntityUtils {
 
     public static RespostaProvaRequestDTO criarRespostaProvaRequestDTO(){
         return RespostaProvaRequestDTO.builder().respostasQuestoes(List.of(criarRespostaQuestaoRequestDTO())).build();
+    }
+
+    public static EstatisticasEstudanteResponseDTO criarEstatisticasEstudanteResponseDTO(){
+        return EstatisticasEstudanteResponseDTO.builder().mediaGeral(BigDecimal.TEN).porcentagemAproveitamento(BigDecimal.valueOf(100D))
+                .estatisticasPorProva(List.of(EstatisticasEstudanteProvaResponseDTO.builder().provaId(1L).nota(BigDecimal.TEN).build()))
+                .build();
+    }
+
+    public static EstatisticasGeraisResponseDTO criarEstatisticasGeraisResponseDTO(){
+        return EstatisticasGeraisResponseDTO.builder().qtdDisciplinasGeral(1L).qtdTurmasGeral(1L).qtdEstudantesGeral(1L)
+                .estatisticasDisciplinas(List.of(EstatisticasDisciplinasResponseDTO.builder().disciplinaId(1L).qtdTurmas(1L).qtdEstudantes(1L).build()))
+                .estatisticasTurmas(List.of(EstatisticasTurmasResponseDTO.builder().turmaId(1L).qtdEstudantes(1L).build())).build();
+    }
+
+    public static EstatisticasTurmaResponseDTO criarEstatisticasTurmaResponseDTO(){
+        return EstatisticasTurmaResponseDTO.builder().mediaGeral(BigDecimal.TEN).porcentagemAprovados(BigDecimal.valueOf(100D))
+                .estatisticasProva(List.of(EstatisticasProvaResponseDTO.builder().mediaTurma(BigDecimal.TEN)
+                        .porcentagemAcimaDeSeis(BigDecimal.valueOf(100D)).provaId(1L).build())).build();
     }
 
 }
