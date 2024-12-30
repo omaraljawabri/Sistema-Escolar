@@ -6,6 +6,7 @@ import com.sistema_escolar.entities.Professor;
 import com.sistema_escolar.entities.Turma;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TurmaRepository extends JpaRepository<Turma, Long> {
@@ -15,5 +16,6 @@ public interface TurmaRepository extends JpaRepository<Turma, Long> {
     Optional<Turma> findByProfessorId(Long id);
     Optional<Turma> findByTurmaCode(String code);
     Optional<Turma> findByIdAndProfessorId(Long id, Long professorId);
+    Optional<Turma> findByProfessorIdAndTurmaCode(Long id, String code);
     long countByDisciplinaId(Long disciplinaId);
 }

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -50,8 +52,20 @@ public class TurmaService {
         if (turmaRepository.findByEstudantes(estudante).isPresent()){
             throw new UserAlreadyBelongsToAnEntityException("Estudante já está cadastrado nesta turma!");
         }
-        turma.getEstudantes().add(estudante);
-        estudante.getTurmas().add(turma);
+        if (turma.getEstudantes() != null){
+            List<Estudante> estudantes = new ArrayList<>(turma.getEstudantes());
+            estudantes.add(estudante);
+            turma.setEstudantes(estudantes);
+        } else{
+            turma.setEstudantes(List.of(estudante));
+        }
+        if (estudante.getTurmas() != null){
+            List<Turma> turmas = new ArrayList<>(estudante.getTurmas());
+            turmas.add(turma);
+            estudante.setTurmas(turmas);
+        } else{
+            estudante.setTurmas(List.of(turma));
+        }
         turmaRepository.save(turma);
     }
 
@@ -63,6 +77,9 @@ public class TurmaService {
                 .orElseThrow(() -> new EntityNotFoundException("Turma selecionada não existe"));
         if (turmaRepository.findByIdAndProfessor(turma.getId(), professor).isPresent()){
             throw new UserAlreadyBelongsToAnEntityException("Professor já está cadastrado nesta turma!");
+        }
+        if (professor.getDisciplina() != null && !professor.getDisciplina().getName().equals(turma.getDisciplina().getName())){
+            throw new UserAlreadyBelongsToAnEntityException("Professor já está cadastrado em outra disciplina");
         }
         professor.setDisciplina(turma.getDisciplina());
         turma.setProfessor(professor);
@@ -97,8 +114,8 @@ public class TurmaService {
             throw new InvalidCodeException("Código de turma está expirado!");
         }
         if (usuario.getRole() == UserRole.PROFESSOR ){
-            if (turmaRepository.findByProfessorId(usuario.getId()).isPresent()) {
-                throw new UserAlreadyBelongsToAnEntityException("Professor já está vinculado a uma turma");
+            if (turmaRepository.findByProfessorIdAndTurmaCode(usuario.getId(), codeRequestDTO.getCode()).isPresent()) {
+                throw new UserAlreadyBelongsToAnEntityException("Professor já está vinculado a essa turma");
             } else{
                 turma.setProfessor(professorRepository.findById(usuario.getId()).get());
                 turmaRepository.save(turma);
@@ -106,15 +123,37 @@ public class TurmaService {
         } else if (usuario.getRole() == UserRole.ESTUDANTE){
             Disciplina disciplina = turma.getDisciplina();
             Estudante estudante = estudanteRepository.findById(usuario.getId()).get();
-            for (Disciplina disciplinas : estudante.getDisciplinas()){
-                if (Objects.equals(disciplinas.getId(), disciplina.getId())){
-                    throw new UserAlreadyBelongsToAnEntityException("Estudante já está vinculado a uma turma desta disciplina!");
+            if (estudante.getDisciplinas() != null) {
+                for (Disciplina disciplinas : estudante.getDisciplinas()) {
+                    if (Objects.equals(disciplinas.getId(), disciplina.getId())) {
+                        throw new UserAlreadyBelongsToAnEntityException("Estudante já está vinculado a uma turma desta disciplina!");
+                    }
                 }
             }
-            turma.getEstudantes().add(estudante);
-            estudante.getTurmas().add(turma);
-            disciplina.getEstudantes().add(estudante);
-            estudante.getDisciplinas().add(disciplina);
+            if (turma.getEstudantes() != null){
+                List<Estudante> estudantes = new ArrayList<>(turma.getEstudantes());
+                estudantes.add(estudante);
+            } else{
+                turma.setEstudantes(List.of(estudante));
+            }
+            if (estudante.getTurmas() != null){
+                List<Turma> turmas = new ArrayList<>(estudante.getTurmas());
+                turmas.add(turma);
+            } else{
+                estudante.setTurmas(List.of(turma));
+            }
+            if (disciplina.getEstudantes() != null){
+                List<Estudante> estudantes = new ArrayList<>(disciplina.getEstudantes());
+                estudantes.add(estudante);
+            } else{
+                disciplina.setEstudantes(List.of(estudante));
+            }
+            if (estudante.getDisciplinas() != null){
+                List<Disciplina> disciplinas = new ArrayList<>(estudante.getDisciplinas());
+                disciplinas.add(disciplina);
+            } else{
+                estudante.setDisciplinas(List.of(disciplina));
+            }
             estudanteRepository.save(estudante);
             turmaRepository.save(turma);
             disciplinaRepository.save(disciplina);
