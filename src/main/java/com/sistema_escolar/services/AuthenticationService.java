@@ -60,7 +60,8 @@ public class AuthenticationService {
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO, String token){
         Usuario usuario
-                = usuarioRepository.findByEmail(loginRequestDTO.getEmail()).orElseThrow(() -> new UserNotFoundException("Email enviado não existe!"));
+                = usuarioRepository.findByEmail(loginRequestDTO.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("Email enviado não existe!"));
         if (Boolean.FALSE.equals(usuario.getIsVerified())){
             throw new AccountWasntValidatedException("Conta não foi validada!");
         }
