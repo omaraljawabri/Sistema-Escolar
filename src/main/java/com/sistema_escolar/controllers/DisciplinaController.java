@@ -40,7 +40,7 @@ public class DisciplinaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> createDisciplina(@RequestBody CreateDisciplinaRequestDTO createDisciplinaRequestDTO){
+    public ResponseEntity<Void> criarDisciplina(@RequestBody CreateDisciplinaRequestDTO createDisciplinaRequestDTO){
         disciplinaService.criarDisciplina(createDisciplinaRequestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
