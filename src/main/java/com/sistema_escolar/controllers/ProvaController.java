@@ -47,7 +47,7 @@ public class ProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)", content = @Content())
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProvaResponseDTO> createProva(@RequestBody ProvaPostRequestDTO provaPostRequestDTO){
+    public ResponseEntity<ProvaResponseDTO> criarProva(@RequestBody ProvaPostRequestDTO provaPostRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(provaService.criarProva(provaPostRequestDTO, usuario));
@@ -66,7 +66,7 @@ public class ProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)", content = @Content())
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProvaResponseDTO> updateProva(
+    public ResponseEntity<ProvaResponseDTO> atualizarProva(
             @Parameter(
                     name = "id",
                     description = "Identificador único da prova",
@@ -95,7 +95,7 @@ public class ProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/publish/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> publishProva(
+    public ResponseEntity<Void> publicarProva(
             @Parameter(
                     description = "Identificador único da prova",
                     name = "id",
@@ -125,7 +125,7 @@ public class ProvaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)", content = @Content())
     })
     @GetMapping(value = "/avaliada/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProvaAvaliadaResponseDTO> getProvaAvaliada(
+    public ResponseEntity<ProvaAvaliadaResponseDTO> buscarProvaAvaliada(
             @Parameter(
                     name = "id",
                     description = "Identificador único da prova",
