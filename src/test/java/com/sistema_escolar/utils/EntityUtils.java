@@ -5,6 +5,9 @@ import com.sistema_escolar.dtos.response.*;
 import com.sistema_escolar.entities.*;
 import com.sistema_escolar.utils.enums.TipoQuestao;
 import com.sistema_escolar.utils.enums.UserRole;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -163,5 +166,13 @@ public class EntityUtils {
         return ProvaAvaliadaResponseDTO.builder().provaId(1L).nomeDisciplina("Geografia").notaDoEstudante(BigDecimal.TEN)
                 .notaPossivel(BigDecimal.TEN).questoesAvaliadas(List.of(criarQuestaoAvaliadaResponseDTO()))
                 .build();
+    }
+
+    public static void mockAuthentication(){
+        Usuario usuario = new Usuario();
+        usuario.setEmail("fulano@gmail.com");
+        usuario.setPassword("fulano");
+        Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

@@ -46,15 +46,6 @@ class EstatisticasControllerTest {
                 .thenReturn(criarEstatisticasTurmaResponseDTO());
     }
 
-    private void mockAuthentication() {
-        Usuario usuario = new Usuario();
-        usuario.setEmail("fulano@gmail.com");
-        usuario.setPassword("fulano");
-        Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-    }
-
     @Test
     @DisplayName("estatisticasDoEstudante deve retornar um EstatisticasEstudanteResponseDTO quando a busca por estatisticas do Estudante for bem sucedida")
     void estatisticasDoEstudante_RetornaEstatisticasEstudanteResponseDTO_QuandoABuscaPorEstatisticasDoEstudanteEBemSucedida() {

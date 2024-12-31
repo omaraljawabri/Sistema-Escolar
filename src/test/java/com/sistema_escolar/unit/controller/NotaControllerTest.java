@@ -41,14 +41,6 @@ class NotaControllerTest {
                 .thenReturn(new NotaResponseDTO(10D));
     }
 
-    private void mockAuthentication() {
-        Usuario usuario = new Usuario();
-        usuario.setEmail("fulano@gmail.com");
-        usuario.setPassword("fulano");
-        Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
     @Test
     @DisplayName("avaliarProva deve retornar um NotaResponseDTO quando uma prova for avaliada com sucesso")
     void avaliarProva_RetornaNotaResponseDTO_QuandoAProvaEAvaliadaComSuceso() {

@@ -49,14 +49,6 @@ class ProvaControllerTest {
                 .thenReturn(criarProvaAvaliadaResponseDTO());
     }
 
-    private void mockAuthentication(){
-        Usuario usuario = new Usuario();
-        usuario.setEmail("fulano@gmail.com");
-        usuario.setPassword("fulano");
-        Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
     @Test
     @DisplayName("criarProva deve cadastrar uma prova e retornar um ProvaResponseDTO quando bem sucedido")
     void criarProva_CadastraUmaProvaERetornaProvaResponseDTO_QuandoBemSucedido() {
