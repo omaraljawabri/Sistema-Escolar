@@ -39,7 +39,7 @@ public class QuestaoController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)", content = @Content())
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<QuestaoResponseDTO>> findQuestoes(
+    public ResponseEntity<Page<QuestaoResponseDTO>> buscarQuestoes(
             @Parameter(
                     name = "pagina",
                     description = "Número da página que será acessada",
