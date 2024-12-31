@@ -143,4 +143,25 @@ public class EntityUtils {
                         .porcentagemAcimaDeSeis(BigDecimal.valueOf(100D)).provaId(1L).build())).build();
     }
 
+    public static QuestaoResponseDTO criarQuestaoResponseDTO(){
+        return QuestaoResponseDTO.builder().id(1L).tipoQuestao(TipoQuestao.OBJETIVA).pergunta("Qual a capital do Brasil?")
+                .alternativas(List.of("A) Brasília", "B) Goiânia", "C) São Paulo", "D) Manaus")).valor(BigDecimal.TWO)
+                .criadoPor("professor@gmail.com").atualizadoPor("professor@gmail.com").respostaCorreta("Brasília").build();
+    }
+
+    public static ProvaResponseDTO criarProvaResponseDTO(){
+        return ProvaResponseDTO.builder().id(1L).valorTotal(BigDecimal.TEN).emailProfessor("professor@gmail.com")
+                .questoes(List.of(criarQuestaoResponseDTO())).build();
+    }
+
+    public static QuestaoAvaliadaResponseDTO criarQuestaoAvaliadaResponseDTO(){
+        return QuestaoAvaliadaResponseDTO.builder().questaoId(1L).pergunta("Qual a capital do Brasil?").resposta("Brasília")
+                .notaDoEstudante(BigDecimal.TEN).notaQuestao(BigDecimal.TEN).build();
+    }
+
+    public static ProvaAvaliadaResponseDTO criarProvaAvaliadaResponseDTO(){
+        return ProvaAvaliadaResponseDTO.builder().provaId(1L).nomeDisciplina("Geografia").notaDoEstudante(BigDecimal.TEN)
+                .notaPossivel(BigDecimal.TEN).questoesAvaliadas(List.of(criarQuestaoAvaliadaResponseDTO()))
+                .build();
+    }
 }
