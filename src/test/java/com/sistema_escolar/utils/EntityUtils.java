@@ -175,4 +175,13 @@ public class EntityUtils {
         Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
+    public static QuestaoRespondidaResponseDTO criarQuestaoRespondidaResponseDTO(){
+        return QuestaoRespondidaResponseDTO.builder().pergunta("Qual a capital do Brasil?").resposta("Brasília").build();
+    }
+
+    public static ProvaRespondidaResponseDTO criarProvaRespondidaResponseDTO(){
+        return ProvaRespondidaResponseDTO.builder().estudanteId(1L).nomeEstudante("Ciclano Sousa")
+                .questoesRespondidas(List.of(criarQuestaoRespondidaResponseDTO())).build();
+    }
 }
