@@ -100,7 +100,7 @@ public class TurmaController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)", content = @Content())
     })
-    @PostMapping("/generate-code/admin")
+    @PostMapping("/gerar-codigo/admin")
     public ResponseEntity<CodeResponseDTO> gerarCodigo(@RequestBody TurmaRequestDTO turmaRequestDTO){
         return ResponseEntity.ok(turmaService.gerarCodigo(turmaRequestDTO));
     }
@@ -116,7 +116,7 @@ public class TurmaController {
             @ApiResponse(responseCode = "403", description = "Usuário não tem permissão necessária para realizar operação", content = @Content()),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)", content = @Content())
     })
-    @GetMapping("/generate-code/professor")
+    @GetMapping("/gerar-codigo/professor")
     public ResponseEntity<CodeResponseDTO> gerarCodigo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
@@ -134,7 +134,7 @@ public class TurmaController {
             @ApiResponse(responseCode = "403", description = "Usuário não tem permissão necessária para realizar operação"),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @PostMapping("/join")
+    @PostMapping("/entrar")
     public ResponseEntity<Void> entrarTurma(@RequestBody CodeRequestDTO codeRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();

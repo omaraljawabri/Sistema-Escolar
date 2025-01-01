@@ -44,7 +44,7 @@ public class AuthenticationController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/registrar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> registrar(@RequestBody @Valid RegisterRequestDTO registerRequestDTO){
         authenticationService.registrarUsuario(registerRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -79,7 +79,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "403", description = "Erro no código passado(Forbidden)"),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @GetMapping("/verify")
+    @GetMapping("/verificar")
     public ResponseEntity<Void> verificarCodigo(
             @Parameter(
                     name = "code",
@@ -102,7 +102,7 @@ public class AuthenticationController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @PostMapping(value = "/change-password/request", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/mudar-senha/requisicao", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> pedirMudancaDeSenha(@RequestBody ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
         authenticationService.mudarSenha(changePasswordEmailRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -116,7 +116,7 @@ public class AuthenticationController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @PostMapping(value = "/change-password/verify", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/mudar-senha/verificar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> verificarMudancaDeSenha(
             @Parameter(
                     name = "code",

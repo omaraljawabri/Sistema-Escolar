@@ -94,7 +94,7 @@ public class ProvaController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
-    @PostMapping(value = "/publish/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/publicar/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> publicarProva(
             @Parameter(
                     description = "Identificador único da prova",
