@@ -45,7 +45,7 @@ public class TurmaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping
-    public ResponseEntity<Void> createTurma(@RequestBody CreateTurmaRequestDTO createTurmaRequestDTO){
+    public ResponseEntity<Void> criarTurma(@RequestBody CreateTurmaRequestDTO createTurmaRequestDTO){
         turmaService.criarTurma(createTurmaRequestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -101,7 +101,7 @@ public class TurmaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)", content = @Content())
     })
     @PostMapping("/generate-code/admin")
-    public ResponseEntity<CodeResponseDTO> generateCode(@RequestBody TurmaRequestDTO turmaRequestDTO){
+    public ResponseEntity<CodeResponseDTO> gerarCodigo(@RequestBody TurmaRequestDTO turmaRequestDTO){
         return ResponseEntity.ok(turmaService.gerarCodigo(turmaRequestDTO));
     }
 
@@ -117,7 +117,7 @@ public class TurmaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)", content = @Content())
     })
     @GetMapping("/generate-code/professor")
-    public ResponseEntity<CodeResponseDTO> generateCode(){
+    public ResponseEntity<CodeResponseDTO> gerarCodigo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         return ResponseEntity.ok(turmaService.gerarCodigo(usuario));
@@ -135,7 +135,7 @@ public class TurmaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping("/join")
-    public ResponseEntity<Void> joinTurma(@RequestBody CodeRequestDTO codeRequestDTO){
+    public ResponseEntity<Void> entrarTurma(@RequestBody CodeRequestDTO codeRequestDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         turmaService.entrarTurma(codeRequestDTO, usuario);

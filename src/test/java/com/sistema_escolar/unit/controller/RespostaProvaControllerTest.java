@@ -6,7 +6,6 @@ import com.sistema_escolar.dtos.response.ProvaRespondidaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.exceptions.*;
 import com.sistema_escolar.services.RespostaProvaService;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,9 +20,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Collections;
 import java.util.List;
 
+import static com.sistema_escolar.utils.EntityUtils.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static com.sistema_escolar.utils.EntityUtils.*;
 
 @ExtendWith(SpringExtension.class)
 class RespostaProvaControllerTest {
