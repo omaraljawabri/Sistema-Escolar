@@ -16,23 +16,23 @@ import java.util.List;
 public class EntityUtils {
 
     public static Usuario criarUsuario(){
-        return Usuario.builder().id(1L).email("fulano@gmail.com").password("fulano").role(UserRole.ADMIN)
+        return Usuario.builder().id(1L).email("fulano@example.com").password("fulano").role(UserRole.ADMIN)
                 .firstName("Fulano").lastName("Silva").codeExpirationTime(LocalDateTime.now().plusHours(3))
                 .verificationCode("acde070d-8c4c-4f0d-9d8a-162843c10333").isVerified(false).build();
     }
 
     public static RegisterRequestDTO criarRegisterRequestDTO(){
-        return RegisterRequestDTO.builder().email("fulano@gmail.com").firstName("Fulano").lastName("Silva")
+        return RegisterRequestDTO.builder().email("fulano@example.com").firstName("Fulano").lastName("Silva")
                 .password("fulano").role(UserRole.ADMIN).build();
     }
 
     public static LoginRequestDTO criarLoginRequestDTO(){
-        return LoginRequestDTO.builder().email("fulano@gmail.com").password("fulano")
+        return LoginRequestDTO.builder().email("fulano@example.com").password("fulano")
                 .build();
     }
 
     public static LoginResponseDTO criarLoginResponseDTO(){
-        return LoginResponseDTO.builder().email("fulano@gmail.com")
+        return LoginResponseDTO.builder().email("fulano@example.com")
                 .token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
                 .build();
     }
@@ -48,7 +48,7 @@ public class EntityUtils {
     }
 
     public static Estudante criarEstudante(){
-        Estudante estudante = new Estudante("ciclano@gmail.com", "ciclano", UserRole.ESTUDANTE,
+        Estudante estudante = new Estudante("ciclano@example.com", "ciclano", UserRole.ESTUDANTE,
                 "acde070d-8c4c-4f0d-9d8a-162843c10334", LocalDateTime.now().plusHours(2),
                 false, "Ciclano", "Sousa");
         estudante.setId(1L);
@@ -56,7 +56,7 @@ public class EntityUtils {
     }
 
     public static Professor criarProfessor(){
-        Professor professor = new Professor("professor@gmail.com", "professor", UserRole.PROFESSOR, "acde070d-8c4c-4f0d-9d8a-162843c10334",
+        Professor professor = new Professor("professor@example.com", "professor", UserRole.PROFESSOR, "acde070d-8c4c-4f0d-9d8a-162843c10334",
                 LocalDateTime.now().plusHours(2), false, "Professor", "Santos");
         professor.setDisciplina(criarDisciplina());
         professor.setId(1L);
@@ -65,13 +65,13 @@ public class EntityUtils {
 
     public static Prova criarProva(){
         return Prova.builder().id(1L).valorTotal(BigDecimal.TEN).isPublished(true).expirationTime(LocalDateTime.now().plusHours(2))
-                .emailProfessor("professor@gmail.com").questoes(List.of(criarQuestao())).disciplina(criarDisciplina()).build();
+                .emailProfessor("professor@example.com").questoes(List.of(criarQuestao())).disciplina(criarDisciplina()).build();
     }
 
     public static Questao criarQuestao(){
         return Questao.builder().id(1L).tipoQuestao(TipoQuestao.OBJETIVA).pergunta("Qual a capital do Brasil?")
                 .alternativas(List.of("A) Brasília", "B) Goiânia", "C) São Paulo", "D) Manaus")).valor(BigDecimal.TWO)
-                .criadoPor("professor@gmail.com").atualizadoPor(null).respostaCorreta("Brasília").build();
+                .criadoPor("professor@example.com").atualizadoPor(null).respostaCorreta("Brasília").build();
     }
 
     public static RespostaProva criarRespostaProva(){
@@ -96,7 +96,7 @@ public class EntityUtils {
     public static QuestaoPostRequestDTO criarQuestaoPostRequestDTO(){
         return QuestaoPostRequestDTO.builder().tipoQuestao(TipoQuestao.OBJETIVA).pergunta("Qual a capital do Brasil?")
                 .alternativas(List.of("A) Brasília", "B) Goiânia", "C) São Paulo", "D) Manaus")).valor(BigDecimal.TWO)
-                .criadoPor("professor@gmail.com").respostaCorreta("Brasília").build();
+                .criadoPor("professor@example.com").respostaCorreta("Brasília").build();
     }
 
     public static ProvaPostRequestDTO criarProvaPostRequestDTO(){
@@ -107,7 +107,7 @@ public class EntityUtils {
     public static QuestaoPutRequestDTO criarQuestaoPutRequestDTO(){
         return QuestaoPutRequestDTO.builder().id(1L).tipoQuestao(TipoQuestao.OBJETIVA).pergunta("Qual a capital do Brasil?")
                 .alternativas(List.of("A) Brasília", "B) Goiânia", "C) São Paulo", "D) Manaus")).valor(BigDecimal.TWO)
-                .atualizadoPor("professor@gmail.com").respostaCorreta("Brasília").build();
+                .atualizadoPor("professor@example.com").respostaCorreta("Brasília").build();
     }
 
     public static ProvaPutRequestDTO criarProvaPutRequestDTO(){
@@ -149,11 +149,11 @@ public class EntityUtils {
     public static QuestaoResponseDTO criarQuestaoResponseDTO(){
         return QuestaoResponseDTO.builder().id(1L).tipoQuestao(TipoQuestao.OBJETIVA).pergunta("Qual a capital do Brasil?")
                 .alternativas(List.of("A) Brasília", "B) Goiânia", "C) São Paulo", "D) Manaus")).valor(BigDecimal.TWO)
-                .criadoPor("professor@gmail.com").atualizadoPor("professor@gmail.com").respostaCorreta("Brasília").build();
+                .criadoPor("professor@example.com").atualizadoPor("professor@example.com").respostaCorreta("Brasília").build();
     }
 
     public static ProvaResponseDTO criarProvaResponseDTO(){
-        return ProvaResponseDTO.builder().id(1L).valorTotal(BigDecimal.TEN).emailProfessor("professor@gmail.com")
+        return ProvaResponseDTO.builder().id(1L).valorTotal(BigDecimal.TEN).emailProfessor("professor@example.com")
                 .questoes(List.of(criarQuestaoResponseDTO())).build();
     }
 
@@ -170,7 +170,7 @@ public class EntityUtils {
 
     public static void mockAuthentication(){
         Usuario usuario = new Usuario();
-        usuario.setEmail("fulano@gmail.com");
+        usuario.setEmail("fulano@example.com");
         usuario.setPassword("fulano");
         Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null);
         SecurityContextHolder.getContext().setAuthentication(authentication);

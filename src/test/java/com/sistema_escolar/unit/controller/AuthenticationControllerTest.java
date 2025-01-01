@@ -63,7 +63,7 @@ class AuthenticationControllerTest {
 
     private Authentication mockAuthentication() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("fulano@gmail.com");
+        usuario.setEmail("fulano@example.com");
         usuario.setPassword("fulano");
         return new UsernamePasswordAuthenticationToken(usuario, null);
     }
@@ -82,11 +82,11 @@ class AuthenticationControllerTest {
     @Test
     @DisplayName("registrar deve lançar uma EntityAlreadyExistsException quando o email do usuário a ser registrado já existir")
     void registrar_LancaEntityAlreadyExistsException_QuandoEmailDoUsuarioExistir(){
-        doThrow(new EntityAlreadyExistsException("Email fulano@gmail.com já existe"))
+        doThrow(new EntityAlreadyExistsException("Email fulano@example.com já existe"))
                 .when(authenticationService).registrarUsuario(ArgumentMatchers.any(RegisterRequestDTO.class));
         assertThatExceptionOfType(EntityAlreadyExistsException.class)
                 .isThrownBy(() -> authenticationController.registrar(criarRegisterRequestDTO()))
-                .withMessage("Email fulano@gmail.com já existe");
+                .withMessage("Email fulano@example.com já existe");
     }
 
     @Test
@@ -96,7 +96,7 @@ class AuthenticationControllerTest {
                 .doesNotThrowAnyException();
         ResponseEntity<LoginResponseDTO> login = authenticationController.login(criarLoginRequestDTO());
         assertThat(login.getBody()).isNotNull();
-        assertThat(login.getBody().getEmail()).isEqualTo("fulano@gmail.com");
+        assertThat(login.getBody().getEmail()).isEqualTo("fulano@example.com");
         assertThat(login.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -143,9 +143,9 @@ class AuthenticationControllerTest {
     @Test
     @DisplayName("pedirMudancaDeSenha deve solicitar a mudança de senha do usuário quando bem sucedido")
     void pedirMudancaDeSenha_SolicitaAMudancaDaSenhaDoUsuario_QuandoBemSucedido() {
-        assertThatCode(() -> authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("fulano@gmail.com")))
+        assertThatCode(() -> authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("fulano@example.com")))
                 .doesNotThrowAnyException();
-        ResponseEntity<Void> responseEntity = authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("fulano@gmail.com"));
+        ResponseEntity<Void> responseEntity = authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("fulano@example.com"));
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -156,7 +156,7 @@ class AuthenticationControllerTest {
         doThrow(new UserNotFoundException("Email enviado não está cadastrado"))
                 .when(authenticationService).mudarSenha(ArgumentMatchers.any(ChangePasswordEmailRequestDTO.class));
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("ciclano@gmail.com")))
+                .isThrownBy(() -> authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("ciclano@example.com")))
                 .withMessage("Email enviado não está cadastrado");
     }
 

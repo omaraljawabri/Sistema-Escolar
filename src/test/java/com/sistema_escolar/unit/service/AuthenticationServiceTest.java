@@ -167,7 +167,7 @@ class AuthenticationServiceTest {
                 .thenReturn(Optional.of(usuario));
         LoginResponseDTO loginResponse = authenticationService.login(criarLoginRequestDTO(), "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
         assertThat(loginResponse).isNotNull();
-        assertThat(loginResponse.getEmail()).isEqualTo("fulano@gmail.com");
+        assertThat(loginResponse.getEmail()).isEqualTo("fulano@example.com");
     }
 
     @Test
@@ -195,9 +195,9 @@ class AuthenticationServiceTest {
     @Test
     @DisplayName("mudarSenha deve iniciar o processo de mudança de senha e enviar o e-mail ao usuário quando bem sucedido")
     void mudarSenha_IniciaProcessoDeMudancaDeSenha_QuandoBemSucedido() {
-        assertThatCode(() -> authenticationService.mudarSenha(new ChangePasswordEmailRequestDTO("fulano@gmail.com")))
+        assertThatCode(() -> authenticationService.mudarSenha(new ChangePasswordEmailRequestDTO("fulano@example.com")))
                 .doesNotThrowAnyException();
-        verify(mailService, times(1)).enviarEmail(Mockito.eq("fulano@gmail.com"),
+        verify(mailService, times(1)).enviarEmail(Mockito.eq("fulano@example.com"),
                 Mockito.eq("Redefinição de senha"), Mockito.contains("http://localhost:8080/api/v1/auth/change-password/verify?code="));
     }
 
@@ -207,9 +207,9 @@ class AuthenticationServiceTest {
         when(usuarioRepository.findByEmail(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> authenticationService.mudarSenha(new ChangePasswordEmailRequestDTO("ciclano@gmail.com")))
+                .isThrownBy(() -> authenticationService.mudarSenha(new ChangePasswordEmailRequestDTO("ciclano@example.com")))
                 .withMessage("Email enviado não está cadastrado");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("fulano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("fulano@example.com"),
                 Mockito.eq("Redefinição de senha"), Mockito.contains("http://localhost:8080/api/v1/auth/change-password/verify?code="));
     }
 

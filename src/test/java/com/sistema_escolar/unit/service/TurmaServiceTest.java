@@ -111,7 +111,7 @@ class TurmaServiceTest {
     @Test
     @DisplayName("addEstudante deve adicionar um estudante a uma turma quando bem sucedido")
     void addEstudante_AdicionaUmEstudanteAUmaTurma_QuandoBemSucedido() {
-        assertThatCode(() -> turmaService.addEstudante(new AddTurmaRequestDTO("ciclano@gmail.com", 1L)))
+        assertThatCode(() -> turmaService.addEstudante(new AddTurmaRequestDTO("ciclano@example.com", 1L)))
                 .doesNotThrowAnyException();
     }
 
@@ -129,7 +129,7 @@ class TurmaServiceTest {
                 .thenReturn(Optional.of(turma));
         when(estudanteRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(estudante));
-        assertThatCode(() -> turmaService.addEstudante(new AddTurmaRequestDTO("ciclano@gmail.com", 1L)))
+        assertThatCode(() -> turmaService.addEstudante(new AddTurmaRequestDTO("ciclano@example.com", 1L)))
                 .doesNotThrowAnyException();
     }
 
@@ -139,7 +139,7 @@ class TurmaServiceTest {
         when(estudanteRepository.findByEmail(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> turmaService.addEstudante(new AddTurmaRequestDTO("fulano@gmail.com", 1L)))
+                .isThrownBy(() -> turmaService.addEstudante(new AddTurmaRequestDTO("fulano@example.com", 1L)))
                 .withMessage("Email do estudante que deseja adicionar não existe");
     }
 
@@ -149,7 +149,7 @@ class TurmaServiceTest {
         when(turmaRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> turmaService.addEstudante(new AddTurmaRequestDTO("ciclano@gmail.com", 2L)))
+                .isThrownBy(() -> turmaService.addEstudante(new AddTurmaRequestDTO("ciclano@example.com", 2L)))
                 .withMessage("Turma selecionada não existe");
     }
 
@@ -159,7 +159,7 @@ class TurmaServiceTest {
         when(turmaRepository.findByEstudantes(ArgumentMatchers.any(Estudante.class)))
                 .thenReturn(Optional.of(criarTurma()));
         assertThatExceptionOfType(UserAlreadyBelongsToAnEntityException.class)
-                .isThrownBy(() -> turmaService.addEstudante(new AddTurmaRequestDTO("ciclano@gmail.com", 1L)))
+                .isThrownBy(() -> turmaService.addEstudante(new AddTurmaRequestDTO("ciclano@example.com", 1L)))
                 .withMessage("Estudante já está cadastrado nesta turma!");
     }
 
@@ -170,7 +170,7 @@ class TurmaServiceTest {
         professor.setDisciplina(null);
         when(professorRepository.findByEmail(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(professor));
-        assertThatCode(() -> turmaService.addProfessor(new AddTurmaRequestDTO("professor@gmail.com", 1L)))
+        assertThatCode(() -> turmaService.addProfessor(new AddTurmaRequestDTO("professor@example.com", 1L)))
                 .doesNotThrowAnyException();
     }
 
@@ -180,7 +180,7 @@ class TurmaServiceTest {
         when(professorRepository.findByEmail(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> turmaService.addProfessor(new AddTurmaRequestDTO("ciclano@gmail.com", 1L)))
+                .isThrownBy(() -> turmaService.addProfessor(new AddTurmaRequestDTO("ciclano@example.com", 1L)))
                 .withMessage("Email do professor que deseja adicionar não existe");
     }
 
@@ -190,7 +190,7 @@ class TurmaServiceTest {
         when(turmaRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> turmaService.addProfessor(new AddTurmaRequestDTO("professor@gmail.com", 2L)))
+                .isThrownBy(() -> turmaService.addProfessor(new AddTurmaRequestDTO("professor@example.com", 2L)))
                 .withMessage("Turma selecionada não existe");
     }
 
@@ -200,7 +200,7 @@ class TurmaServiceTest {
         when(turmaRepository.findByIdAndProfessor(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Professor.class)))
                 .thenReturn(Optional.of(criarTurma()));
         assertThatExceptionOfType(UserAlreadyBelongsToAnEntityException.class)
-                .isThrownBy(() -> turmaService.addProfessor(new AddTurmaRequestDTO("professor@gmail.com", 1L)))
+                .isThrownBy(() -> turmaService.addProfessor(new AddTurmaRequestDTO("professor@example.com", 1L)))
                 .withMessage("Professor já está cadastrado nesta turma!");
     }
 
@@ -214,7 +214,7 @@ class TurmaServiceTest {
         when(professorRepository.findByEmail(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(professor));
         assertThatExceptionOfType(UserAlreadyBelongsToAnEntityException.class)
-                .isThrownBy(() -> turmaService.addProfessor(new AddTurmaRequestDTO("professor@gmail.com", 1L)))
+                .isThrownBy(() -> turmaService.addProfessor(new AddTurmaRequestDTO("professor@example.com", 1L)))
                 .withMessage("Professor já está cadastrado em outra disciplina");
     }
 

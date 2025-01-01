@@ -82,7 +82,7 @@ class NotaServiceTest {
         NotaResponseDTO notaResponseDTO = notaService.avaliarProva(1L, List.of(criarNotaRequestDTO()), criarUsuario(), 1L);
         assertThat(notaResponseDTO).isNotNull();
         assertThat(notaResponseDTO.getNotaProva()).isEqualTo(2D);
-        verify(mailService, times(1)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(1)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Recebimento de nota"), Mockito.contains("Olá, uma nova nota sua foi publicada na disciplina"));
     }
 
@@ -94,7 +94,7 @@ class NotaServiceTest {
         assertThatExceptionOfType(UserNotFoundException.class)
                 .isThrownBy(() -> notaService.avaliarProva(1L, List.of(criarNotaRequestDTO()), criarUsuario(), 2L))
                 .withMessage("Estudante não encontrado");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Recebimento de nota"), Mockito.contains("Olá, uma nova nota sua foi publicada na disciplina"));
     }
 
@@ -106,7 +106,7 @@ class NotaServiceTest {
         assertThatExceptionOfType(UserNotFoundException.class)
                 .isThrownBy(() -> notaService.avaliarProva(1L, List.of(criarNotaRequestDTO()), criarUsuario(), 2L))
                 .withMessage("Professor não encontrado");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Recebimento de nota"), Mockito.contains("Olá, uma nova nota sua foi publicada na disciplina"));
     }
 
@@ -118,7 +118,7 @@ class NotaServiceTest {
         assertThatExceptionOfType(EntityNotFoundException.class)
                 .isThrownBy(() -> notaService.avaliarProva(2L, List.of(criarNotaRequestDTO()), criarUsuario(), 2L))
                 .withMessage("Prova não pertence a esse professor ou id da prova não existe");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Recebimento de nota"), Mockito.contains("Olá, uma nova nota sua foi publicada na disciplina"));
     }
 
@@ -130,7 +130,7 @@ class NotaServiceTest {
         assertThatExceptionOfType(QuestionErrorException.class)
                 .isThrownBy(() -> notaService.avaliarProva(1L, List.of(notaRequestDTO), criarUsuario(), 1L))
                 .withMessage("Nota da questão é maior do que seu valor máximo");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Recebimento de nota"), Mockito.contains("Olá, uma nova nota sua foi publicada na disciplina"));
     }
 
@@ -144,7 +144,7 @@ class NotaServiceTest {
         assertThatExceptionOfType(EntityNotFoundException.class)
                 .isThrownBy(() -> notaService.avaliarProva(1L, List.of(notaRequestDTO), criarUsuario(), 1L))
                 .withMessage("Id da questão não existe");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Recebimento de nota"), Mockito.contains("Olá, uma nova nota sua foi publicada na disciplina"));
     }
 
@@ -156,7 +156,7 @@ class NotaServiceTest {
         assertThatExceptionOfType(QuestionErrorException.class)
                 .isThrownBy(() -> notaService.avaliarProva(5L, List.of(criarNotaRequestDTO()), criarUsuario(), 2L))
                 .withMessage("Questão não foi respondida pelo estudante na prova com id passado");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Recebimento de nota"), Mockito.contains("Olá, uma nova nota sua foi publicada na disciplina"));
     }
 }

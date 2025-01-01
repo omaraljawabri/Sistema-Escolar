@@ -93,7 +93,7 @@ class RespostaProvaServiceTest {
                 .thenReturn(List.of(respostaProva));
         assertThatCode(() -> respostaProvaService.responderProva(1L, criarRespostaProvaRequestDTO(), criarEstudante()))
                 .doesNotThrowAnyException();
-        verify(mailService, times(1)).enviarEmail(Mockito.eq("professor@gmail.com"),
+        verify(mailService, times(1)).enviarEmail(Mockito.eq("professor@example.com"),
                 Mockito.eq("Envio de prova"), Mockito.eq("O aluno Ciclano enviou a prova da disciplina de Geografia, entre na plataforma para começar a correção!"));
     }
 
@@ -105,7 +105,7 @@ class RespostaProvaServiceTest {
         assertThatExceptionOfType(UserNotFoundException.class)
                 .isThrownBy(() -> respostaProvaService.responderProva(1L, criarRespostaProvaRequestDTO(), criarEstudante()))
                 .withMessage("Estudante não encontrado");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@example.com"),
                 Mockito.eq("Envio de prova"), Mockito.eq("O aluno Ciclano enviou a prova da disciplina de Geografia, entre na plataforma para começar a correção!"));
     }
 
@@ -117,7 +117,7 @@ class RespostaProvaServiceTest {
         assertThatExceptionOfType(EntityNotFoundException.class)
                 .isThrownBy(() -> respostaProvaService.responderProva(2L, criarRespostaProvaRequestDTO(), criarEstudante()))
                 .withMessage("Id da prova não existe");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@example.com"),
                 Mockito.eq("Envio de prova"), Mockito.eq("O aluno Ciclano enviou a prova da disciplina de Geografia, entre na plataforma para começar a correção!"));
     }
 
@@ -131,7 +131,7 @@ class RespostaProvaServiceTest {
         assertThatExceptionOfType(TestErrorException.class)
                 .isThrownBy(() -> respostaProvaService.responderProva(1L, criarRespostaProvaRequestDTO(), criarEstudante()))
                 .withMessage("O tempo de prova já foi encerrado ou a prova não foi publicada ainda");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@example.com"),
                 Mockito.eq("Envio de prova"), Mockito.eq("O aluno Ciclano enviou a prova da disciplina de Geografia, entre na plataforma para começar a correção!"));
     }
 
@@ -146,7 +146,7 @@ class RespostaProvaServiceTest {
         assertThatExceptionOfType(TestErrorException.class)
                 .isThrownBy(() -> respostaProvaService.responderProva(1L, criarRespostaProvaRequestDTO(), criarEstudante()))
                 .withMessage("O tempo de prova já foi encerrado ou a prova não foi publicada ainda");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@example.com"),
                 Mockito.eq("Envio de prova"), Mockito.eq("O aluno Ciclano enviou a prova da disciplina de Geografia, entre na plataforma para começar a correção!"));
     }
 
@@ -158,7 +158,7 @@ class RespostaProvaServiceTest {
         assertThatExceptionOfType(UserAlreadyBelongsToAnEntityException.class)
                 .isThrownBy(() -> respostaProvaService.responderProva(1L, criarRespostaProvaRequestDTO(), criarEstudante()))
                 .withMessage("Estudante já respondeu a esta prova");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@example.com"),
                 Mockito.eq("Envio de prova"), Mockito.eq("O aluno Ciclano enviou a prova da disciplina de Geografia, entre na plataforma para começar a correção!"));
     }
 
@@ -170,7 +170,7 @@ class RespostaProvaServiceTest {
         assertThatExceptionOfType(EntityNotFoundException.class)
                 .isThrownBy(() -> respostaProvaService.responderProva(1L, criarRespostaProvaRequestDTO(), criarEstudante()))
                 .withMessage("Id da questão não existe ou questão não pertence a esta prova");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@example.com"),
                 Mockito.eq("Envio de prova"), Mockito.eq("O aluno Ciclano enviou a prova da disciplina de Geografia, entre na plataforma para começar a correção!"));
     }
 
@@ -182,7 +182,7 @@ class RespostaProvaServiceTest {
         assertThatExceptionOfType(EntityNotFoundException.class)
                 .isThrownBy(() -> respostaProvaService.responderProva(1L, criarRespostaProvaRequestDTO(), criarEstudante()))
                 .withMessage("Id da questão não existe ou questão não pertence a esta prova");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("professor@example.com"),
                 Mockito.eq("Envio de prova"), Mockito.eq("O aluno Ciclano enviou a prova da disciplina de Geografia, entre na plataforma para começar a correção!"));
     }
 

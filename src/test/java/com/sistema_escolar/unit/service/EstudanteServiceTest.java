@@ -39,7 +39,7 @@ class EstudanteServiceTest {
     void buscarPorId_RetornaEstudante_QuandoIdPassadoExistir() {
         Estudante estudante = estudanteService.buscarPorId(1L);
         assertThat(estudante).isNotNull();
-        assertThat(estudante.getEmail()).isEqualTo("ciclano@gmail.com");
+        assertThat(estudante.getEmail()).isEqualTo("ciclano@example.com");
         assertThat(estudante.getFirstName()).isEqualTo("Ciclano");
     }
 

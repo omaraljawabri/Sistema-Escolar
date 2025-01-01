@@ -105,7 +105,7 @@ class ProvaServiceTest {
         assertThat(provaResponseDTO).isNotNull();
         assertThat(provaResponseDTO.getId()).isEqualTo(1L);
         assertThat(provaResponseDTO.getQuestoes()).isNotNull().isNotEmpty().hasSize(1);
-        assertThat(provaResponseDTO.getQuestoes().getFirst().getCriadoPor()).isEqualTo("professor@gmail.com");
+        assertThat(provaResponseDTO.getQuestoes().getFirst().getCriadoPor()).isEqualTo("professor@example.com");
     }
 
     @Test
@@ -208,7 +208,7 @@ class ProvaServiceTest {
     void publicarProva_PublicaUmaProva_QuandoBemSucedido() {
         assertThatCode(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, criarProfessor()))
                 .doesNotThrowAnyException();
-        verify(mailService, times(1)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(1)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
     }
 
@@ -222,7 +222,7 @@ class ProvaServiceTest {
         assertThatExceptionOfType(UserNotFoundException.class)
                 .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, professor))
                 .withMessage("Professor não foi encontrado");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
     }
 
@@ -234,7 +234,7 @@ class ProvaServiceTest {
         assertThatExceptionOfType(EntityNotFoundException.class)
                 .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 5L, criarProfessor()))
                 .withMessage("Prova não pertence a esse professor ou id da prova não existe");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
     }
 
@@ -246,7 +246,7 @@ class ProvaServiceTest {
         assertThatExceptionOfType(UserDoesntBelongException.class)
                 .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, criarProfessor()))
                 .withMessage("Professor não está vinculado a uma turma");
-        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@gmail.com"),
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
                 Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
     }
 
@@ -271,10 +271,10 @@ class ProvaServiceTest {
     @Test
     @DisplayName("buscarPorIdEEmailDoProfessor deve retornar uma prova quando o id da prova buscado existir e ela estiver vinculada ao professor")
     void buscarPorIdEEmailDoProfessor_RetornaProva_QuandoProvaExistirEEstiverVinculadaAoProfessor() {
-        Prova prova = provaService.buscarPorIdEEmailDoProfessor(1L, "professor@gmail.com");
+        Prova prova = provaService.buscarPorIdEEmailDoProfessor(1L, "professor@example.com");
         assertThat(prova).isNotNull();
         assertThat(prova.getId()).isEqualTo(1L);
-        assertThat(prova.getEmailProfessor()).isEqualTo("professor@gmail.com");
+        assertThat(prova.getEmailProfessor()).isEqualTo("professor@example.com");
     }
 
     @Test
@@ -283,7 +283,7 @@ class ProvaServiceTest {
         when(provaRepository.findByIdAndEmailProfessor(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> provaService.buscarPorIdEEmailDoProfessor(5L, "fulano@gmail.com"))
+                .isThrownBy(() -> provaService.buscarPorIdEEmailDoProfessor(5L, "fulano@example.com"))
                 .withMessage("Prova não pertence a esse professor ou id da prova não existe");
     }
 
