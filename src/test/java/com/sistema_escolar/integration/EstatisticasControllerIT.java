@@ -39,13 +39,7 @@ class EstatisticasControllerIT {
     private NotaRepository notaRepository;
 
     @Autowired
-    private ProvaRepository provaRepository;
-
-    @Autowired
     private DisciplinaRepository disciplinaRepository;
-
-    @Autowired
-    private QuestaoRepository questaoRepository;
 
     @Autowired
     private TurmaRepository turmaRepository;
