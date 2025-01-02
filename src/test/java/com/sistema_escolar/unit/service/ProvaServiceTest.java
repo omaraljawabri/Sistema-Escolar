@@ -7,7 +7,6 @@ import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.entities.Professor;
 import com.sistema_escolar.entities.Prova;
 import com.sistema_escolar.entities.Questao;
-import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.exceptions.EntityNotFoundException;
 import com.sistema_escolar.exceptions.UserDoesntBelongException;
 import com.sistema_escolar.exceptions.UserNotFoundException;
@@ -19,7 +18,6 @@ import com.sistema_escolar.services.EstudanteService;
 import com.sistema_escolar.services.MailService;
 import com.sistema_escolar.services.ProfessorService;
 import com.sistema_escolar.services.ProvaService;
-import com.sistema_escolar.utils.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -289,8 +287,8 @@ class ProvaServiceTest {
 
     @Test
     @DisplayName("getProvaAvaliada deve retornar uma ProvaAvaliadaResponseDTO quando a busca por uma prova avaliada é bem sucedida")
-    void getProvaAvaliada_RetornaProvaAvaliadaResponseDTO_QuandoABuscaPorProvaAvaliadaEBemSucedida() {
-        ProvaAvaliadaResponseDTO provaAvaliada = provaService.getProvaAvaliada(1L, criarProfessor());
+    void buscarProvaAvaliada_RetornaProvaAvaliadaResponseDTO_QuandoABuscaPorProvaAvaliadaEBemSucedida() {
+        ProvaAvaliadaResponseDTO provaAvaliada = provaService.buscarProvaAvaliada(1L, criarProfessor());
         assertThat(provaAvaliada).isNotNull();
         assertThat(provaAvaliada.getProvaId()).isEqualTo(1L);
         assertThat(provaAvaliada.getQuestoesAvaliadas()).isNotEmpty().isNotNull().hasSize(1);
@@ -298,33 +296,33 @@ class ProvaServiceTest {
 
     @Test
     @DisplayName("getProvaAvaliada deve lançar uma UserNotFoundException quando o id do estudante passado não existir")
-    void getProvaAvaliada_LancaUserNotFoundException_QuandoEstudanteIdNaoExistir(){
+    void buscarProvaAvaliada_LancaUserNotFoundException_QuandoEstudanteIdNaoExistir(){
         doThrow(new UserNotFoundException("Estudante não encontrado"))
                 .when(estudanteService).buscarPorId(ArgumentMatchers.anyLong());
         Professor professor = criarProfessor();
         professor.setId(7L);
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> provaService.getProvaAvaliada(1L, professor))
+                .isThrownBy(() -> provaService.buscarProvaAvaliada(1L, professor))
                 .withMessage("Estudante não encontrado");
     }
 
     @Test
     @DisplayName("getProvaAvaliada deve lançar uma EntityNotFoundException quando o id da prova buscada não existir")
-    void getProvaAvaliada_LancaEntityNotFoundException_QuandoProvaIdNaoExistir(){
+    void buscarProvaAvaliada_LancaEntityNotFoundException_QuandoProvaIdNaoExistir(){
         when(provaRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> provaService.getProvaAvaliada(5L, criarProfessor()))
+                .isThrownBy(() -> provaService.buscarProvaAvaliada(5L, criarProfessor()))
                 .withMessage("Id da prova não existe");
     }
 
     @Test
     @DisplayName("getProvaAvaliada deve lançar uma UserDoesntBelongException quando não houverem respostas do estudante para a prova buscada")
-    void getProvaAvaliada_LancaUserDoesntBelongException_QuandoNaoHouveremRespostasDoEstudanteParaAProva(){
+    void buscarProvaAvaliada_LancaUserDoesntBelongException_QuandoNaoHouveremRespostasDoEstudanteParaAProva(){
         when(respostaProvaRepository.findByEstudanteIdAndProvaIdAndAvaliadaTrue(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
                 .thenReturn(Collections.emptyList());
         assertThatExceptionOfType(UserDoesntBelongException.class)
-                .isThrownBy(() -> provaService.getProvaAvaliada(1L, criarProfessor()))
+                .isThrownBy(() -> provaService.buscarProvaAvaliada(1L, criarProfessor()))
                 .withMessage("Estudante não fez esta prova");
     }
 }

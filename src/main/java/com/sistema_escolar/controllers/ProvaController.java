@@ -136,6 +136,6 @@ public class ProvaController {
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        return ResponseEntity.ok(provaService.getProvaAvaliada(id, usuario));
+        return ResponseEntity.ok(provaService.buscarProvaAvaliada(id, usuario));
     }
 }

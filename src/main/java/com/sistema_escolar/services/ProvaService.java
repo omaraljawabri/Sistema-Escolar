@@ -96,7 +96,7 @@ public class ProvaService {
                 .orElseThrow(() -> new EntityNotFoundException("Prova não pertence a esse professor ou id da prova não existe"));
     }
 
-    public ProvaAvaliadaResponseDTO getProvaAvaliada(Long id, Usuario usuario) {
+    public ProvaAvaliadaResponseDTO buscarProvaAvaliada(Long id, Usuario usuario) {
         Estudante estudante = estudanteService.buscarPorId(usuario.getId());
         Prova prova = buscarPorId(id);
         List<RespostaProva> respostasProva

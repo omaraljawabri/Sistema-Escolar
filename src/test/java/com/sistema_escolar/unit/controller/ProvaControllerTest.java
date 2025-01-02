@@ -20,9 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.sistema_escolar.utils.EntityUtils.*;
@@ -45,7 +42,7 @@ class ProvaControllerTest {
         when(provaService.atualizarProva(ArgumentMatchers.anyLong(), ArgumentMatchers.any(ProvaPutRequestDTO.class), ArgumentMatchers.any(Usuario.class)))
                 .thenReturn(criarProvaResponseDTO());
         doNothing().when(provaService).publicarProva(ArgumentMatchers.any(PublishProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
-        when(provaService.getProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class)))
+        when(provaService.buscarProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class)))
                 .thenReturn(criarProvaAvaliadaResponseDTO());
     }
 
@@ -188,7 +185,7 @@ class ProvaControllerTest {
     void buscarProvaAvaliada_LancaUserNotFoundException_QuandoEstudanteIdNaoExistir(){
         mockAuthentication();
         doThrow(new UserNotFoundException("Estudante não encontrado"))
-                .when(provaService).getProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
+                .when(provaService).buscarProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
         assertThatExceptionOfType(UserNotFoundException.class)
                 .isThrownBy(() -> provaController.buscarProvaAvaliada(2L))
                 .withMessage("Estudante não encontrado");
@@ -199,7 +196,7 @@ class ProvaControllerTest {
     void buscarProvaAvaliada_LancaEntityNotFoundException_QuandoProvaIdNaoExistir(){
         mockAuthentication();
         doThrow(new EntityNotFoundException("Id da prova não existe"))
-                .when(provaService).getProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
+                .when(provaService).buscarProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
         assertThatExceptionOfType(EntityNotFoundException.class)
                 .isThrownBy(() -> provaController.buscarProvaAvaliada(2L))
                 .withMessage("Id da prova não existe");
@@ -210,7 +207,7 @@ class ProvaControllerTest {
     void buscarProvaAvaliada_LancaUserDoesntBelongException_QuandoProvaNaoTiverSidoFeitaPeloEstudante(){
         mockAuthentication();
         doThrow(new UserDoesntBelongException("Estudante não fez esta prova"))
-                .when(provaService).getProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
+                .when(provaService).buscarProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
         assertThatExceptionOfType(UserDoesntBelongException.class)
                 .isThrownBy(() -> provaController.buscarProvaAvaliada(2L))
                 .withMessage("Estudante não fez esta prova");
