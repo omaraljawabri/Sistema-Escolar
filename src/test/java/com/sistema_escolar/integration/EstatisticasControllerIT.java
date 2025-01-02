@@ -67,11 +67,7 @@ class EstatisticasControllerIT {
     @Test
     @DisplayName("estatisticasDoEstudante deve retornar EstatisticasEstudanteResponseDTO e http status 200 quando a busca por estatisticas do estudante for bem sucedida")
     void estatisticasDoEstudante_RetornaEstatisticasEstudanteResponseDTOEStatus200_QuandoABuscaPorEstatisticasEBemSucedida() {
-        Estudante estudante = criarEstudante();
-        estudante.setId(null);
-        estudante.setIsVerified(true);
-        estudante.setVerificationCode(null);
-        estudante.setCodeExpirationTime(null);
+        Estudante estudante = criarEstudanteIT();
         estudante.setPassword(new BCryptPasswordEncoder().encode("ciclano"));
         String tokenJWT = gerarTokenJWT(estudante, "ciclano");
         HttpHeaders headers = new HttpHeaders();
@@ -87,13 +83,7 @@ class EstatisticasControllerIT {
     @Test
     @DisplayName("estatisticasDoEstudante deve retornar um http status 403 quando usuário que solicitou as estatísticas não é um estudante")
     void estatisticasDoEstudante_Retorna403_QuandoUsuarioNaoEEstudante(){
-        Professor professor = criarProfessor();
-        professor.setId(null);
-        professor.setPassword(new BCryptPasswordEncoder().encode("professor"));
-        professor.setVerificationCode(null);
-        professor.setDisciplina(null);
-        professor.setIsVerified(true);
-        professor.setCodeExpirationTime(null);
+        Professor professor = criarProfessorIT();
         String tokenJWT = gerarTokenJWT(professor, "professor");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+ tokenJWT);
@@ -110,12 +100,7 @@ class EstatisticasControllerIT {
         Disciplina disciplina = criarDisciplina();
         disciplina.setId(null);
         disciplinaRepository.save(disciplina);
-        Usuario usuario = criarUsuario();
-        usuario.setId(null);
-        usuario.setPassword(new BCryptPasswordEncoder().encode("fulano"));
-        usuario.setIsVerified(true);
-        usuario.setVerificationCode(null);
-        usuario.setCodeExpirationTime(null);
+        Usuario usuario = criarAdminIT();
         String tokenJWT = gerarTokenJWT(usuario, "fulano");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+tokenJWT);
@@ -130,12 +115,7 @@ class EstatisticasControllerIT {
     @Test
     @DisplayName("estatisticasGerais deve retornar um http status 403 quando o usuário que solicitou as estatísticas não for do tipo ADMIN")
     void estatisticasGerais_Retorna403_QuandoUsuarioNaoEAdmin(){
-        Estudante estudante = criarEstudante();
-        estudante.setId(null);
-        estudante.setVerificationCode(null);
-        estudante.setCodeExpirationTime(null);
-        estudante.setIsVerified(true);
-        estudante.setPassword(new BCryptPasswordEncoder().encode("ciclano"));
+        Estudante estudante = criarEstudanteIT();
         String tokenJWT = gerarTokenJWT(estudante, "ciclano");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+tokenJWT);
@@ -149,13 +129,7 @@ class EstatisticasControllerIT {
     @Test
     @DisplayName("estatisticasDaTurma deve retornar EstatisticasTurmaResponseDTO e um http status 200 quando a busca por estatísticas da turma for bem sucedida")
     void estatisticasDaTurma_RetornaEstatisticasTurmaResponseDTOEStatus200_QuandoABuscaPorEstatisticasDaTurmaEBemSucedida() {
-        Professor professor = criarProfessor();
-        professor.setId(null);
-        professor.setPassword(new BCryptPasswordEncoder().encode("professor"));
-        professor.setVerificationCode(null);
-        professor.setDisciplina(null);
-        professor.setIsVerified(true);
-        professor.setCodeExpirationTime(null);
+        Professor professor = criarProfessorIT();
         String tokenJWT = gerarTokenJWT(professor, "professor");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+ tokenJWT);
@@ -171,13 +145,7 @@ class EstatisticasControllerIT {
     @Test
     @DisplayName("estatisticasDaTurma deve retornar um http status 404 quando o professor que solicitou as estatísticas não fizer parte da turma")
     void estatisticasDaTurma_Retorna404_QuandoProfessorNaoFizerParteDaTurma(){
-        Professor professor = criarProfessor();
-        professor.setId(null);
-        professor.setPassword(new BCryptPasswordEncoder().encode("professor"));
-        professor.setVerificationCode(null);
-        professor.setDisciplina(null);
-        professor.setIsVerified(true);
-        professor.setCodeExpirationTime(null);
+        Professor professor = criarProfessorIT();
         String tokenJWT = gerarTokenJWT(professor, "professor");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+ tokenJWT);
@@ -190,12 +158,7 @@ class EstatisticasControllerIT {
     @Test
     @DisplayName("estatisticasDaTurma deve retornar um http status 403 quando o usuário que solicitou as estatísticas não for do tipo PROFESSOR")
     void estatisticasDaTurma_Retorna403_QuandoUsuarioNaoEProfessor(){
-        Usuario usuario = criarUsuario();
-        usuario.setId(null);
-        usuario.setPassword(new BCryptPasswordEncoder().encode("fulano"));
-        usuario.setIsVerified(true);
-        usuario.setVerificationCode(null);
-        usuario.setCodeExpirationTime(null);
+        Usuario usuario = criarAdminIT();
         String tokenJWT = gerarTokenJWT(usuario, "fulano");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+tokenJWT);

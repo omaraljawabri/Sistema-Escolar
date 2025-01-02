@@ -8,6 +8,7 @@ import com.sistema_escolar.utils.enums.UserRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -183,5 +184,21 @@ public class EntityUtils {
     public static ProvaRespondidaResponseDTO criarProvaRespondidaResponseDTO(){
         return ProvaRespondidaResponseDTO.builder().estudanteId(1L).nomeEstudante("Ciclano Sousa")
                 .questoesRespondidas(List.of(criarQuestaoRespondidaResponseDTO())).build();
+    }
+
+    public static Usuario criarAdminIT(){
+        return Usuario.builder().email("fulano@example.com").password(new BCryptPasswordEncoder().encode("fulano")).role(UserRole.ADMIN)
+                .firstName("Fulano").lastName("Silva").build();
+    }
+
+    public static Estudante criarEstudanteIT(){
+        return new Estudante("ciclano@example.com", new BCryptPasswordEncoder().encode("ciclano"), UserRole.ESTUDANTE,
+                null, null, true, "Ciclano",
+                "Sousa");
+    }
+
+    public static Professor criarProfessorIT(){
+        return new Professor("professor@example.com", new BCryptPasswordEncoder().encode("professor"), UserRole.PROFESSOR, null,
+                null, true, "Professor", "Santos");
     }
 }
