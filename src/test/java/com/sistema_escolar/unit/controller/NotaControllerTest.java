@@ -5,6 +5,7 @@ import com.sistema_escolar.dtos.response.NotaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.exceptions.EntityNotFoundException;
 import com.sistema_escolar.exceptions.QuestionErrorException;
+import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.services.NotaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +50,39 @@ class NotaControllerTest {
         assertThat(notaResponseDTO.getBody()).isNotNull();
         assertThat(notaResponseDTO.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(notaResponseDTO.getBody().getNotaProva()).isEqualTo(10D);
+    }
+
+    @Test
+    @DisplayName("avaliarProva lança uma UserNotFoundException quando o estudante não for encontrado")
+    void avaliarProva_LancaUserNotFoundException_QuandoEstudanteNaoExistir(){
+        mockAuthentication();
+        doThrow(new UserNotFoundException("Estudante não encontrado"))
+                .when(notaService).avaliarProva(ArgumentMatchers.anyLong(), ArgumentMatchers.anyList(), ArgumentMatchers.any(Usuario.class), ArgumentMatchers.anyLong());
+        assertThatExceptionOfType(UserNotFoundException.class)
+                .isThrownBy(() -> notaController.avaliarProva(1L, 2L, List.of(criarNotaRequestDTO())))
+                .withMessage("Estudante não encontrado");
+    }
+
+    @Test
+    @DisplayName("avaliarProva lança uma UserNotFoundException quando professor não for encontrado")
+    void avaliarProva_LancaUserNotFoundException_QuandoProfessorNaoExistir(){
+        mockAuthentication();
+        doThrow(new UserNotFoundException("Professor não foi encontrado"))
+                .when(notaService).avaliarProva(ArgumentMatchers.anyLong(), ArgumentMatchers.anyList(), ArgumentMatchers.any(Usuario.class), ArgumentMatchers.anyLong());
+        assertThatExceptionOfType(UserNotFoundException.class)
+                .isThrownBy(() -> notaController.avaliarProva(1L, 1L, List.of(criarNotaRequestDTO())))
+                .withMessage("Professor não foi encontrado");
+    }
+
+    @Test
+    @DisplayName("avaliarProva lança uma EntityNotFoundException quando prova não pertencer ao professor ou id da prova não existir")
+    void avaliarProva_LancaEntityNotFoundException_QuandoProvaNaoPertencerAoProfessorOuProvaIdNaoExistir(){
+        mockAuthentication();
+        doThrow(new EntityNotFoundException("Prova não pertence a esse professor ou id da prova não existe"))
+                .when(notaService).avaliarProva(ArgumentMatchers.anyLong(), ArgumentMatchers.anyList(), ArgumentMatchers.any(Usuario.class), ArgumentMatchers.anyLong());
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> notaController.avaliarProva(1L, 1L, List.of(criarNotaRequestDTO())))
+                .withMessage("Prova não pertence a esse professor ou id da prova não existe");
     }
 
     @Test
