@@ -61,7 +61,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/api/v1/turma/gerar-codigo/professor").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma/entrar").hasAnyRole("PROFESSOR", "ESTUDANTE")
                         .requestMatchers(HttpMethod.POST, "/api/v1/prova").hasRole("PROFESSOR")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/prova").hasRole("PROFESSOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/prova/**").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/v1/prova/**").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/prova/avaliada/**").hasRole("ESTUDANTE")
                         .requestMatchers(HttpMethod.GET, "/api/v1/questao").hasRole("PROFESSOR")
