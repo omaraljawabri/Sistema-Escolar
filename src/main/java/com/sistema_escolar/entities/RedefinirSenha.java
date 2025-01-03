@@ -22,10 +22,10 @@ public class RedefinirSenha {
     private Long id;
 
     @NotNull
-    private String verificationCode;
+    private String codigoDeVerificacao;
 
     @NotNull
-    private LocalDateTime expirationCodeTime;
+    private LocalDateTime tempoDeExpiracaoCodigo;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")

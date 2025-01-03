@@ -2,7 +2,7 @@ package com.sistema_escolar.unit.service;
 
 import com.sistema_escolar.dtos.request.AddTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.CodeRequestDTO;
-import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
+import com.sistema_escolar.dtos.request.CriarTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.TurmaRequestDTO;
 import com.sistema_escolar.dtos.response.CodeResponseDTO;
 import com.sistema_escolar.entities.Disciplina;
@@ -53,11 +53,11 @@ class TurmaServiceTest {
     @BeforeEach
     void setup(){
         Turma turma = criarTurma();
-        turma.setTurmaCode("7%$@&57632");
-        turma.setCodeExpirationTime(LocalDateTime.now().plusHours(2));
+        turma.setCodigoTurma("7%$@&57632");
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusHours(2));
         when(disciplinaRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(criarDisciplina()));
-        when(turmaRepository.findByNameAndDisciplina(ArgumentMatchers.anyString(), ArgumentMatchers.any(Disciplina.class)))
+        when(turmaRepository.findByNomeAndDisciplina(ArgumentMatchers.anyString(), ArgumentMatchers.any(Disciplina.class)))
                 .thenReturn(Optional.empty());
         when(estudanteRepository.findByEmail(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(criarEstudante()));
@@ -71,30 +71,30 @@ class TurmaServiceTest {
                 .thenReturn(Optional.empty());
         when(turmaRepository.findByProfessorId(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(criarTurma()));
-        when(turmaRepository.findByTurmaCode(ArgumentMatchers.anyString()))
+        when(turmaRepository.findByCodigoTurma(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(turma));
         when(professorRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(criarProfessor()));
         when(estudanteRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(criarEstudante()));
-        when(turmaRepository.findByProfessorIdAndTurmaCode(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        when(turmaRepository.findByProfessorIdAndCodigoTurma(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
     }
 
     @Test
     @DisplayName("criarTurma deve cadastrar uma turma quando bem sucedido")
     void criarTurma_CadastraUmaTurma_QuandoBemSucedido() {
-        assertThatCode(() -> turmaService.criarTurma(new CreateTurmaRequestDTO("Turma A", 1L)))
+        assertThatCode(() -> turmaService.criarTurma(new CriarTurmaRequestDTO("Turma A", 1L)))
                 .doesNotThrowAnyException();
     }
 
     @Test
     @DisplayName("criarTurma deve lançar uma EntityAlreadyExistsException quando o nome da turma passado já existir")
     void criarTurma_LancaEntityAlreadyExistsException_QuandoNomeDaTurmaJaExistir(){
-        when(turmaRepository.findByNameAndDisciplina(ArgumentMatchers.anyString(), ArgumentMatchers.any(Disciplina.class)))
+        when(turmaRepository.findByNomeAndDisciplina(ArgumentMatchers.anyString(), ArgumentMatchers.any(Disciplina.class)))
                 .thenReturn(Optional.of(criarTurma()));
         assertThatExceptionOfType(EntityAlreadyExistsException.class)
-                .isThrownBy(() -> turmaService.criarTurma(new CreateTurmaRequestDTO("Turma B", 1L)))
+                .isThrownBy(() -> turmaService.criarTurma(new CriarTurmaRequestDTO("Turma B", 1L)))
                 .withMessage("A turma que está sendo criada já existe");
     }
 
@@ -104,7 +104,7 @@ class TurmaServiceTest {
         when(disciplinaRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> turmaService.criarTurma(new CreateTurmaRequestDTO("Turma A", 2L)))
+                .isThrownBy(() -> turmaService.criarTurma(new CriarTurmaRequestDTO("Turma A", 2L)))
                 .withMessage("Disciplina passada não existe");
     }
 
@@ -121,8 +121,8 @@ class TurmaServiceTest {
         Turma turma = criarTurma();
         turma.setEstudantes(null);
         turma.setId(2L);
-        turma.setTurmaCode("7%$@&57682");
-        turma.setCodeExpirationTime(LocalDateTime.now().plusHours(2));
+        turma.setCodigoTurma("7%$@&57682");
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusHours(2));
         Estudante estudante = criarEstudante();
         estudante.setTurmas(List.of(criarTurma()));
         when(turmaRepository.findById(ArgumentMatchers.anyLong()))
@@ -209,7 +209,7 @@ class TurmaServiceTest {
     void addProfessor_LancaUserAlreadyBelongsToAnEntityException_QuandoProfessorJaPertencerAOutraDisciplina(){
         Professor professor = criarProfessor();
         Disciplina disciplina = criarDisciplina();
-        disciplina.setName("Matemática");
+        disciplina.setNome("Matemática");
         professor.setDisciplina(disciplina);
         when(professorRepository.findByEmail(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(professor));
@@ -271,7 +271,7 @@ class TurmaServiceTest {
     @Test
     @DisplayName("entrarTurma deve lançar uma InvalidCodeException quando o código da turma passado não existir")
     void entrarTurma_LancaInvalidCodeException_QuandoCodigoDaTurmaNaoExistir(){
-        when(turmaRepository.findByTurmaCode(ArgumentMatchers.anyString()))
+        when(turmaRepository.findByCodigoTurma(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.empty());
         assertThatExceptionOfType(InvalidCodeException.class)
                 .isThrownBy(() -> turmaService.entrarTurma(new CodeRequestDTO(""), criarEstudante()))
@@ -282,9 +282,9 @@ class TurmaServiceTest {
     @DisplayName("entrarTurma deve lançar uma InvalidCodeException quando o código da turma passado já estiver expirado")
     void entrarTurma_LancaInvalidCodeException_QuandoCodigoDaTurmaJaEstiverExpirado(){
         Turma turma = criarTurma();
-        turma.setTurmaCode("7%$@&57632");
-        turma.setCodeExpirationTime(LocalDateTime.now().minusHours(2));
-        when(turmaRepository.findByTurmaCode(ArgumentMatchers.anyString()))
+        turma.setCodigoTurma("7%$@&57632");
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().minusHours(2));
+        when(turmaRepository.findByCodigoTurma(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(turma));
         assertThatExceptionOfType(InvalidCodeException.class)
                 .isThrownBy(() -> turmaService.entrarTurma(new CodeRequestDTO("7%$@&57632"), criarEstudante()))
@@ -294,7 +294,7 @@ class TurmaServiceTest {
     @Test
     @DisplayName("entrarTurma deve lançar uma UserAlreadyBelongsToAnEntityException quando o professor a entrar na turma ja fizer parte dela")
     void entrarTurma_LancaUserAlreadyBelongsToAnEntityException_QuandoProfessorJaFizerParteDaTurma(){
-        when(turmaRepository.findByProfessorIdAndTurmaCode(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        when(turmaRepository.findByProfessorIdAndCodigoTurma(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(criarTurma()));
         assertThatExceptionOfType(UserAlreadyBelongsToAnEntityException.class)
                 .isThrownBy(() -> turmaService.entrarTurma(new CodeRequestDTO("7%$@&57632"), criarProfessor()))
@@ -318,15 +318,15 @@ class TurmaServiceTest {
     void entrarTurma_CadastraEstudanteNaTurma_PercorrendoDiferentesCondicoes(){
         Turma turma = criarTurma();
         turma.setEstudantes(null);
-        turma.setTurmaCode("7%$@&57632");
-        turma.setCodeExpirationTime(LocalDateTime.now().plusHours(2));
+        turma.setCodigoTurma("7%$@&57632");
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusHours(2));
         Estudante estudante = criarEstudante();
         estudante.setTurmas(List.of(turma));
         Disciplina disciplina = criarDisciplina();
         disciplina.setEstudantes(List.of(estudante));
         disciplina.setId(2L);
         estudante.setDisciplinas(List.of(disciplina));
-        when(turmaRepository.findByTurmaCode(ArgumentMatchers.anyString()))
+        when(turmaRepository.findByCodigoTurma(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(turma));
         when(estudanteRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(estudante));

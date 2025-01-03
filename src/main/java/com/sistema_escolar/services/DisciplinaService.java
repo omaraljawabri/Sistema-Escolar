@@ -1,6 +1,6 @@
 package com.sistema_escolar.services;
 
-import com.sistema_escolar.dtos.request.CreateDisciplinaRequestDTO;
+import com.sistema_escolar.dtos.request.CriarDisciplinaRequestDTO;
 import com.sistema_escolar.entities.Disciplina;
 import com.sistema_escolar.exceptions.EntityAlreadyExistsException;
 import com.sistema_escolar.repositories.DisciplinaRepository;
@@ -15,12 +15,12 @@ public class DisciplinaService {
 
     private final DisciplinaRepository disciplinaRepository;
 
-    public void criarDisciplina(CreateDisciplinaRequestDTO createDisciplinaRequestDTO){
-        Optional<Disciplina> disciplinaOptional = disciplinaRepository.findByName(createDisciplinaRequestDTO.getName());
+    public void criarDisciplina(CriarDisciplinaRequestDTO criarDisciplinaRequestDTO){
+        Optional<Disciplina> disciplinaOptional = disciplinaRepository.findByNome(criarDisciplinaRequestDTO.getNome());
         if (disciplinaOptional.isPresent()){
             throw new EntityAlreadyExistsException("Nome da disciplina já existe");
         }
-        Disciplina disciplinaToSave = Disciplina.builder().name(createDisciplinaRequestDTO.getName()).build();
+        Disciplina disciplinaToSave = Disciplina.builder().nome(criarDisciplinaRequestDTO.getNome()).build();
         disciplinaRepository.save(disciplinaToSave);
     }
 }

@@ -16,7 +16,7 @@ import java.time.ZoneOffset;
 public class TokenService {
     @Value("${api.sistema-escolar.auth.token.secret}")
     private String secret;
-    public String generateToken(Usuario usuario){
+    public String gerarToken(Usuario usuario){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
@@ -24,14 +24,14 @@ public class TokenService {
                     .withIssuer("login-auth-sistema-escolar-api")
                     .withSubject(usuario.getEmail())
                     .withClaim("role", usuario.getRole().name())
-                    .withExpiresAt(this.generateExpirationTime())
+                    .withExpiresAt(this.gerarTempoDeExpiracao())
                     .sign(algorithm);
         } catch (JWTCreationException exception){
             throw new RuntimeException("Erro ao tentar autenticar");
         }
     }
 
-    public String validateToken(String token){
+    public String validarToken(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
@@ -44,7 +44,7 @@ public class TokenService {
         }
     }
 
-    private Instant generateExpirationTime(){
+    private Instant gerarTempoDeExpiracao(){
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }

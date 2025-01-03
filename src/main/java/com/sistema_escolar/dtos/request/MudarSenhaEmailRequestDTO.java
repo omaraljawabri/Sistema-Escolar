@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ChangePasswordEmailRequestDTO {
+public class MudarSenhaEmailRequestDTO {
     @Email
     @NotNull
     @Schema(description = "E-mail do usuário", type = "String", example = "fulano@gmail.com", requiredMode = Schema.RequiredMode.REQUIRED)

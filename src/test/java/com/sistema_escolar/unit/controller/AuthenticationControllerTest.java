@@ -1,10 +1,10 @@
 package com.sistema_escolar.unit.controller;
 
 import com.sistema_escolar.controllers.AuthenticationController;
-import com.sistema_escolar.dtos.request.ChangePasswordEmailRequestDTO;
-import com.sistema_escolar.dtos.request.ChangePasswordRequestDTO;
+import com.sistema_escolar.dtos.request.MudarSenhaEmailRequestDTO;
+import com.sistema_escolar.dtos.request.MudarSenhaRequestDTO;
 import com.sistema_escolar.dtos.request.LoginRequestDTO;
-import com.sistema_escolar.dtos.request.RegisterRequestDTO;
+import com.sistema_escolar.dtos.request.RegistrarRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.exceptions.AccountWasntValidatedException;
@@ -13,7 +13,6 @@ import com.sistema_escolar.exceptions.InvalidCodeException;
 import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.infra.security.TokenService;
 import com.sistema_escolar.services.AuthenticationService;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,22 +48,22 @@ class AuthenticationControllerTest {
 
     @BeforeEach
     void setup(){
-        doNothing().when(authenticationService).registrarUsuario(ArgumentMatchers.any(RegisterRequestDTO.class));
+        doNothing().when(authenticationService).registrarUsuario(ArgumentMatchers.any(RegistrarRequestDTO.class));
         when(authenticationService.login(ArgumentMatchers.any(LoginRequestDTO.class), ArgumentMatchers.anyString()))
                 .thenReturn(criarLoginResponseDTO());
         when(authenticationManager.authenticate(ArgumentMatchers.any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(mockAuthentication());
-        when(tokenService.generateToken(ArgumentMatchers.any(Usuario.class)))
+        when(tokenService.gerarToken(ArgumentMatchers.any(Usuario.class)))
                 .thenReturn("mocked-token");
         doNothing().when(authenticationService).verificarCodigo(ArgumentMatchers.anyString());
-        doNothing().when(authenticationService).mudarSenha(ArgumentMatchers.any(ChangePasswordEmailRequestDTO.class));
-        doNothing().when(authenticationService).verificarMudarSenha(ArgumentMatchers.anyString(), ArgumentMatchers.any(ChangePasswordRequestDTO.class));
+        doNothing().when(authenticationService).mudarSenha(ArgumentMatchers.any(MudarSenhaEmailRequestDTO.class));
+        doNothing().when(authenticationService).verificarMudarSenha(ArgumentMatchers.anyString(), ArgumentMatchers.any(MudarSenhaRequestDTO.class));
     }
 
     private Authentication mockAuthentication() {
         Usuario usuario = new Usuario();
         usuario.setEmail("fulano@example.com");
-        usuario.setPassword("fulano");
+        usuario.setSenha("fulano");
         return new UsernamePasswordAuthenticationToken(usuario, null);
     }
 
@@ -83,7 +82,7 @@ class AuthenticationControllerTest {
     @DisplayName("registrar deve lançar uma EntityAlreadyExistsException quando o email do usuário a ser registrado já existir")
     void registrar_LancaEntityAlreadyExistsException_QuandoEmailDoUsuarioExistir(){
         doThrow(new EntityAlreadyExistsException("Email fulano@example.com já existe"))
-                .when(authenticationService).registrarUsuario(ArgumentMatchers.any(RegisterRequestDTO.class));
+                .when(authenticationService).registrarUsuario(ArgumentMatchers.any(RegistrarRequestDTO.class));
         assertThatExceptionOfType(EntityAlreadyExistsException.class)
                 .isThrownBy(() -> authenticationController.registrar(criarRegisterRequestDTO()))
                 .withMessage("Email fulano@example.com já existe");
@@ -143,9 +142,9 @@ class AuthenticationControllerTest {
     @Test
     @DisplayName("pedirMudancaDeSenha deve solicitar a mudança de senha do usuário quando bem sucedido")
     void pedirMudancaDeSenha_SolicitaAMudancaDaSenhaDoUsuario_QuandoBemSucedido() {
-        assertThatCode(() -> authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("fulano@example.com")))
+        assertThatCode(() -> authenticationController.pedirMudancaDeSenha(new MudarSenhaEmailRequestDTO("fulano@example.com")))
                 .doesNotThrowAnyException();
-        ResponseEntity<Void> responseEntity = authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("fulano@example.com"));
+        ResponseEntity<Void> responseEntity = authenticationController.pedirMudancaDeSenha(new MudarSenhaEmailRequestDTO("fulano@example.com"));
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -154,18 +153,18 @@ class AuthenticationControllerTest {
     @DisplayName("pedirMudancaDeSenha deve lançar uma UserNotFoundException quando o email do usuário não existir")
     void pedirMudancaDeSenha_LancaUserNotFoundException_QuandoEmailDoUsuarioNaoExistir(){
         doThrow(new UserNotFoundException("Email enviado não está cadastrado"))
-                .when(authenticationService).mudarSenha(ArgumentMatchers.any(ChangePasswordEmailRequestDTO.class));
+                .when(authenticationService).mudarSenha(ArgumentMatchers.any(MudarSenhaEmailRequestDTO.class));
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> authenticationController.pedirMudancaDeSenha(new ChangePasswordEmailRequestDTO("ciclano@example.com")))
+                .isThrownBy(() -> authenticationController.pedirMudancaDeSenha(new MudarSenhaEmailRequestDTO("ciclano@example.com")))
                 .withMessage("Email enviado não está cadastrado");
     }
 
     @Test
     @DisplayName("verificarMudancaDeSenha verifica o pedido de mudança de senha do usuário e altera a senha do mesmo quando bem sucedido")
     void verificarMudancaDeSenha_VerificaOPedidoDeMudancaDeSenhaEAlteraSenhaDoUsuario_QuandoBemSucedido() {
-        assertThatCode(() -> authenticationController.verificarMudancaDeSenha("mocked-code", new ChangePasswordRequestDTO("fulano10")))
+        assertThatCode(() -> authenticationController.verificarMudancaDeSenha("mocked-code", new MudarSenhaRequestDTO("fulano10")))
                 .doesNotThrowAnyException();
-        ResponseEntity<Void> responseEntity = authenticationController.verificarMudancaDeSenha("mocked-code", new ChangePasswordRequestDTO("fulano10"));
+        ResponseEntity<Void> responseEntity = authenticationController.verificarMudancaDeSenha("mocked-code", new MudarSenhaRequestDTO("fulano10"));
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -174,9 +173,9 @@ class AuthenticationControllerTest {
     @DisplayName("verificarMudancaDeSenha deve lançar uma InvalidCodeException quando houver algum erro na mudança de senha do usuário")
     void verificarMudancaDeSenha_LancaInvalidCodeException_QuandoHouverErroNaMudancaDeSenha(){
         doThrow(new InvalidCodeException("Código de validação inválido!"))
-                .when(authenticationService).verificarMudarSenha(ArgumentMatchers.anyString(), ArgumentMatchers.any(ChangePasswordRequestDTO.class));
+                .when(authenticationService).verificarMudarSenha(ArgumentMatchers.anyString(), ArgumentMatchers.any(MudarSenhaRequestDTO.class));
         assertThatExceptionOfType(InvalidCodeException.class)
-                .isThrownBy(() -> authenticationController.verificarMudancaDeSenha("invalidmocked-code", new ChangePasswordRequestDTO("fulano10")))
+                .isThrownBy(() -> authenticationController.verificarMudancaDeSenha("invalidmocked-code", new MudarSenhaRequestDTO("fulano10")))
                 .withMessage("Código de validação inválido!");
     }
 }

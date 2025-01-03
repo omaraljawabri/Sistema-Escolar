@@ -4,11 +4,9 @@ import com.sistema_escolar.dtos.response.EstatisticasEstudanteResponseDTO;
 import com.sistema_escolar.dtos.response.EstatisticasGeraisResponseDTO;
 import com.sistema_escolar.dtos.response.EstatisticasTurmaResponseDTO;
 import com.sistema_escolar.entities.Prova;
-import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.repositories.*;
 import com.sistema_escolar.services.EstatisticasService;
-import com.sistema_escolar.utils.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,8 +52,8 @@ class EstatisticasServiceTest {
         when(turmaRepository.findByIdAndProfessorId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(criarTurma()));
         Prova prova = criarProva();
-        prova.setExpirationTime(LocalDateTime.now().minusHours(2));
-        when(provaRepository.findByDisciplinaIdAndEmailProfessorAndIsPublishedTrue(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        prova.setTempoDeExpiracao(LocalDateTime.now().minusHours(2));
+        when(provaRepository.findByDisciplinaIdAndEmailProfessorAndPublicadoTrue(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
                 .thenReturn(List.of(prova));
         when(notaRepository.findByEstudanteIdAndProvaId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(criarNota()));
@@ -105,7 +103,7 @@ class EstatisticasServiceTest {
     @Test
     @DisplayName("estatisticasDaTurma deve retornar 0 como valor dos atributos quando não houverem provas publicadas ou expiradas daquela turma")
     void estatisticasDaTurma_RetornaZeroComoValores_QuandoNaoHouveremProvasPublicadasOuExpiradasNaTurma(){
-        when(provaRepository.findByDisciplinaIdAndEmailProfessorAndIsPublishedTrue(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        when(provaRepository.findByDisciplinaIdAndEmailProfessorAndPublicadoTrue(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
                 .thenReturn(Collections.emptyList());
         EstatisticasTurmaResponseDTO estatisticasTurmaResponseDTO = estatisticasService.estatisticasDaTurma(1L, criarProfessor());
         assertThat(estatisticasTurmaResponseDTO).isNotNull();

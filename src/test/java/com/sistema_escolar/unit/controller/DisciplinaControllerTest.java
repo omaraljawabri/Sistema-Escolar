@@ -1,10 +1,9 @@
 package com.sistema_escolar.unit.controller;
 
 import com.sistema_escolar.controllers.DisciplinaController;
-import com.sistema_escolar.dtos.request.CreateDisciplinaRequestDTO;
+import com.sistema_escolar.dtos.request.CriarDisciplinaRequestDTO;
 import com.sistema_escolar.exceptions.EntityAlreadyExistsException;
 import com.sistema_escolar.services.DisciplinaService;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,15 +29,15 @@ class DisciplinaControllerTest {
 
     @BeforeEach
     void setup(){
-        doNothing().when(disciplinaService).criarDisciplina(ArgumentMatchers.any(CreateDisciplinaRequestDTO.class));
+        doNothing().when(disciplinaService).criarDisciplina(ArgumentMatchers.any(CriarDisciplinaRequestDTO.class));
     }
 
     @Test
     @DisplayName("criarDisciplina deve cadastrar uma disciplina no sistema quando for bem sucedido")
     void criarDisciplina_CadastraUmaDisciplinaNoSistema_QuandoBemSucedido() {
-        assertThatCode(() -> disciplinaController.criarDisciplina(new CreateDisciplinaRequestDTO("Geografia")))
+        assertThatCode(() -> disciplinaController.criarDisciplina(new CriarDisciplinaRequestDTO("Geografia")))
                 .doesNotThrowAnyException();
-        ResponseEntity<Void> responseEntity = disciplinaController.criarDisciplina(new CreateDisciplinaRequestDTO("Geografia"));
+        ResponseEntity<Void> responseEntity = disciplinaController.criarDisciplina(new CriarDisciplinaRequestDTO("Geografia"));
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
@@ -47,9 +46,9 @@ class DisciplinaControllerTest {
     @DisplayName("criarDisciplina deve lançar uma EntityAlreadyExistsException quando o nome da disciplina a ser cadastrada já existir")
     void criarDisciplina_LancaEntityAlreadyExistsException_QuandoNomeDaDisciplinaJaExistir(){
         doThrow(new EntityAlreadyExistsException("Nome da disciplina já existe"))
-                .when(disciplinaService).criarDisciplina(ArgumentMatchers.any(CreateDisciplinaRequestDTO.class));
+                .when(disciplinaService).criarDisciplina(ArgumentMatchers.any(CriarDisciplinaRequestDTO.class));
         assertThatExceptionOfType(EntityAlreadyExistsException.class)
-                .isThrownBy(() -> disciplinaController.criarDisciplina(new CreateDisciplinaRequestDTO("Matemática")))
+                .isThrownBy(() -> disciplinaController.criarDisciplina(new CriarDisciplinaRequestDTO("Matemática")))
                 .withMessage("Nome da disciplina já existe");
     }
 }

@@ -1,9 +1,9 @@
 package com.sistema_escolar.services;
 
-import com.sistema_escolar.dtos.request.ChangePasswordEmailRequestDTO;
-import com.sistema_escolar.dtos.request.ChangePasswordRequestDTO;
+import com.sistema_escolar.dtos.request.MudarSenhaEmailRequestDTO;
+import com.sistema_escolar.dtos.request.MudarSenhaRequestDTO;
 import com.sistema_escolar.dtos.request.LoginRequestDTO;
-import com.sistema_escolar.dtos.request.RegisterRequestDTO;
+import com.sistema_escolar.dtos.request.RegistrarRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.*;
 import com.sistema_escolar.exceptions.AccountWasntValidatedException;
@@ -33,28 +33,28 @@ public class AuthenticationService {
     private final MailService mailService;
 
     @Transactional
-    public void registrarUsuario(RegisterRequestDTO registerRequestDTO){
-        if (usuarioRepository.findByEmail(registerRequestDTO.getEmail()).isPresent()){
-            throw new EntityAlreadyExistsException("Email "+usuarioRepository.findByEmail(registerRequestDTO.getEmail()).get().getEmail()+" já existe");
+    public void registrarUsuario(RegistrarRequestDTO registrarRequestDTO){
+        if (usuarioRepository.findByEmail(registrarRequestDTO.getEmail()).isPresent()){
+            throw new EntityAlreadyExistsException("Email "+usuarioRepository.findByEmail(registrarRequestDTO.getEmail()).get().getEmail()+" já existe");
         }
         String verificationCode = UUID.randomUUID().toString();
         LocalDateTime codeExpirationTime = LocalDateTime.now().plusHours(24);
-        String password = new BCryptPasswordEncoder().encode(registerRequestDTO.getPassword());
-        salvarUsuario(registerRequestDTO, password, verificationCode, codeExpirationTime);
+        String password = new BCryptPasswordEncoder().encode(registrarRequestDTO.getSenha());
+        salvarUsuario(registrarRequestDTO, password, verificationCode, codeExpirationTime);
         String verificationLink = String.format("http://localhost:8080/api/v1/auth/verificar?code=%s", verificationCode);
         String subject = "Validação de cadastro";
         String textMessage = String.format("Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. %nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: %n%s", verificationLink);
-        mailService.enviarEmail(registerRequestDTO.getEmail(), subject, textMessage);
+        mailService.enviarEmail(registrarRequestDTO.getEmail(), subject, textMessage);
     }
 
     public void verificarCodigo(String code){
-        Optional<Usuario> usuario = usuarioRepository.findByVerificationCode(code);
-        if (usuario.isEmpty() || usuario.orElseThrow().getCodeExpirationTime().isBefore(LocalDateTime.now())){
+        Optional<Usuario> usuario = usuarioRepository.findByCodigoDeVerificacao(code);
+        if (usuario.isEmpty() || usuario.orElseThrow().getTempoDeExpiracaoCodigo().isBefore(LocalDateTime.now())){
             throw new InvalidCodeException("Código de verificação inválido");
         }
-        usuario.orElseThrow().setIsVerified(true);
-        usuario.orElseThrow().setVerificationCode(null);
-        usuario.orElseThrow().setCodeExpirationTime(null);
+        usuario.orElseThrow().setVerificado(true);
+        usuario.orElseThrow().setCodigoDeVerificacao(null);
+        usuario.orElseThrow().setTempoDeExpiracaoCodigo(null);
         usuarioRepository.save(usuario.get());
     }
 
@@ -62,56 +62,56 @@ public class AuthenticationService {
         Usuario usuario
                 = usuarioRepository.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Email enviado não existe!"));
-        if (Boolean.FALSE.equals(usuario.getIsVerified())){
+        if (Boolean.FALSE.equals(usuario.getVerificado())){
             throw new AccountWasntValidatedException("Conta não foi validada!");
         }
         return LoginResponseDTO.builder().email(loginRequestDTO.getEmail()).token(token).build();
     }
 
     @Transactional
-    public void mudarSenha(ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
+    public void mudarSenha(MudarSenhaEmailRequestDTO mudarSenhaEmailRequestDTO){
         Usuario usuario
-                = usuarioRepository.findByEmail(changePasswordEmailRequestDTO.getEmail())
+                = usuarioRepository.findByEmail(mudarSenhaEmailRequestDTO.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Email enviado não está cadastrado"));
         String verificationCode = UUID.randomUUID().toString();
-        RedefinirSenha redefinirSenha = RedefinirSenha.builder().verificationCode(verificationCode).expirationCodeTime(LocalDateTime.now().plusHours(24))
+        RedefinirSenha redefinirSenha = RedefinirSenha.builder().codigoDeVerificacao(verificationCode).tempoDeExpiracaoCodigo(LocalDateTime.now().plusHours(24))
                 .usuario(usuario).build();
         redefinirSenhaRepository.save(redefinirSenha);
         String verificationLink = String.format("http://localhost:8080/api/v1/auth/change-password/verificar?code=%s",verificationCode);
         String subject = "Redefinição de senha";
         String textMessage = String.format("Olá, recebemos seu pedido para redefinição de senha!%nClique no link abaixo para prosseguir com o processo!%n%s",verificationLink);
-        mailService.enviarEmail(changePasswordEmailRequestDTO.getEmail(), subject, textMessage);
+        mailService.enviarEmail(mudarSenhaEmailRequestDTO.getEmail(), subject, textMessage);
     }
 
     @Transactional
-    public void verificarMudarSenha(String code, ChangePasswordRequestDTO changePasswordRequestDTO){
-        Optional<RedefinirSenha> redefinirSenha = redefinirSenhaRepository.findByVerificationCode(code);
-        if (redefinirSenha.isEmpty() || redefinirSenha.orElseThrow().getExpirationCodeTime().isBefore(LocalDateTime.now())){
+    public void verificarMudarSenha(String code, MudarSenhaRequestDTO mudarSenhaRequestDTO){
+        Optional<RedefinirSenha> redefinirSenha = redefinirSenhaRepository.findByCodigoDeVerificacao(code);
+        if (redefinirSenha.isEmpty() || redefinirSenha.orElseThrow().getTempoDeExpiracaoCodigo().isBefore(LocalDateTime.now())){
             throw new InvalidCodeException("Código de validação inválido!");
         }
         Usuario usuario = redefinirSenha.orElseThrow().getUsuario();
-        String newPassword = new BCryptPasswordEncoder().encode(changePasswordRequestDTO.getNewPassword());
-        usuario.setPassword(newPassword);
+        String newPassword = new BCryptPasswordEncoder().encode(mudarSenhaRequestDTO.getNovaSenha());
+        usuario.setSenha(newPassword);
         usuarioRepository.save(usuario);
         redefinirSenhaRepository.deleteById(redefinirSenha.get().getId());
     }
 
-    private void salvarUsuario(RegisterRequestDTO registerRequestDTO, String password, String verificationCode,
+    private void salvarUsuario(RegistrarRequestDTO registrarRequestDTO, String password, String verificationCode,
                                LocalDateTime codeExpirationTime){
-        if (registerRequestDTO.getRole() == UserRole.ADMIN){
+        if (registrarRequestDTO.getRole() == UserRole.ADMIN){
             Admin admin
-                    = new Admin(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
-                    codeExpirationTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
+                    = new Admin(registrarRequestDTO.getEmail(), password, registrarRequestDTO.getRole(), verificationCode,
+                    codeExpirationTime, false, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
             adminRepository.save(admin);
-        } else if (registerRequestDTO.getRole() == UserRole.PROFESSOR){
+        } else if (registrarRequestDTO.getRole() == UserRole.PROFESSOR){
             Professor professor
-                    = new Professor(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
-                    codeExpirationTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
+                    = new Professor(registrarRequestDTO.getEmail(), password, registrarRequestDTO.getRole(), verificationCode,
+                    codeExpirationTime, false, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
             professorRepository.save(professor);
         } else{
             Estudante estudante
-                    = new Estudante(registerRequestDTO.getEmail(), password, registerRequestDTO.getRole(), verificationCode,
-                    codeExpirationTime, false, registerRequestDTO.getFirstName(), registerRequestDTO.getLastName());
+                    = new Estudante(registrarRequestDTO.getEmail(), password, registrarRequestDTO.getRole(), verificationCode,
+                    codeExpirationTime, false, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
             estudanteRepository.save(estudante);
         }
     }

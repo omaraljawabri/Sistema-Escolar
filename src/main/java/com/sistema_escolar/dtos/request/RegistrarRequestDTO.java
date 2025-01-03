@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class RegisterRequestDTO {
+public class RegistrarRequestDTO {
     @NotNull
     @Email
     @Schema(description = "E-mail do usuário", type = "String", example = "fulano@gmail.com", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -21,15 +21,15 @@ public class RegisterRequestDTO {
 
     @NotNull
     @Schema(description = "Senha do usuário", type = "String", example = "fulano", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String password;
+    private String senha;
 
     @NotNull
     @Schema(description = "Primeiro nome do usuário", type = "String", example = "Fulano", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String firstName;
+    private String nome;
 
     @NotNull
     @Schema(description = "Sobrenome do usuário", type = "String", example = "Silva", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String lastName;
+    private String sobrenome;
 
     @NotNull
     @Schema(description = "Tipo de conta do usuário", example = "ADMIN", allowableValues = {"ADMIN", "PROFESSOR", "ESTUDANTE"}, requiredMode = Schema.RequiredMode.REQUIRED)

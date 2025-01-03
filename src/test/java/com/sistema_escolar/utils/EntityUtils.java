@@ -17,18 +17,18 @@ import java.util.List;
 public class EntityUtils {
 
     public static Usuario criarUsuario(){
-        return Usuario.builder().id(1L).email("fulano@example.com").password("fulano").role(UserRole.ADMIN)
-                .firstName("Fulano").lastName("Silva").codeExpirationTime(LocalDateTime.now().plusHours(3))
-                .verificationCode("acde070d-8c4c-4f0d-9d8a-162843c10333").isVerified(false).build();
+        return Usuario.builder().id(1L).email("fulano@example.com").senha("fulano").role(UserRole.ADMIN)
+                .nome("Fulano").sobrenome("Silva").tempoDeExpiracaoCodigo(LocalDateTime.now().plusHours(3))
+                .codigoDeVerificacao("acde070d-8c4c-4f0d-9d8a-162843c10333").verificado(false).build();
     }
 
-    public static RegisterRequestDTO criarRegisterRequestDTO(){
-        return RegisterRequestDTO.builder().email("fulano@example.com").firstName("Fulano").lastName("Silva")
-                .password("fulano").role(UserRole.ADMIN).build();
+    public static RegistrarRequestDTO criarRegisterRequestDTO(){
+        return RegistrarRequestDTO.builder().email("fulano@example.com").nome("Fulano").sobrenome("Silva")
+                .senha("fulano").role(UserRole.ADMIN).build();
     }
 
     public static LoginRequestDTO criarLoginRequestDTO(){
-        return LoginRequestDTO.builder().email("fulano@example.com").password("fulano")
+        return LoginRequestDTO.builder().email("fulano@example.com").senha("fulano")
                 .build();
     }
 
@@ -39,13 +39,13 @@ public class EntityUtils {
     }
 
     public static RedefinirSenha criarRedefinirSenha(){
-        return RedefinirSenha.builder().id(1L).verificationCode("acde070d-8c4c-4f0d-9d8a-162843c10334")
-                .expirationCodeTime(LocalDateTime.now().plusHours(2)).usuario(criarUsuario())
+        return RedefinirSenha.builder().id(1L).codigoDeVerificacao("acde070d-8c4c-4f0d-9d8a-162843c10334")
+                .tempoDeExpiracaoCodigo(LocalDateTime.now().plusHours(2)).usuario(criarUsuario())
                 .build();
     }
 
     public static Disciplina criarDisciplina(){
-        return Disciplina.builder().id(1L).name("Geografia").build();
+        return Disciplina.builder().id(1L).nome("Geografia").build();
     }
 
     public static Estudante criarEstudante(){
@@ -65,7 +65,7 @@ public class EntityUtils {
     }
 
     public static Prova criarProva(){
-        return Prova.builder().id(1L).valorTotal(BigDecimal.TEN).isPublished(true).expirationTime(LocalDateTime.now().plusHours(2))
+        return Prova.builder().id(1L).valorTotal(BigDecimal.TEN).publicado(true).tempoDeExpiracao(LocalDateTime.now().plusHours(2))
                 .emailProfessor("professor@example.com").questoes(List.of(criarQuestao())).disciplina(criarDisciplina()).build();
     }
 
@@ -90,7 +90,7 @@ public class EntityUtils {
     }
 
     public static Turma criarTurma(){
-        return Turma.builder().id(1L).name("Turma A").disciplina(criarDisciplina()).professor(criarProfessor())
+        return Turma.builder().id(1L).nome("Turma A").disciplina(criarDisciplina()).professor(criarProfessor())
                 .estudantes(List.of(criarEstudante())).build();
     }
 
@@ -115,8 +115,8 @@ public class EntityUtils {
         return ProvaPutRequestDTO.builder().valorTotal(BigDecimal.TEN).questoes(List.of(criarQuestaoPutRequestDTO())).build();
     }
 
-    public static PublishProvaRequestDTO criarPublishProvaRequestDTO(){
-        return PublishProvaRequestDTO.builder().expirationHours(2).expirationMinutes(30)
+    public static PublicarProvaRequestDTO criarPublishProvaRequestDTO(){
+        return PublicarProvaRequestDTO.builder().horasExpiracao(2).minutosExpiracao(30)
                 .build();
     }
 
@@ -172,7 +172,7 @@ public class EntityUtils {
     public static void mockAuthentication(){
         Usuario usuario = new Usuario();
         usuario.setEmail("fulano@example.com");
-        usuario.setPassword("fulano");
+        usuario.setSenha("fulano");
         Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
@@ -187,8 +187,8 @@ public class EntityUtils {
     }
 
     public static Usuario criarAdminIT(){
-        return Usuario.builder().email("fulano@example.com").password(new BCryptPasswordEncoder().encode("fulano")).role(UserRole.ADMIN)
-                .firstName("Fulano").lastName("Silva").build();
+        return Usuario.builder().email("fulano@example.com").senha(new BCryptPasswordEncoder().encode("fulano")).role(UserRole.ADMIN)
+                .nome("Fulano").sobrenome("Silva").build();
     }
 
     public static Estudante criarEstudanteIT(){

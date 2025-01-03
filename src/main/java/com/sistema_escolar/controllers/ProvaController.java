@@ -2,7 +2,7 @@ package com.sistema_escolar.controllers;
 
 import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
-import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
+import com.sistema_escolar.dtos.request.PublicarProvaRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaAvaliadaResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
@@ -103,11 +103,11 @@ public class ProvaController {
                     schema = @Schema(example = "1", type = "Long")
             )
             @PathVariable Long id,
-            @RequestBody PublishProvaRequestDTO publishProvaRequestDTO
+            @RequestBody PublicarProvaRequestDTO publicarProvaRequestDTO
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        provaService.publicarProva(publishProvaRequestDTO, id, usuario);
+        provaService.publicarProva(publicarProvaRequestDTO, id, usuario);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

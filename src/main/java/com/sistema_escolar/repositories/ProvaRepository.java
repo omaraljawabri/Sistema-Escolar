@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface ProvaRepository extends JpaRepository<Prova, Long> {
     Optional<Prova> findByIdAndEmailProfessor(Long id, String emailProfessor);
-    List<Prova> findByDisciplinaIdAndEmailProfessorAndIsPublishedTrue(Long disciplinaId, String emailProfessor);
+    List<Prova> findByDisciplinaIdAndEmailProfessorAndPublicadoTrue(Long disciplinaId, String emailProfessor);
     List<Prova> findByNotas(List<Nota> notas);
 }

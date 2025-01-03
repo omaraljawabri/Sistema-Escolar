@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface RedefinirSenhaRepository extends JpaRepository<RedefinirSenha, Long> {
-    Optional<RedefinirSenha> findByVerificationCode(String verificationCode);
+    Optional<RedefinirSenha> findByCodigoDeVerificacao(String codigoDeVerificacao);
 }

@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CreateDisciplinaRequestDTO {
+public class CriarDisciplinaRequestDTO {
     @NotNull(message = "nome da disciplina deve ser preenchido")
     @Schema(description = "Nome da disciplina que será criada", example = "Geografia", type = "String", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String name;
+    private String nome;
 }

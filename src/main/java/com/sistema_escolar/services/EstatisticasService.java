@@ -29,8 +29,8 @@ public class EstatisticasService {
         Turma turma = turmaRepository.findByIdAndProfessorId(id, usuario.getId())
                 .orElseThrow(() -> new UserNotFoundException("Professor não faz parte dessa turma ou turma não existe"));
         List<Prova> provas
-                = provaRepository.findByDisciplinaIdAndEmailProfessorAndIsPublishedTrue(turma.getDisciplina().getId(), turma.getProfessor().getEmail());
-        List<Prova> provasExpiradas = provas.stream().filter(prova -> prova.getExpirationTime().isBefore(LocalDateTime.now())).toList();
+                = provaRepository.findByDisciplinaIdAndEmailProfessorAndPublicadoTrue(turma.getDisciplina().getId(), turma.getProfessor().getEmail());
+        List<Prova> provasExpiradas = provas.stream().filter(prova -> prova.getTempoDeExpiracao().isBefore(LocalDateTime.now())).toList();
         if (provasExpiradas.isEmpty()){
             return EstatisticasTurmaResponseDTO.builder().mediaGeral(BigDecimal.ZERO)
                     .porcentagemAprovados(BigDecimal.ZERO).estatisticasProva(Collections.emptyList()).build();

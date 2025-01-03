@@ -37,7 +37,7 @@ public class RespostaProvaService {
     public void responderProva(Long id, RespostaProvaRequestDTO respostaProvaRequestDTO, Usuario usuario) {
         Estudante estudante = estudanteService.buscarPorId(usuario.getId());
         Prova prova = provaService.buscarPorId(id);
-        if (Boolean.TRUE.equals(!prova.getIsPublished()) || prova.getExpirationTime().isBefore(LocalDateTime.now())){
+        if (Boolean.TRUE.equals(!prova.getPublicado()) || prova.getTempoDeExpiracao().isBefore(LocalDateTime.now())){
             throw new TestErrorException("O tempo de prova já foi encerrado ou a prova não foi publicada ainda");
         }
         if (!respostaProvaRepository.findByEstudanteIdAndProvaId(estudante.getId(), id).isEmpty() &&
@@ -45,7 +45,7 @@ public class RespostaProvaService {
             throw new UserAlreadyBelongsToAnEntityException("Estudante já respondeu a esta prova");
         }
         adicionarRespostasProva(respostaProvaRequestDTO, estudante, prova, id);
-        String mensagem = String.format("O aluno %s enviou a prova da disciplina de %s, entre na plataforma para começar a correção!", estudante.getFirstName(), prova.getDisciplina().getName());
+        String mensagem = String.format("O aluno %s enviou a prova da disciplina de %s, entre na plataforma para começar a correção!", estudante.getNome(), prova.getDisciplina().getNome());
         mailService.enviarEmail(prova.getEmailProfessor(), "Envio de prova", mensagem);
     }
 
@@ -87,8 +87,8 @@ public class RespostaProvaService {
             if ((respostasProva.size()-1 > i && !Objects.equals(respostasProva.get(i).getEstudante().getId(),
                     respostasProva.get(i+1).getEstudante().getId())) || respostasProva.size()-1 == i) {
                 provaRespondidaResponseDTOS.add(ProvaRespondidaResponseDTO.builder().estudanteId(respostasProva.get(i).getEstudante().getId())
-                        .nomeEstudante(String.format("%s %s", respostasProva.get(i).getEstudante().getFirstName(),
-                                respostasProva.get(i).getEstudante().getLastName()))
+                        .nomeEstudante(String.format("%s %s", respostasProva.get(i).getEstudante().getNome(),
+                                respostasProva.get(i).getEstudante().getSobrenome()))
                         .questoesRespondidas(new ArrayList<>(questaoRespondidaResponseDTOS)).build());
                 questaoRespondidaResponseDTOS.clear();
             }

@@ -23,11 +23,11 @@ public class Turma {
     private Long id;
 
     @NotNull(message = "nome da turma deve ser preenchido")
-    private String name;
+    private String nome;
 
-    private String turmaCode;
+    private String codigoTurma;
 
-    private LocalDateTime codeExpirationTime;
+    private LocalDateTime tempoExpiracaoCodigo;
 
     @ManyToOne
     @JoinColumn(name = "professor_id")

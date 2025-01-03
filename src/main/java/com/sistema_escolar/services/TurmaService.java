@@ -2,7 +2,7 @@ package com.sistema_escolar.services;
 
 import com.sistema_escolar.dtos.request.AddTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.CodeRequestDTO;
-import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
+import com.sistema_escolar.dtos.request.CriarTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.TurmaRequestDTO;
 import com.sistema_escolar.dtos.response.CodeResponseDTO;
 import com.sistema_escolar.entities.*;
@@ -32,15 +32,15 @@ public class TurmaService {
     private final EstudanteRepository estudanteRepository;
     private final ProfessorRepository professorRepository;
 
-    public void criarTurma(CreateTurmaRequestDTO createTurmaRequestDTO){
+    public void criarTurma(CriarTurmaRequestDTO criarTurmaRequestDTO){
         Disciplina disciplina
-                = disciplinaRepository.findById(createTurmaRequestDTO.getDisciplinaId())
+                = disciplinaRepository.findById(criarTurmaRequestDTO.getDisciplinaId())
                 .orElseThrow(() -> new EntityNotFoundException("Disciplina passada não existe"));
-        Optional<Turma> turmaOptional = turmaRepository.findByNameAndDisciplina(createTurmaRequestDTO.getName(), disciplina);
+        Optional<Turma> turmaOptional = turmaRepository.findByNomeAndDisciplina(criarTurmaRequestDTO.getNome(), disciplina);
         if (turmaOptional.isPresent()){
             throw new EntityAlreadyExistsException("A turma que está sendo criada já existe");
         }
-        Turma turmaToSave = Turma.builder().name(createTurmaRequestDTO.getName()).disciplina(disciplina).build();
+        Turma turmaToSave = Turma.builder().nome(criarTurmaRequestDTO.getNome()).disciplina(disciplina).build();
         turmaRepository.save(turmaToSave);
     }
 
@@ -78,7 +78,7 @@ public class TurmaService {
         if (turmaRepository.findByIdAndProfessor(turma.getId(), professor).isPresent()){
             throw new UserAlreadyBelongsToAnEntityException("Professor já está cadastrado nesta turma!");
         }
-        if (professor.getDisciplina() != null && !professor.getDisciplina().getName().equals(turma.getDisciplina().getName())){
+        if (professor.getDisciplina() != null && !professor.getDisciplina().getNome().equals(turma.getDisciplina().getNome())){
             throw new UserAlreadyBelongsToAnEntityException("Professor já está cadastrado em outra disciplina");
         }
         professor.setDisciplina(turma.getDisciplina());
@@ -91,30 +91,30 @@ public class TurmaService {
         String generatedCode = CodeGenerator.generateCode();
         Turma turma = turmaRepository.findById(turmaRequestDTO.getTurmaId())
                 .orElseThrow(() -> new EntityNotFoundException("Turma selecionada não existe"));
-        turma.setTurmaCode(generatedCode);
-        turma.setCodeExpirationTime(LocalDateTime.now().plusDays(7));
+        turma.setCodigoTurma(generatedCode);
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusDays(7));
         turmaRepository.save(turma);
-        return CodeResponseDTO.builder().code(generatedCode).build();
+        return CodeResponseDTO.builder().codigo(generatedCode).build();
     }
 
     public CodeResponseDTO gerarCodigo(Usuario usuario){
         Turma turma = turmaRepository.findByProfessorId(usuario.getId())
                 .orElseThrow(() -> new UserDoesntBelongException("Professor não esta vinculado a nenhuma turma"));
         String generatedCode = CodeGenerator.generateCode();
-        turma.setTurmaCode(generatedCode);
-        turma.setCodeExpirationTime(LocalDateTime.now().plusHours(7));
+        turma.setCodigoTurma(generatedCode);
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusHours(7));
         turmaRepository.save(turma);
-        return CodeResponseDTO.builder().code(generatedCode).build();
+        return CodeResponseDTO.builder().codigo(generatedCode).build();
     }
 
     public void entrarTurma(CodeRequestDTO codeRequestDTO, Usuario usuario){
-        Turma turma = turmaRepository.findByTurmaCode(codeRequestDTO.getCode())
+        Turma turma = turmaRepository.findByCodigoTurma(codeRequestDTO.getCodigo())
                 .orElseThrow(() -> new InvalidCodeException("Código de turma não existe!"));
-        if (turma.getCodeExpirationTime().isBefore(LocalDateTime.now())){
+        if (turma.getTempoExpiracaoCodigo().isBefore(LocalDateTime.now())){
             throw new InvalidCodeException("Código de turma está expirado!");
         }
         if (usuario.getRole() == UserRole.PROFESSOR ){
-            if (turmaRepository.findByProfessorIdAndTurmaCode(usuario.getId(), codeRequestDTO.getCode()).isPresent()) {
+            if (turmaRepository.findByProfessorIdAndCodigoTurma(usuario.getId(), codeRequestDTO.getCodigo()).isPresent()) {
                 throw new UserAlreadyBelongsToAnEntityException("Professor já está vinculado a essa turma");
             } else{
                 turma.setProfessor(professorRepository.findById(usuario.getId()).get());

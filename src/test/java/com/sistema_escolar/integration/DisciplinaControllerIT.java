@@ -1,6 +1,6 @@
 package com.sistema_escolar.integration;
 
-import com.sistema_escolar.dtos.request.CreateDisciplinaRequestDTO;
+import com.sistema_escolar.dtos.request.CriarDisciplinaRequestDTO;
 import com.sistema_escolar.dtos.request.LoginRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.Disciplina;
@@ -57,7 +57,7 @@ class DisciplinaControllerIT {
         String tokenJWT = gerarTokenJWT(usuario, "fulano");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+tokenJWT);
-        ResponseEntity<Void> responseEntity = testRestTemplate.postForEntity(rootUrl + "/disciplina", new HttpEntity<>(new CreateDisciplinaRequestDTO("Geografia"), headers),Void.class);
+        ResponseEntity<Void> responseEntity = testRestTemplate.postForEntity(rootUrl + "/disciplina", new HttpEntity<>(new CriarDisciplinaRequestDTO("Geografia"), headers),Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
@@ -65,12 +65,12 @@ class DisciplinaControllerIT {
     @Test
     @DisplayName("criarDisciplina deve retornar um http status 400 quando o nome da disciplina a ser criada já existir")
     void criarDisciplina_Retorna400_QuandoNomeDaDisciplinaJaExistir(){
-        disciplinaRepository.save(Disciplina.builder().name("Geografia").build());
+        disciplinaRepository.save(Disciplina.builder().nome("Geografia").build());
         Usuario usuario = criarAdminIT();
         String tokenJWT = gerarTokenJWT(usuario, "fulano");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+ tokenJWT);
-        ResponseEntity<Void> responseEntity = testRestTemplate.postForEntity(rootUrl + "/disciplina", new HttpEntity<>(new CreateDisciplinaRequestDTO("Geografia"), headers), Void.class);
+        ResponseEntity<Void> responseEntity = testRestTemplate.postForEntity(rootUrl + "/disciplina", new HttpEntity<>(new CriarDisciplinaRequestDTO("Geografia"), headers), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(responseEntity.getBody()).isNull();
@@ -83,7 +83,7 @@ class DisciplinaControllerIT {
         String tokenJWT = gerarTokenJWT(professor, "professor");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+ tokenJWT);
-        ResponseEntity<Void> responseEntity = testRestTemplate.postForEntity(rootUrl + "/disciplina", new HttpEntity<>(new CreateDisciplinaRequestDTO("Geografia"), headers), Void.class);
+        ResponseEntity<Void> responseEntity = testRestTemplate.postForEntity(rootUrl + "/disciplina", new HttpEntity<>(new CriarDisciplinaRequestDTO("Geografia"), headers), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(responseEntity.getBody()).isNull();

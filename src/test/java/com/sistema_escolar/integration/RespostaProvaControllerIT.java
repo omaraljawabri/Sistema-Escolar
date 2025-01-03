@@ -139,7 +139,7 @@ class RespostaProvaControllerIT {
         String tokenJWT = gerarTokenJWT(criarEstudanteIT(), "ciclano");
         adicionarDependenciasPost();
         Prova prova = provaRepository.findById(1L).get();
-        prova.setExpirationTime(LocalDateTime.now().minusHours(2));
+        prova.setTempoDeExpiracao(LocalDateTime.now().minusHours(2));
         provaRepository.save(prova);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+tokenJWT);

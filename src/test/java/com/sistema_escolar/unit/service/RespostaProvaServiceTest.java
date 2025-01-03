@@ -17,7 +17,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.cglib.core.Local;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
@@ -59,7 +58,7 @@ class RespostaProvaServiceTest {
     @BeforeEach
     void setup(){
         Prova prova = criarProva();
-        prova.setIsPublished(true);
+        prova.setPublicado(true);
         Estudante estudante = criarEstudante();
         estudante.setId(2L);
         RespostaProva respostaProva = criarRespostaProva();
@@ -125,7 +124,7 @@ class RespostaProvaServiceTest {
     @DisplayName("responderProva deve lançar uma TestErrorException quando a prova respondida não foi publicada ainda")
     void responderProva_LancaTestErrorException_QuandoProvaRespondidaNaoTiverSidoPublicada(){
         Prova prova = criarProva();
-        prova.setIsPublished(false);
+        prova.setPublicado(false);
         when(provaService.buscarPorId(ArgumentMatchers.anyLong()))
                 .thenReturn(prova);
         assertThatExceptionOfType(TestErrorException.class)
@@ -139,8 +138,8 @@ class RespostaProvaServiceTest {
     @DisplayName("responderProva deve lançar uma TestErrorException quando a prova respondida já estiver expirada")
     void responderProva_LancaTestErrorException_QuandoProvaRespondidaJaEstiverExpirada(){
         Prova prova = criarProva();
-        prova.setIsPublished(true);
-        prova.setExpirationTime(LocalDateTime.now().minusHours(2));
+        prova.setPublicado(true);
+        prova.setTempoDeExpiracao(LocalDateTime.now().minusHours(2));
         when(provaService.buscarPorId(ArgumentMatchers.anyLong()))
                 .thenReturn(prova);
         assertThatExceptionOfType(TestErrorException.class)

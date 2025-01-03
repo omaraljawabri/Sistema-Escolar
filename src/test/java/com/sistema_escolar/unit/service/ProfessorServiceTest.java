@@ -40,7 +40,7 @@ class ProfessorServiceTest {
         Professor professor = professorService.buscarPorId(1L);
         assertThat(professor).isNotNull();
         assertThat(professor.getId()).isEqualTo(1L);
-        assertThat(professor.getFirstName()).isEqualTo("Professor");
+        assertThat(professor.getNome()).isEqualTo("Professor");
     }
 
     @Test

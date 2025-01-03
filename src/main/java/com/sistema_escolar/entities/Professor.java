@@ -26,12 +26,12 @@ public class Professor extends Usuario{
 
     public Professor(String email, String password, UserRole userRole, String verificationCode, LocalDateTime codeExpirationTime, boolean isVerified, String firstName, String lastName){
         this.setEmail(email);
-        this.setPassword(password);
+        this.setSenha(password);
         this.setRole(userRole);
-        this.setVerificationCode(verificationCode);
-        this.setCodeExpirationTime(codeExpirationTime);
-        this.setIsVerified(isVerified);
-        this.setFirstName(firstName);
-        this.setLastName(lastName);
+        this.setCodigoDeVerificacao(verificationCode);
+        this.setTempoDeExpiracaoCodigo(codeExpirationTime);
+        this.setVerificado(isVerified);
+        this.setNome(firstName);
+        this.setSobrenome(lastName);
     }
 }

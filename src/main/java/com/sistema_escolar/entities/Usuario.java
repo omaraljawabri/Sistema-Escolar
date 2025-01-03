@@ -28,26 +28,26 @@ public class Usuario implements UserDetails {
     private Long id;
 
     @NotNull(message = "primeiro nome deve ser preenchido")
-    private String firstName;
+    private String nome;
 
     @NotNull(message = "sobrenome deve ser preenchido")
-    private String lastName;
+    private String sobrenome;
 
     @NotNull(message = "email deve ser preenchido")
     private String email;
 
     @NotNull(message = "senha deve ser preenchida")
-    private String password;
+    private String senha;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "role deve ser preenchida")
     private UserRole role;
 
-    private Boolean isVerified;
+    private Boolean verificado;
 
-    private LocalDateTime codeExpirationTime;
+    private LocalDateTime tempoDeExpiracaoCodigo;
 
-    private String verificationCode;
+    private String codigoDeVerificacao;
 
     @OneToMany(mappedBy = "usuario")
     private List<RedefinirSenha> redefinirSenha;
@@ -57,9 +57,8 @@ public class Usuario implements UserDetails {
         return this.email;
     }
 
-    @Override
     public String getPassword(){
-        return this.password;
+        return this.senha;
     }
 
     @Override

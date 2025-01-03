@@ -20,7 +20,7 @@ public class Disciplina {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String nome;
 
     @ManyToMany
     @JoinTable(name = "estudante_disciplina", joinColumns = @JoinColumn(name = "disciplina_id"),

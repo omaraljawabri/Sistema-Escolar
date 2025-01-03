@@ -80,8 +80,8 @@ class TurmaControllerIT {
         adicionarDependencias();
         usuarioRepository.save(usuario);
         Turma turma = criarTurma();
-        turma.setCodeExpirationTime(LocalDateTime.now().plusHours(2));
-        turma.setTurmaCode("9427396$%*");
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusHours(2));
+        turma.setCodigoTurma("9427396$%*");
         turma.setId(null);
         turma.setEstudantes(null);
         turma.setProfessor(null);
@@ -91,8 +91,8 @@ class TurmaControllerIT {
     private void adicionarDependenciasGet(){
         adicionarDependencias();
         Turma turma = criarTurma();
-        turma.setCodeExpirationTime(LocalDateTime.now().plusHours(2));
-        turma.setTurmaCode("9427396$%*");
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusHours(2));
+        turma.setCodigoTurma("9427396$%*");
         turma.setId(null);
         turma.setEstudantes(null);
         turma.setProfessor(null);
@@ -107,7 +107,7 @@ class TurmaControllerIT {
         headers.set("Authorization", "Bearer "+tokenJWT);
         adicionarDependencias();
         ResponseEntity<Void> responseEntity
-                = testRestTemplate.postForEntity(rootUrl + "/turma", new HttpEntity<>(new CreateTurmaRequestDTO("Turma A", 1L), headers), Void.class);
+                = testRestTemplate.postForEntity(rootUrl + "/turma", new HttpEntity<>(new CriarTurmaRequestDTO("Turma A", 1L), headers), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
@@ -119,7 +119,7 @@ class TurmaControllerIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+tokenJWT);
         ResponseEntity<Void> responseEntity
-                = testRestTemplate.postForEntity(rootUrl + "/turma", new HttpEntity<>(new CreateTurmaRequestDTO("Turma A", 1L), headers), Void.class);
+                = testRestTemplate.postForEntity(rootUrl + "/turma", new HttpEntity<>(new CriarTurmaRequestDTO("Turma A", 1L), headers), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -135,7 +135,7 @@ class TurmaControllerIT {
         turmaRepository.save(turma);
         headers.set("Authorization", "Bearer "+tokenJWT);
         ResponseEntity<Void> responseEntity
-                = testRestTemplate.postForEntity(rootUrl + "/turma", new HttpEntity<>(new CreateTurmaRequestDTO("Turma A", 1L), headers), Void.class);
+                = testRestTemplate.postForEntity(rootUrl + "/turma", new HttpEntity<>(new CriarTurmaRequestDTO("Turma A", 1L), headers), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -148,7 +148,7 @@ class TurmaControllerIT {
         adicionarDependencias();
         headers.set("Authorization", "Bearer "+tokenJWT);
         ResponseEntity<Void> responseEntity
-                = testRestTemplate.postForEntity(rootUrl + "/turma", new HttpEntity<>(new CreateTurmaRequestDTO("Turma A", 1L), headers), Void.class);
+                = testRestTemplate.postForEntity(rootUrl + "/turma", new HttpEntity<>(new CriarTurmaRequestDTO("Turma A", 1L), headers), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
@@ -289,7 +289,7 @@ class TurmaControllerIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+tokenJWT);
         adicionarDependenciasGet(criarProfessorIT());
-        Disciplina disciplina = disciplinaRepository.save(Disciplina.builder().name("Matemática").build());
+        Disciplina disciplina = disciplinaRepository.save(Disciplina.builder().nome("Matemática").build());
         Professor professor = criarProfessor();
         professor.setId(2L);
         professor.setDisciplina(disciplina);
@@ -325,7 +325,7 @@ class TurmaControllerIT {
         assertThat(codeResponse).isNotNull();
         assertThat(codeResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(codeResponse.getBody()).isNotNull();
-        assertThat(codeResponse.getBody().getCode()).isNotNull();
+        assertThat(codeResponse.getBody().getCodigo()).isNotNull();
     }
 
     @Test
@@ -370,7 +370,7 @@ class TurmaControllerIT {
         assertThat(codeResponse).isNotNull();
         assertThat(codeResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(codeResponse.getBody()).isNotNull();
-        assertThat(codeResponse.getBody().getCode()).isNotNull();
+        assertThat(codeResponse.getBody().getCodigo()).isNotNull();
     }
 
     @Test
@@ -420,8 +420,8 @@ class TurmaControllerIT {
         turma.setId(null);
         turma.setProfessor(null);
         turma.setEstudantes(null);
-        turma.setCodeExpirationTime(LocalDateTime.now().plusHours(2));
-        turma.setTurmaCode("9427396$%*");
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusHours(2));
+        turma.setCodigoTurma("9427396$%*");
         turmaRepository.save(turma);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+tokenJWT);
@@ -483,7 +483,7 @@ class TurmaControllerIT {
         headers.set("Authorization", "Bearer "+tokenJWT);
         adicionarDependenciasGet();
         Turma turma = turmaRepository.findById(1L).get();
-        turma.setCodeExpirationTime(LocalDateTime.now().minusHours(2));
+        turma.setTempoExpiracaoCodigo(LocalDateTime.now().minusHours(2));
         turmaRepository.save(turma);
         ResponseEntity<Void> responseEntity
                 = testRestTemplate.postForEntity(rootUrl + "/turma/entrar", new HttpEntity<>(new CodeRequestDTO("9427396$%*"), headers), Void.class);

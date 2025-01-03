@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class CodeRequestDTO {
     @NotNull
     @Schema(description = "Código de identificação da turma", example = "?26@4Y2615A", type = "String", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String code;
+    private String codigo;
 }

@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CodeResponseDTO {
-    private String code;
+    private String codigo;
 }

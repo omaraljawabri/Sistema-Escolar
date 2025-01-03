@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ChangePasswordRequestDTO {
+public class MudarSenhaRequestDTO {
     @NotNull
     @Schema(description = "Nova senha do usuário", type = "String", example = "fulano10", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String newPassword;
+    private String novaSenha;
 }

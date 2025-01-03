@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class PublishProvaRequestDTO {
+public class PublicarProvaRequestDTO {
     @Schema(description = "Número de horas que a prova ficará disponível", example = "1", type = "Integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    public Integer expirationHours;
+    public Integer horasExpiracao;
     @Schema(description = "Número de minutos que a prova ficará disponível", example = "30", type = "Integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    public Integer expirationMinutes;
+    public Integer minutosExpiracao;
 }

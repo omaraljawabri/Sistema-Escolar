@@ -21,5 +21,5 @@ public class LoginRequestDTO {
 
     @NotNull
     @Schema(description = "Senha do usuário", type = "String", example = "fulano", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String password;
+    private String senha;
 }

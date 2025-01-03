@@ -3,7 +3,7 @@ package com.sistema_escolar.unit.controller;
 import com.sistema_escolar.controllers.TurmaController;
 import com.sistema_escolar.dtos.request.AddTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.CodeRequestDTO;
-import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
+import com.sistema_escolar.dtos.request.CriarTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.TurmaRequestDTO;
 import com.sistema_escolar.dtos.response.CodeResponseDTO;
 import com.sistema_escolar.entities.Usuario;
@@ -38,7 +38,7 @@ class TurmaControllerTest {
 
     @BeforeEach
     void setup(){
-        doNothing().when(turmaService).criarTurma(ArgumentMatchers.any(CreateTurmaRequestDTO.class));
+        doNothing().when(turmaService).criarTurma(ArgumentMatchers.any(CriarTurmaRequestDTO.class));
         doNothing().when(turmaService).addEstudante(ArgumentMatchers.any(AddTurmaRequestDTO.class));
         doNothing().when(turmaService).addProfessor(ArgumentMatchers.any(AddTurmaRequestDTO.class));
         when(turmaService.gerarCodigo(ArgumentMatchers.any(TurmaRequestDTO.class)))
@@ -51,9 +51,9 @@ class TurmaControllerTest {
     @Test
     @DisplayName("criarTurma deve cadastrar uma turma no sistema quando a operação for bem sucedida")
     void criarTurma_CadastraUmaTurmaNoSistema_QuandoBemSucedido() {
-        assertThatCode(() -> turmaController.criarTurma(new CreateTurmaRequestDTO("Turma A", 1L)))
+        assertThatCode(() -> turmaController.criarTurma(new CriarTurmaRequestDTO("Turma A", 1L)))
                 .doesNotThrowAnyException();
-        ResponseEntity<Void> responseEntity = turmaController.criarTurma(new CreateTurmaRequestDTO("Turma A", 1L));
+        ResponseEntity<Void> responseEntity = turmaController.criarTurma(new CriarTurmaRequestDTO("Turma A", 1L));
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
@@ -62,9 +62,9 @@ class TurmaControllerTest {
     @DisplayName("criarTurma deve lançar uma EntityNotFoundException quando o id da disciplina passado não existir")
     void criarTurma_LancaEntityNotFoundException_QuandoDisciplinaIdNaoExistir(){
         doThrow(new EntityNotFoundException("Disciplina passada não existe"))
-                .when(turmaService).criarTurma(ArgumentMatchers.any(CreateTurmaRequestDTO.class));
+                .when(turmaService).criarTurma(ArgumentMatchers.any(CriarTurmaRequestDTO.class));
         assertThatExceptionOfType(EntityNotFoundException.class)
-                .isThrownBy(() -> turmaController.criarTurma(new CreateTurmaRequestDTO("Turma A", 2L)))
+                .isThrownBy(() -> turmaController.criarTurma(new CriarTurmaRequestDTO("Turma A", 2L)))
                 .withMessage("Disciplina passada não existe");
     }
 
@@ -72,9 +72,9 @@ class TurmaControllerTest {
     @DisplayName("criarTurma deve lançar uma EntityAlreadyExistsException quando o nome da turma já existir no banco de dados")
     void criarTurma_LancaEntityAlreadyExistsException_QuandoNomeDaTurmaJaExistir(){
         doThrow(new EntityAlreadyExistsException("A turma que está sendo criada já existe"))
-                .when(turmaService).criarTurma(ArgumentMatchers.any(CreateTurmaRequestDTO.class));
+                .when(turmaService).criarTurma(ArgumentMatchers.any(CriarTurmaRequestDTO.class));
         assertThatExceptionOfType(EntityAlreadyExistsException.class)
-                .isThrownBy(() -> turmaController.criarTurma(new CreateTurmaRequestDTO("Turma A", 1L)))
+                .isThrownBy(() -> turmaController.criarTurma(new CriarTurmaRequestDTO("Turma A", 1L)))
                 .withMessage("A turma que está sendo criada já existe");
     }
 
@@ -174,7 +174,7 @@ class TurmaControllerTest {
         ResponseEntity<CodeResponseDTO> codeResponseDTOResponseEntity = turmaController.gerarCodigo(new TurmaRequestDTO(1L));
         assertThat(codeResponseDTOResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(codeResponseDTOResponseEntity.getBody()).isNotNull();
-        assertThat(codeResponseDTOResponseEntity.getBody().getCode()).isEqualTo("9514367@#");
+        assertThat(codeResponseDTOResponseEntity.getBody().getCodigo()).isEqualTo("9514367@#");
     }
 
     @Test
@@ -194,7 +194,7 @@ class TurmaControllerTest {
         ResponseEntity<CodeResponseDTO> codeResponseDTOResponseEntity = turmaController.gerarCodigo();
         assertThat(codeResponseDTOResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(codeResponseDTOResponseEntity.getBody()).isNotNull();
-        assertThat(codeResponseDTOResponseEntity.getBody().getCode()).isEqualTo("64075307$");
+        assertThat(codeResponseDTOResponseEntity.getBody().getCodigo()).isEqualTo("64075307$");
     }
 
     @Test

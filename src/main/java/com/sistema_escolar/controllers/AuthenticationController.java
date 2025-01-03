@@ -1,9 +1,9 @@
 package com.sistema_escolar.controllers;
 
-import com.sistema_escolar.dtos.request.ChangePasswordEmailRequestDTO;
-import com.sistema_escolar.dtos.request.ChangePasswordRequestDTO;
+import com.sistema_escolar.dtos.request.MudarSenhaEmailRequestDTO;
+import com.sistema_escolar.dtos.request.MudarSenhaRequestDTO;
 import com.sistema_escolar.dtos.request.LoginRequestDTO;
-import com.sistema_escolar.dtos.request.RegisterRequestDTO;
+import com.sistema_escolar.dtos.request.RegistrarRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.infra.handlers.ErrorMessage;
@@ -45,8 +45,8 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/registrar", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> registrar(@RequestBody @Valid RegisterRequestDTO registerRequestDTO){
-        authenticationService.registrarUsuario(registerRequestDTO);
+    public ResponseEntity<Void> registrar(@RequestBody @Valid RegistrarRequestDTO registrarRequestDTO){
+        authenticationService.registrarUsuario(registrarRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -63,10 +63,10 @@ public class AuthenticationController {
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequestDTO){
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                = new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
+                = new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getSenha());
         Authentication auth = this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
-        String token = tokenService.generateToken((Usuario) auth.getPrincipal());
+        String token = tokenService.gerarToken((Usuario) auth.getPrincipal());
         return ResponseEntity.ok(authenticationService.login(loginRequestDTO, token));
     }
 
@@ -103,8 +103,8 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(value = "/mudar-senha/requisicao", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> pedirMudancaDeSenha(@RequestBody ChangePasswordEmailRequestDTO changePasswordEmailRequestDTO){
-        authenticationService.mudarSenha(changePasswordEmailRequestDTO);
+    public ResponseEntity<Void> pedirMudancaDeSenha(@RequestBody MudarSenhaEmailRequestDTO mudarSenhaEmailRequestDTO){
+        authenticationService.mudarSenha(mudarSenhaEmailRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -125,9 +125,9 @@ public class AuthenticationController {
                     schema = @Schema(type = "String", example = "acde070d-8c4c-4f0d-9d8a-162843c10333")
             )
             @RequestParam("code") String code,
-            @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO
+            @RequestBody MudarSenhaRequestDTO mudarSenhaRequestDTO
     ){
-        authenticationService.verificarMudarSenha(code, changePasswordRequestDTO);
+        authenticationService.verificarMudarSenha(code, mudarSenhaRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

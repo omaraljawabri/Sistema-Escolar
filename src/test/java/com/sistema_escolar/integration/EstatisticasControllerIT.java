@@ -68,7 +68,7 @@ class EstatisticasControllerIT {
     @DisplayName("estatisticasDoEstudante deve retornar EstatisticasEstudanteResponseDTO e http status 200 quando a busca por estatisticas do estudante for bem sucedida")
     void estatisticasDoEstudante_RetornaEstatisticasEstudanteResponseDTOEStatus200_QuandoABuscaPorEstatisticasEBemSucedida() {
         Estudante estudante = criarEstudanteIT();
-        estudante.setPassword(new BCryptPasswordEncoder().encode("ciclano"));
+        estudante.setSenha(new BCryptPasswordEncoder().encode("ciclano"));
         String tokenJWT = gerarTokenJWT(estudante, "ciclano");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+ tokenJWT);

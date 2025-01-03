@@ -2,7 +2,7 @@ package com.sistema_escolar.controllers;
 
 import com.sistema_escolar.dtos.request.AddTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.CodeRequestDTO;
-import com.sistema_escolar.dtos.request.CreateTurmaRequestDTO;
+import com.sistema_escolar.dtos.request.CriarTurmaRequestDTO;
 import com.sistema_escolar.dtos.request.TurmaRequestDTO;
 import com.sistema_escolar.dtos.response.CodeResponseDTO;
 import com.sistema_escolar.entities.Usuario;
@@ -45,8 +45,8 @@ public class TurmaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping
-    public ResponseEntity<Void> criarTurma(@RequestBody CreateTurmaRequestDTO createTurmaRequestDTO){
-        turmaService.criarTurma(createTurmaRequestDTO);
+    public ResponseEntity<Void> criarTurma(@RequestBody CriarTurmaRequestDTO criarTurmaRequestDTO){
+        turmaService.criarTurma(criarTurmaRequestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

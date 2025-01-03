@@ -2,7 +2,7 @@ package com.sistema_escolar.services;
 
 import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
-import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
+import com.sistema_escolar.dtos.request.PublicarProvaRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaAvaliadaResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.dtos.response.QuestaoAvaliadaResponseDTO;
@@ -47,7 +47,7 @@ public class ProvaService {
         prova.setQuestoes(questoes);
         prova.setDisciplina(professor.getDisciplina());
         prova.setEmailProfessor(professor.getEmail());
-        prova.setIsPublished(false);
+        prova.setPublicado(false);
         Prova savedProva = provaRepository.save(prova);
         List<Questao> savedQuestoes = questaoRepository.saveAll(questoes);
         List<QuestaoResponseDTO> questaoResponseDTOS
@@ -69,18 +69,18 @@ public class ProvaService {
                 .questoes(questaoResponseDTOS).emailProfessor(savedProva.getEmailProfessor()).build();
     }
 
-    public void publicarProva(PublishProvaRequestDTO publishProvaRequestDTO, Long id, Usuario usuario) {
+    public void publicarProva(PublicarProvaRequestDTO publicarProvaRequestDTO, Long id, Usuario usuario) {
         Professor professor = professorService.buscarPorId(usuario.getId());
         Prova prova = buscarPorIdEEmailDoProfessor(id, professor.getEmail());
-        prova.setIsPublished(true);
-        prova.setExpirationTime(LocalDateTime.now().plusHours(publishProvaRequestDTO.getExpirationHours()).plusMinutes(publishProvaRequestDTO.getExpirationMinutes()));
+        prova.setPublicado(true);
+        prova.setTempoDeExpiracao(LocalDateTime.now().plusHours(publicarProvaRequestDTO.getHorasExpiracao()).plusMinutes(publicarProvaRequestDTO.getMinutosExpiracao()));
         provaRepository.save(prova);
         Turma turma = turmaRepository.findByProfessorId(professor.getId())
                 .orElseThrow(() -> new UserDoesntBelongException("Professor não está vinculado a uma turma"));
-        String turmaName = turma.getName();
-        String disciplinaName = turma.getDisciplina().getName();
+        String turmaName = turma.getNome();
+        String disciplinaName = turma.getDisciplina().getNome();
         for (Estudante estudante : turma.getEstudantes()) {
-            String mensagem = "Olá, " + estudante.getFirstName() + ", uma nova prova foi postada na turma " +
+            String mensagem = "Olá, " + estudante.getNome() + ", uma nova prova foi postada na turma " +
                     turmaName + " da disciplina " + disciplinaName + "!";
             mailService.enviarEmail(estudante.getEmail(), "Postagem de prova", mensagem);
         }
@@ -163,7 +163,7 @@ public class ProvaService {
             notaPossivel += questaoAvaliadaResponseDTO.getNotaQuestao().doubleValue();
         }
         return ProvaAvaliadaResponseDTO.builder().provaId(prova.getId()).notaDoEstudante(BigDecimal.valueOf(notaTotal))
-                .notaPossivel(BigDecimal.valueOf(notaPossivel)).nomeDisciplina(prova.getDisciplina().getName()).questoesAvaliadas(questaoAvaliadaResponseDTOS)
+                .notaPossivel(BigDecimal.valueOf(notaPossivel)).nomeDisciplina(prova.getDisciplina().getNome()).questoesAvaliadas(questaoAvaliadaResponseDTOS)
                 .build();
     }
 }

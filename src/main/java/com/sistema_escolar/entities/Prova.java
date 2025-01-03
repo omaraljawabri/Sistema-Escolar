@@ -31,9 +31,9 @@ public class Prova {
     @NotNull
     private BigDecimal valorTotal;
 
-    private Boolean isPublished;
+    private Boolean publicado;
 
-    private LocalDateTime expirationTime;
+    private LocalDateTime tempoDeExpiracao;
 
     private String emailProfessor;
 

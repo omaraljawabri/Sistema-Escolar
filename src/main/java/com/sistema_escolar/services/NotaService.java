@@ -37,7 +37,7 @@ public class NotaService {
                 = notaRequestDTO.stream().sorted(Comparator.comparing(NotaRequestDTO::getQuestaoId)).toList();
         Double notaTotal = adicionarRespostasProva(prova, notasOrdenadas, estudante);
         mailService.enviarEmail(estudante.getEmail(), "Recebimento de nota",
-                String.format("Olá, uma nova nota sua foi publicada na disciplina %s pelo professor %s %s", professor.getDisciplina().getName(), professor.getFirstName(), professor.getLastName()));
+                String.format("Olá, uma nova nota sua foi publicada na disciplina %s pelo professor %s %s", professor.getDisciplina().getNome(), professor.getNome(), professor.getSobrenome()));
         return NotaResponseDTO.builder().notaProva(notaTotal).build();
     }
 

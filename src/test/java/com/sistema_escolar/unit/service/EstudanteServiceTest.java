@@ -40,7 +40,7 @@ class EstudanteServiceTest {
         Estudante estudante = estudanteService.buscarPorId(1L);
         assertThat(estudante).isNotNull();
         assertThat(estudante.getEmail()).isEqualTo("ciclano@example.com");
-        assertThat(estudante.getFirstName()).isEqualTo("Ciclano");
+        assertThat(estudante.getNome()).isEqualTo("Ciclano");
     }
 
     @Test

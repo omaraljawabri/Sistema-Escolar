@@ -3,7 +3,7 @@ package com.sistema_escolar.unit.controller;
 import com.sistema_escolar.controllers.ProvaController;
 import com.sistema_escolar.dtos.request.ProvaPostRequestDTO;
 import com.sistema_escolar.dtos.request.ProvaPutRequestDTO;
-import com.sistema_escolar.dtos.request.PublishProvaRequestDTO;
+import com.sistema_escolar.dtos.request.PublicarProvaRequestDTO;
 import com.sistema_escolar.dtos.response.ProvaAvaliadaResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
@@ -41,7 +41,7 @@ class ProvaControllerTest {
                 .thenReturn(criarProvaResponseDTO());
         when(provaService.atualizarProva(ArgumentMatchers.anyLong(), ArgumentMatchers.any(ProvaPutRequestDTO.class), ArgumentMatchers.any(Usuario.class)))
                 .thenReturn(criarProvaResponseDTO());
-        doNothing().when(provaService).publicarProva(ArgumentMatchers.any(PublishProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
+        doNothing().when(provaService).publicarProva(ArgumentMatchers.any(PublicarProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
         when(provaService.buscarProvaAvaliada(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class)))
                 .thenReturn(criarProvaAvaliadaResponseDTO());
     }
@@ -140,7 +140,7 @@ class ProvaControllerTest {
     void publicarProva_LancaUserNotFoundException_QuandoProfessorIdNaoExistir(){
         mockAuthentication();
         doThrow(new UserNotFoundException("Professor não foi encontrado"))
-                .when(provaService).publicarProva(ArgumentMatchers.any(PublishProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
+                .when(provaService).publicarProva(ArgumentMatchers.any(PublicarProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
         assertThatExceptionOfType(UserNotFoundException.class)
                 .isThrownBy(() -> provaController.publicarProva(2L, criarPublishProvaRequestDTO()))
                 .withMessage("Professor não foi encontrado");
@@ -151,7 +151,7 @@ class ProvaControllerTest {
     void publicarProva_LancaEntityNotFoundException_QuandoProvaNaoPertenceAoProfessorOuProvaIdNaoExistir(){
         mockAuthentication();
         doThrow(new EntityNotFoundException("Prova não pertence a esse professor ou id da prova não existe"))
-                .when(provaService).publicarProva(ArgumentMatchers.any(PublishProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
+                .when(provaService).publicarProva(ArgumentMatchers.any(PublicarProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
         assertThatExceptionOfType(EntityNotFoundException.class)
                 .isThrownBy(() -> provaController.publicarProva(2L, criarPublishProvaRequestDTO()))
                 .withMessage("Prova não pertence a esse professor ou id da prova não existe");
@@ -162,7 +162,7 @@ class ProvaControllerTest {
     void publicarProva_LancaUserDoesntBelongException_QuandoProfessorNaoEstiverEmNenhumaTurma(){
         mockAuthentication();
         doThrow(new UserDoesntBelongException("Professor não está vinculado a uma turma"))
-                .when(provaService).publicarProva(ArgumentMatchers.any(PublishProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
+                .when(provaService).publicarProva(ArgumentMatchers.any(PublicarProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
         assertThatExceptionOfType(UserDoesntBelongException.class)
                 .isThrownBy(() -> provaController.publicarProva(1L, criarPublishProvaRequestDTO()))
                 .withMessage("Professor não está vinculado a uma turma");

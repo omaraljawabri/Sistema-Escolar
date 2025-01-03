@@ -1,6 +1,6 @@
 package com.sistema_escolar.controllers;
 
-import com.sistema_escolar.dtos.request.CreateDisciplinaRequestDTO;
+import com.sistema_escolar.dtos.request.CriarDisciplinaRequestDTO;
 import com.sistema_escolar.infra.handlers.ErrorMessage;
 import com.sistema_escolar.services.DisciplinaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,8 +40,8 @@ public class DisciplinaController {
             @ApiResponse(responseCode = "500", description = "Erro ao realizar operação(Internal server error)")
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> criarDisciplina(@RequestBody CreateDisciplinaRequestDTO createDisciplinaRequestDTO){
-        disciplinaService.criarDisciplina(createDisciplinaRequestDTO);
+    public ResponseEntity<Void> criarDisciplina(@RequestBody CriarDisciplinaRequestDTO criarDisciplinaRequestDTO){
+        disciplinaService.criarDisciplina(criarDisciplinaRequestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

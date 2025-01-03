@@ -1,7 +1,7 @@
 package com.sistema_escolar.integration;
 
-import com.sistema_escolar.dtos.request.ChangePasswordEmailRequestDTO;
-import com.sistema_escolar.dtos.request.ChangePasswordRequestDTO;
+import com.sistema_escolar.dtos.request.MudarSenhaEmailRequestDTO;
+import com.sistema_escolar.dtos.request.MudarSenhaRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
 import com.sistema_escolar.entities.Estudante;
 import com.sistema_escolar.entities.RedefinirSenha;
@@ -68,9 +68,9 @@ class AuthenticationControllerIT {
     void login_RetornaLoginResponseDTOEStatus200_QuandoBemSucedido() {
         Usuario usuario = criarUsuario();
         usuario.setId(null);
-        usuario.setIsVerified(true);
-        usuario.setVerificationCode(null);
-        usuario.setPassword(new BCryptPasswordEncoder().encode("fulano"));
+        usuario.setVerificado(true);
+        usuario.setCodigoDeVerificacao(null);
+        usuario.setSenha(new BCryptPasswordEncoder().encode("fulano"));
         usuarioRepository.save(usuario);
         ResponseEntity<LoginResponseDTO> loginResponseDTOResponseEntity
                 = testRestTemplate.postForEntity(rootUrl + "/login", criarLoginRequestDTO(), LoginResponseDTO.class);
@@ -95,7 +95,7 @@ class AuthenticationControllerIT {
     void login_Retorna400_QuandoContaDoUsuarioNaoTiverSidoVerificada(){
         Usuario usuario = criarUsuario();
         usuario.setId(null);
-        usuario.setPassword(new BCryptPasswordEncoder().encode("fulano"));
+        usuario.setSenha(new BCryptPasswordEncoder().encode("fulano"));
         usuarioRepository.save(usuario);
         ResponseEntity<LoginResponseDTO> loginResponseDTOResponseEntity
                 = testRestTemplate.postForEntity(rootUrl + "/login", criarLoginRequestDTO(), LoginResponseDTO.class);
@@ -134,7 +134,7 @@ class AuthenticationControllerIT {
         usuario.setId(null);
         usuarioRepository.save(usuario);
         ResponseEntity<Void> responseEntity
-                = testRestTemplate.exchange(rootUrl + "/mudar-senha/requisicao", HttpMethod.POST, new HttpEntity<>(new ChangePasswordEmailRequestDTO("fulano@example.com")), Void.class);
+                = testRestTemplate.exchange(rootUrl + "/mudar-senha/requisicao", HttpMethod.POST, new HttpEntity<>(new MudarSenhaEmailRequestDTO("fulano@example.com")), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -143,7 +143,7 @@ class AuthenticationControllerIT {
     @DisplayName("pedirMudancaDeSenha deve retornar um http status 404 quando o email do usuário que solicitou a mudança não existir")
     void pedirMudancaDeSenha_Retorna404_QuandoEmailDoUsuarioNaoExistir(){
         ResponseEntity<Void> responseEntity
-                = testRestTemplate.exchange(rootUrl + "/mudar-senha/requisicao", HttpMethod.POST, new HttpEntity<>(new ChangePasswordEmailRequestDTO("ciclano@example.com")), Void.class);
+                = testRestTemplate.exchange(rootUrl + "/mudar-senha/requisicao", HttpMethod.POST, new HttpEntity<>(new MudarSenhaEmailRequestDTO("ciclano@example.com")), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -158,7 +158,7 @@ class AuthenticationControllerIT {
         redefinirSenha.setId(null);
         redefinirSenhaRepository.save(redefinirSenha);
         ResponseEntity<Void> responseEntity
-                = testRestTemplate.exchange(rootUrl + "/mudar-senha/verificar?code=acde070d-8c4c-4f0d-9d8a-162843c10334", HttpMethod.POST, new HttpEntity<>(new ChangePasswordRequestDTO("fulano10")), Void.class);
+                = testRestTemplate.exchange(rootUrl + "/mudar-senha/verificar?code=acde070d-8c4c-4f0d-9d8a-162843c10334", HttpMethod.POST, new HttpEntity<>(new MudarSenhaRequestDTO("fulano10")), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -171,10 +171,10 @@ class AuthenticationControllerIT {
         usuarioRepository.save(usuario);
         RedefinirSenha redefinirSenha = criarRedefinirSenha();
         redefinirSenha.setId(null);
-        redefinirSenha.setExpirationCodeTime(LocalDateTime.now().minusHours(2));
+        redefinirSenha.setTempoDeExpiracaoCodigo(LocalDateTime.now().minusHours(2));
         redefinirSenhaRepository.save(redefinirSenha);
         ResponseEntity<Void> responseEntity
-                = testRestTemplate.exchange(rootUrl + "/mudar-senha/verificar?code=acde070d-8c4c-4f0d-9d8a-162843c10334", HttpMethod.POST, new HttpEntity<>(new ChangePasswordRequestDTO("fulano10")), Void.class);
+                = testRestTemplate.exchange(rootUrl + "/mudar-senha/verificar?code=acde070d-8c4c-4f0d-9d8a-162843c10334", HttpMethod.POST, new HttpEntity<>(new MudarSenhaRequestDTO("fulano10")), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
