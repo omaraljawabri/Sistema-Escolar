@@ -16,7 +16,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class EstatisticasService {
 
     private final TurmaRepository turmaRepository;
@@ -24,6 +23,7 @@ public class EstatisticasService {
     private final NotaRepository notaRepository;
     private final DisciplinaRepository disciplinaRepository;
     private final EstudanteRepository estudanteRepository;
+    private final RespostaProvaRepository respostaProvaRepository;
 
     public EstatisticasTurmaResponseDTO estatisticasDaTurma(Long id, Usuario usuario) {
         Turma turma = turmaRepository.findByIdAndProfessorId(id, usuario.getId())
@@ -72,10 +72,12 @@ public class EstatisticasService {
     private Double calcularMediaGeral(List<Prova> provas, Turma turma){
         double mediaGeral = 0D;
         int numeroTotal = 0;
-        for (int i = 0; i < provas.size(); i++) {
+        for (Prova prova : provas) {
             for (int j = 0; j < turma.getEstudantes().size(); j++) {
-                mediaGeral += buscarNotaProvaParaEstatisticas(provas.get(i), turma.getEstudantes().get(i));
-                numeroTotal++;
+                if (respostaProvaRepository.existsByProvaIdAndEstudanteId(prova.getId(), turma.getEstudantes().get(j).getId())){
+                    mediaGeral += buscarNotaProvaParaEstatisticas(prova, turma.getEstudantes().get(j));
+                    numeroTotal++;
+                }
             }
         }
         if (numeroTotal == 0){
@@ -87,9 +89,9 @@ public class EstatisticasService {
     private Double calcularPorcentagemGeralAcimaDeSeis(List<Prova> provas, Turma turma){
         double numeroAcimaDeSeis = 0;
         double numeroTotal = 0;
-        for (int i = 0; i < provas.size(); i++) {
+        for (Prova prova : provas) {
             for (int j = 0; j < turma.getEstudantes().size(); j++) {
-                if (buscarNotaProvaParaEstatisticas(provas.get(i), turma.getEstudantes().get(i)) >= 6){
+                if (buscarNotaProvaParaEstatisticas(prova, turma.getEstudantes().get(j)) >= 6) {
                     numeroAcimaDeSeis++;
                 }
                 numeroTotal++;
@@ -106,20 +108,22 @@ public class EstatisticasService {
         double numeroAcimaDeSeisPorProva = 0;
         double numeroPorProva = 0;
         double mediaPorProva = 0;
-        for (int i = 0; i < provas.size(); i++) {
+        for (Prova prova : provas) {
             for (int j = 0; j < turma.getEstudantes().size(); j++) {
-                if (buscarNotaProvaParaEstatisticas(provas.get(i), turma.getEstudantes().get(i)) >= 6){
-                    numeroAcimaDeSeisPorProva++;
+                if (respostaProvaRepository.existsByProvaIdAndEstudanteId(prova.getId(), turma.getEstudantes().get(j).getId())){
+                    if (buscarNotaProvaParaEstatisticas(prova, turma.getEstudantes().get(j)) >= 6) {
+                        numeroAcimaDeSeisPorProva++;
+                    }
+                    mediaPorProva += buscarNotaProvaParaEstatisticas(prova, turma.getEstudantes().get(j));
+                    numeroPorProva++;
                 }
-                mediaPorProva+= buscarNotaProvaParaEstatisticas(provas.get(i), turma.getEstudantes().get(i));
-                numeroPorProva++;
             }
-            if (numeroPorProva == 0){
+            if (numeroPorProva == 0) {
                 numeroPorProva = 1;
             }
-            estatisticasProvaResponseDTOS.add(EstatisticasProvaResponseDTO.builder().provaId(provas.get(i).getId())
-                    .mediaTurma(BigDecimal.valueOf(mediaPorProva/numeroPorProva))
-                    .porcentagemAcimaDeSeis(BigDecimal.valueOf((numeroAcimaDeSeisPorProva/numeroPorProva)*100))
+            estatisticasProvaResponseDTOS.add(EstatisticasProvaResponseDTO.builder().provaId(prova.getId())
+                    .mediaTurma(BigDecimal.valueOf(mediaPorProva / numeroPorProva))
+                    .porcentagemAcimaDeSeis(BigDecimal.valueOf((numeroAcimaDeSeisPorProva / numeroPorProva) * 100))
                     .build());
             numeroAcimaDeSeisPorProva = 0;
             numeroPorProva = 0;
@@ -129,8 +133,8 @@ public class EstatisticasService {
     }
 
     private Double buscarNotaProvaParaEstatisticas(Prova prova, Estudante estudante){
-        if (notaRepository.findByEstudanteIdAndProvaId(prova.getId(), estudante.getId()).isPresent()){
-            return notaRepository.findByEstudanteIdAndProvaId(prova.getId(), estudante.getId()).get().getValor().doubleValue();
+        if (notaRepository.findByEstudanteIdAndProvaId(estudante.getId(), prova.getId()).isPresent()){
+            return notaRepository.findByEstudanteIdAndProvaId(estudante.getId(), prova.getId()).get().getValor().doubleValue();
         } else{
             return 0D;
         }

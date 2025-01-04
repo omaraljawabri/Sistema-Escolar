@@ -11,4 +11,5 @@ public interface RespostaProvaRepository extends JpaRepository<RespostaProva, Lo
     List<RespostaProva> findAllByProvaIdAndRespondidaTrue(Long id);
     Optional<RespostaProva> findByQuestaoIdAndProvaIdAndEstudanteId(Long questaoId, Long provaId, Long estudanteId);
     List<RespostaProva> findByEstudanteIdAndProvaIdAndAvaliadaTrue(Long estudanteId, Long provaId);
+    boolean existsByProvaIdAndEstudanteId(Long provaId, Long estudanteId);
 }
