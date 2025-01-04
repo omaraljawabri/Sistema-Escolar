@@ -5,7 +5,6 @@ import com.sistema_escolar.entities.*;
 import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
