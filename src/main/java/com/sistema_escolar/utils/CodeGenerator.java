@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 
 public class CodeGenerator {
 
-    public static String generateCode(){
+    public static String gerarCodigo(){
         String pattern = "8CTJOQKXH4@F1NZ&GDLIW6!3V2%#R7A90E5BP?YSMU ";
         SecureRandom random = new SecureRandom();
         StringBuffer stringBuffer = new StringBuffer(11);
