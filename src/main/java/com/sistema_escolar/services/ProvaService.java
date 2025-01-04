@@ -9,6 +9,7 @@ import com.sistema_escolar.dtos.response.QuestaoAvaliadaResponseDTO;
 import com.sistema_escolar.dtos.response.QuestaoResponseDTO;
 import com.sistema_escolar.entities.*;
 import com.sistema_escolar.exceptions.EntityNotFoundException;
+import com.sistema_escolar.exceptions.TestErrorException;
 import com.sistema_escolar.exceptions.UserDoesntBelongException;
 import com.sistema_escolar.repositories.ProvaRepository;
 import com.sistema_escolar.repositories.QuestaoRepository;
@@ -70,6 +71,9 @@ public class ProvaService {
     }
 
     public void publicarProva(PublicarProvaRequestDTO publicarProvaRequestDTO, Long id, Usuario usuario) {
+        if (provaRepository.existsByIdAndPublicadoTrue(id)) {
+            throw new TestErrorException("Prova já foi publicada");
+        }
         Professor professor = professorService.buscarPorId(usuario.getId());
         Prova prova = buscarPorIdEEmailDoProfessor(id, professor.getEmail());
         prova.setPublicado(true);
