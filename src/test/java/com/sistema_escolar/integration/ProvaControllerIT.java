@@ -18,6 +18,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.*;
 import static com.sistema_escolar.utils.EntityUtils.*;
 
@@ -76,6 +78,8 @@ class ProvaControllerIT {
         questao.setId(null);
         questaoRepository.save(questao);
         Prova prova = criarProva();
+        prova.setPublicado(false);
+        prova.setTempoDeExpiracao(null);
         prova.setId(null);
         provaRepository.save(prova);
     }
@@ -282,6 +286,24 @@ class ProvaControllerIT {
                 = testRestTemplate.exchange(rootUrl + "/prova/publicar/{id}", HttpMethod.POST, new HttpEntity<>(criarPublishProvaRequestDTO(), headers), Void.class, 1L);
         assertThat(response).isNotNull();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("publicarProva deve retornar um http status 400 quando a prova já estiver publicada")
+    void publicarProva_Retorna400_QuandoProvaJaEstaPublicada(){
+        String tokenJWT = gerarTokenJWT(criarProfessorIT(), "professor");
+        adicionarDependenciasPut();
+        Prova prova = provaRepository.findById(1L).get();
+        prova.setPublicado(true);
+        prova.setTempoDeExpiracao(LocalDateTime.now().plusHours(2));
+        provaRepository.save(prova);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer "+tokenJWT);
+        ResponseEntity<Void> response
+                = testRestTemplate.exchange(rootUrl + "/prova/publicar/{id}", HttpMethod.POST, new HttpEntity<>(criarPublishProvaRequestDTO(), headers), Void.class, 1L);
+        assertThat(response).isNotNull();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).isNull();
     }
 

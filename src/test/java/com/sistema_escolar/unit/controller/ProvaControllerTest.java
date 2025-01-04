@@ -8,6 +8,7 @@ import com.sistema_escolar.dtos.response.ProvaAvaliadaResponseDTO;
 import com.sistema_escolar.dtos.response.ProvaResponseDTO;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.exceptions.EntityNotFoundException;
+import com.sistema_escolar.exceptions.TestErrorException;
 import com.sistema_escolar.exceptions.UserDoesntBelongException;
 import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.services.ProvaService;
@@ -166,6 +167,17 @@ class ProvaControllerTest {
         assertThatExceptionOfType(UserDoesntBelongException.class)
                 .isThrownBy(() -> provaController.publicarProva(1L, criarPublishProvaRequestDTO()))
                 .withMessage("Professor não está vinculado a uma turma");
+    }
+
+    @Test
+    @DisplayName("publicarProva deve lançar uma TestErrorException quando prova já estiver publicada")
+    void publicarProva_LancaTestErrorException_QuandoProvaJaEstaPublicada(){
+        mockAuthentication();
+        doThrow(new TestErrorException("Prova já está publicada"))
+                .when(provaService).publicarProva(ArgumentMatchers.any(PublicarProvaRequestDTO.class), ArgumentMatchers.anyLong(), ArgumentMatchers.any(Usuario.class));
+        assertThatExceptionOfType(TestErrorException.class)
+                .isThrownBy(() -> provaController.publicarProva(1L, criarPublishProvaRequestDTO()))
+                .withMessage("Prova já está publicada");
     }
 
 

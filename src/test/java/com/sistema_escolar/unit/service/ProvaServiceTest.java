@@ -8,6 +8,7 @@ import com.sistema_escolar.entities.Professor;
 import com.sistema_escolar.entities.Prova;
 import com.sistema_escolar.entities.Questao;
 import com.sistema_escolar.exceptions.EntityNotFoundException;
+import com.sistema_escolar.exceptions.TestErrorException;
 import com.sistema_escolar.exceptions.UserDoesntBelongException;
 import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.repositories.ProvaRepository;
@@ -83,6 +84,8 @@ class ProvaServiceTest {
                 .thenReturn(criarEstudante());
         when(respostaProvaRepository.findByEstudanteIdAndProvaIdAndAvaliadaTrue(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
                 .thenReturn(List.of(criarRespostaProva()));
+        when(provaRepository.existsByIdAndPublicadoTrue(ArgumentMatchers.anyLong()))
+                .thenReturn(false);
     }
 
     @Test
@@ -249,6 +252,18 @@ class ProvaServiceTest {
     }
 
     @Test
+    @DisplayName("publicarProva deve lançar uma TestErrorException quando professor tentar publicar uma prova que já está publicada")
+    void publicarProva_LancaTestErrorException_QuandoProvaJaEstaPublicada(){
+        when(provaRepository.existsByIdAndPublicadoTrue(ArgumentMatchers.anyLong()))
+                .thenReturn(true);
+        assertThatExceptionOfType(TestErrorException.class)
+                .isThrownBy(() -> provaService.publicarProva(criarPublishProvaRequestDTO(), 1L, criarProfessor()))
+                .withMessage("Prova já foi publicada");
+        verify(mailService, times(0)).enviarEmail(Mockito.eq("ciclano@example.com"),
+                Mockito.eq("Postagem de prova"), Mockito.contains("Olá, Ciclano, uma nova prova foi postada"));
+    }
+
+    @Test
     @DisplayName("buscarPorId deve retornar uma Prova quando o id buscado existir")
     void buscarPorId_RetornaProva_QuandoIdBuscadoExistir() {
         Prova prova = provaService.buscarPorId(1L);
@@ -286,7 +301,7 @@ class ProvaServiceTest {
     }
 
     @Test
-    @DisplayName("getProvaAvaliada deve retornar uma ProvaAvaliadaResponseDTO quando a busca por uma prova avaliada é bem sucedida")
+    @DisplayName("buscarProvaAvaliada deve retornar uma ProvaAvaliadaResponseDTO quando a busca por uma prova avaliada é bem sucedida")
     void buscarProvaAvaliada_RetornaProvaAvaliadaResponseDTO_QuandoABuscaPorProvaAvaliadaEBemSucedida() {
         ProvaAvaliadaResponseDTO provaAvaliada = provaService.buscarProvaAvaliada(1L, criarProfessor());
         assertThat(provaAvaliada).isNotNull();
@@ -295,7 +310,7 @@ class ProvaServiceTest {
     }
 
     @Test
-    @DisplayName("getProvaAvaliada deve lançar uma UserNotFoundException quando o id do estudante passado não existir")
+    @DisplayName("buscarProvaAvaliada deve lançar uma UserNotFoundException quando o id do estudante passado não existir")
     void buscarProvaAvaliada_LancaUserNotFoundException_QuandoEstudanteIdNaoExistir(){
         doThrow(new UserNotFoundException("Estudante não encontrado"))
                 .when(estudanteService).buscarPorId(ArgumentMatchers.anyLong());
@@ -307,7 +322,7 @@ class ProvaServiceTest {
     }
 
     @Test
-    @DisplayName("getProvaAvaliada deve lançar uma EntityNotFoundException quando o id da prova buscada não existir")
+    @DisplayName("buscarProvaAvaliada deve lançar uma EntityNotFoundException quando o id da prova buscada não existir")
     void buscarProvaAvaliada_LancaEntityNotFoundException_QuandoProvaIdNaoExistir(){
         when(provaRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
@@ -317,7 +332,7 @@ class ProvaServiceTest {
     }
 
     @Test
-    @DisplayName("getProvaAvaliada deve lançar uma UserDoesntBelongException quando não houverem respostas do estudante para a prova buscada")
+    @DisplayName("buscarProvaAvaliada deve lançar uma UserDoesntBelongException quando não houverem respostas do estudante para a prova buscada")
     void buscarProvaAvaliada_LancaUserDoesntBelongException_QuandoNaoHouveremRespostasDoEstudanteParaAProva(){
         when(respostaProvaRepository.findByEstudanteIdAndProvaIdAndAvaliadaTrue(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
                 .thenReturn(Collections.emptyList());
