@@ -47,6 +47,9 @@ class EstatisticasServiceTest {
     @Mock
     private EstudanteRepository estudanteRepository;
 
+    @Mock
+    private RespostaProvaRepository respostaProvaRepository;
+
     @BeforeEach
     void setup(){
         when(turmaRepository.findByIdAndProfessorId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
@@ -79,6 +82,8 @@ class EstatisticasServiceTest {
                 .thenReturn(List.of(criarTurma()));
         when(estudanteRepository.countByTurmasId(ArgumentMatchers.anyLong()))
                 .thenReturn(1L);
+        when(respostaProvaRepository.existsByProvaIdAndEstudanteId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
+                .thenReturn(true);
     }
 
     @Test
