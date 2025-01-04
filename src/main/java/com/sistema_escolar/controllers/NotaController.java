@@ -45,19 +45,7 @@ public class NotaController {
     })
     @PostMapping(value = "/prova/{id}/{estudanteId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NotaResponseDTO> avaliarProva(
-            @Parameter(
-                    name = "id",
-                    description = "Identificador único da prova",
-                    required = true,
-                    schema = @Schema(example = "1", type = "Long")
-            )
             @PathVariable Long id,
-            @Parameter(
-                    name = "estudanteId",
-                    description = "Identificador único do estudante",
-                    required = true,
-                    schema = @Schema(example = "1", type = "Long")
-            )
             @PathVariable Long estudanteId,
             @RequestBody List<NotaRequestDTO> notaRequestDTO
     ){

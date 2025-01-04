@@ -81,12 +81,6 @@ public class AuthenticationController {
     })
     @GetMapping("/verificar")
     public ResponseEntity<Void> verificarCodigo(
-            @Parameter(
-                    name = "code",
-                    description = "Código único para identificação",
-                    required = true,
-                    schema = @Schema(type = "String", example = "acde070d-8c4c-4f0d-9d8a-162843c10333")
-            )
             @RequestParam("code") String code
     ){
         authenticationService.verificarCodigo(code);
@@ -118,12 +112,6 @@ public class AuthenticationController {
     })
     @PostMapping(value = "/mudar-senha/verificar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> verificarMudancaDeSenha(
-            @Parameter(
-                    name = "code",
-                    description = "Código único para identificação",
-                    required = true,
-                    schema = @Schema(type = "String", example = "acde070d-8c4c-4f0d-9d8a-162843c10333")
-            )
             @RequestParam("code") String code,
             @RequestBody MudarSenhaRequestDTO mudarSenhaRequestDTO
     ){

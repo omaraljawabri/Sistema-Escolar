@@ -67,12 +67,6 @@ public class ProvaController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProvaResponseDTO> atualizarProva(
-            @Parameter(
-                    name = "id",
-                    description = "Identificador único da prova",
-                    required = true,
-                    schema = @Schema(type = "Long", example = "1")
-            )
             @PathVariable Long id,
             @RequestBody ProvaPutRequestDTO provaPutRequestDTO
     ){
@@ -96,12 +90,6 @@ public class ProvaController {
     })
     @PostMapping(value = "/publicar/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> publicarProva(
-            @Parameter(
-                    description = "Identificador único da prova",
-                    name = "id",
-                    required = true,
-                    schema = @Schema(example = "1", type = "Long")
-            )
             @PathVariable Long id,
             @RequestBody PublicarProvaRequestDTO publicarProvaRequestDTO
     ){
@@ -126,12 +114,6 @@ public class ProvaController {
     })
     @GetMapping(value = "/avaliada/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProvaAvaliadaResponseDTO> buscarProvaAvaliada(
-            @Parameter(
-                    name = "id",
-                    description = "Identificador único da prova",
-                    required = true,
-                    schema = @Schema(example = "1", type = "Long")
-            )
             @PathVariable Long id
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

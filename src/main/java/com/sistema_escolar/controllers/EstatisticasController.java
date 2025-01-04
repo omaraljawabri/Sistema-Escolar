@@ -80,12 +80,6 @@ public class EstatisticasController {
     })
     @GetMapping(value = "/turma/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EstatisticasTurmaResponseDTO> estatisticasDaTurma(
-            @Parameter(
-                    name = "id",
-                    description = "Identificador único do usuário",
-                    required = true,
-                    schema = @Schema(example = "1", type = "Long")
-            )
             @PathVariable Long id
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

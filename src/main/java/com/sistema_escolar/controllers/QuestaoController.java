@@ -40,19 +40,7 @@ public class QuestaoController {
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<QuestaoResponseDTO>> buscarQuestoes(
-            @Parameter(
-                    name = "pagina",
-                    description = "Número da página que será acessada",
-                    required = true,
-                    schema = @Schema(example = "1", type = "int")
-            )
             @RequestParam int pagina,
-            @Parameter(
-                    name = "quantidade",
-                    description = "Quantidade de questões que serão acessadas",
-                    required = true,
-                    schema = @Schema(example = "10", type = "int")
-            )
             @RequestParam int quantidade
     ){
         return ResponseEntity.ok(questaoService.buscarQuestoes(pagina, quantidade));

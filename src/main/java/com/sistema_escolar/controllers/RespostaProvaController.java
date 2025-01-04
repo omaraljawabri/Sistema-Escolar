@@ -46,12 +46,6 @@ public class RespostaProvaController {
     })
     @PostMapping("/{id}")
     public ResponseEntity<Void> responderProva(
-            @Parameter(
-                    name = "id",
-                    description = "Identificador único da prova",
-                    required = true,
-                    schema = @Schema(example = "1", type = "Long")
-            )
             @PathVariable Long id,
             @RequestBody RespostaProvaRequestDTO respostaProvaRequestDTO
     ){
@@ -76,12 +70,6 @@ public class RespostaProvaController {
     })
     @GetMapping("/{provaId}")
     public ResponseEntity<List<ProvaRespondidaResponseDTO>> provasRespondidas(
-            @Parameter(
-                    name = "provaId",
-                    description = "Identificador único da prova",
-                    required = true,
-                    schema = @Schema(example = "1", type = "Long")
-            )
             @PathVariable Long provaId
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
