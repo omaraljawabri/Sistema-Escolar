@@ -77,7 +77,7 @@ public class AuthenticationService {
         RedefinirSenha redefinirSenha = RedefinirSenha.builder().codigoDeVerificacao(verificationCode).tempoDeExpiracaoCodigo(LocalDateTime.now().plusHours(24))
                 .usuario(usuario).build();
         redefinirSenhaRepository.save(redefinirSenha);
-        String verificationLink = String.format("http://localhost:8080/api/v1/auth/change-password/verificar?code=%s",verificationCode);
+        String verificationLink = String.format("http://localhost:8080/api/v1/auth/mudar-senha/verificar?code=%s",verificationCode);
         String subject = "Redefinição de senha";
         String textMessage = String.format("Olá, recebemos seu pedido para redefinição de senha!%nClique no link abaixo para prosseguir com o processo!%n%s",verificationLink);
         mailService.enviarEmail(mudarSenhaEmailRequestDTO.getEmail(), subject, textMessage);

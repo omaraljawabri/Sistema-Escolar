@@ -198,7 +198,7 @@ class AuthenticationServiceTest {
         assertThatCode(() -> authenticationService.mudarSenha(new MudarSenhaEmailRequestDTO("fulano@example.com")))
                 .doesNotThrowAnyException();
         verify(mailService, times(1)).enviarEmail(Mockito.eq("fulano@example.com"),
-                Mockito.eq("Redefinição de senha"), Mockito.contains("http://localhost:8080/api/v1/auth/change-password/verificar?code="));
+                Mockito.eq("Redefinição de senha"), Mockito.contains("http://localhost:8080/api/v1/auth/mudar-senha/verificar?code="));
     }
 
     @Test
@@ -210,7 +210,7 @@ class AuthenticationServiceTest {
                 .isThrownBy(() -> authenticationService.mudarSenha(new MudarSenhaEmailRequestDTO("ciclano@example.com")))
                 .withMessage("Email enviado não está cadastrado");
         verify(mailService, times(0)).enviarEmail(Mockito.eq("fulano@example.com"),
-                Mockito.eq("Redefinição de senha"), Mockito.contains("http://localhost:8080/api/v1/auth/change-password/verificar?code="));
+                Mockito.eq("Redefinição de senha"), Mockito.contains("http://localhost:8080/api/v1/auth/mudar-senha/verificar?code="));
     }
 
     @Test
