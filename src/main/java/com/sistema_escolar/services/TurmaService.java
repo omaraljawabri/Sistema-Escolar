@@ -14,6 +14,7 @@ import com.sistema_escolar.repositories.TurmaRepository;
 import com.sistema_escolar.utils.CodeGenerator;
 import com.sistema_escolar.utils.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class TurmaService {
 
     private final TurmaRepository turmaRepository;
@@ -88,7 +90,7 @@ public class TurmaService {
     }
 
     public CodeResponseDTO gerarCodigo(TurmaRequestDTO turmaRequestDTO) {
-        String generatedCode = CodeGenerator.generateCode();
+        String generatedCode = CodeGenerator.gerarCodigo();
         Turma turma = turmaRepository.findById(turmaRequestDTO.getTurmaId())
                 .orElseThrow(() -> new EntityNotFoundException("Turma selecionada não existe"));
         turma.setCodigoTurma(generatedCode);
@@ -100,7 +102,7 @@ public class TurmaService {
     public CodeResponseDTO gerarCodigo(Usuario usuario){
         Turma turma = turmaRepository.findByProfessorId(usuario.getId())
                 .orElseThrow(() -> new UserDoesntBelongException("Professor não esta vinculado a nenhuma turma"));
-        String generatedCode = CodeGenerator.generateCode();
+        String generatedCode = CodeGenerator.gerarCodigo();
         turma.setCodigoTurma(generatedCode);
         turma.setTempoExpiracaoCodigo(LocalDateTime.now().plusHours(7));
         turmaRepository.save(turma);
@@ -133,27 +135,32 @@ public class TurmaService {
             if (turma.getEstudantes() != null){
                 List<Estudante> estudantes = new ArrayList<>(turma.getEstudantes());
                 estudantes.add(estudante);
+                turma.setEstudantes(estudantes);
             } else{
                 turma.setEstudantes(List.of(estudante));
             }
             if (estudante.getTurmas() != null){
                 List<Turma> turmas = new ArrayList<>(estudante.getTurmas());
                 turmas.add(turma);
+                estudante.setTurmas(turmas);
             } else{
                 estudante.setTurmas(List.of(turma));
             }
             if (disciplina.getEstudantes() != null){
                 List<Estudante> estudantes = new ArrayList<>(disciplina.getEstudantes());
                 estudantes.add(estudante);
+                disciplina.setEstudantes(estudantes);
             } else{
                 disciplina.setEstudantes(List.of(estudante));
             }
             if (estudante.getDisciplinas() != null){
                 List<Disciplina> disciplinas = new ArrayList<>(estudante.getDisciplinas());
                 disciplinas.add(disciplina);
+                estudante.setDisciplinas(disciplinas);
             } else{
                 estudante.setDisciplinas(List.of(disciplina));
             }
+            log.info(estudante.getTurmas().getFirst().getId());
             estudanteRepository.save(estudante);
             turmaRepository.save(turma);
             disciplinaRepository.save(disciplina);
