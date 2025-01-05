@@ -1,5 +1,5 @@
 # 🏫 Sistema-Escolar
- Projeto de um Sistema Escolar utilizando roles (ADMIN, PROFESSOR e ESTUDANTE) e autenticação com token JWT
+ Projeto de uma API de um Sistema Escolar utilizando roles (ADMIN, PROFESSOR e ESTUDANTE) e autenticação com token JWT
 
 ## 💻 Tecnologias utilizadas
 - Java
