@@ -118,6 +118,17 @@ class EstatisticasServiceTest {
     }
 
     @Test
+    @DisplayName("estatisticasDaTurma deve retornar 0 como valor dos atributos quando não existirem respostas de prova relacionadas com o id da prova e do estudante")
+    void estatisticasDaTurma_RetornaZeroComoValores_QuandoNaoHouveremRespostasDeProvaComProvaIdEEstudanteId(){
+        when(respostaProvaRepository.existsByProvaIdAndEstudanteId(ArgumentMatchers.anyLong(), ArgumentMatchers.anyLong()))
+                .thenReturn(false);
+        EstatisticasTurmaResponseDTO estatisticasTurmaResponseDTO = estatisticasService.estatisticasDaTurma(1L, criarProfessor());
+        assertThat(estatisticasTurmaResponseDTO).isNotNull();
+        assertThat(estatisticasTurmaResponseDTO.getMediaGeral()).isEqualTo(BigDecimal.valueOf(0D));
+        assertThat(estatisticasTurmaResponseDTO.getPorcentagemAprovados()).isEqualTo(BigDecimal.valueOf(100D));
+     }
+
+    @Test
     @DisplayName("estatisticasDoEstudante deve retornar uma EstatisticasEstudanteResponseDTO quando a busca por estatísticas do estudante for bem sucedida")
     void estatisticasDoEstudante_RetornaEstatisticasEstudanteResponseDTO_QuandoABuscaPorEstatisticasEBemSucedida() {
         EstatisticasEstudanteResponseDTO estatisticasEstudanteResponseDTO = estatisticasService.estatisticasDoEstudante(criarEstudante());
