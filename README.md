@@ -1,5 +1,5 @@
 # 🏫 Sistema-Escolar
- Projeto de um pequeno sistema escolar utilizando mecanismo de roles (ADMIN, PROFESSOR e ESTUDANTE) e autenticação com token JWT
+ Projeto de um Sistema Escolar utilizando roles (ADMIN, PROFESSOR e ESTUDANTE) e autenticação com token JWT
 
 ## 💻 Tecnologias utilizadas
 - Java
@@ -42,6 +42,7 @@ A aplicação contém testes unitários e de integração, com uma cobertura de 
     1. Abra o terminal no repositório.
     2. Execute o comando: set MAIL_USERNAME=<seu_email>
     3. Execute o comando: set MAIL_PASSWORD=<sua_senha>
+    Obs: O e-mail e senha passados são os mesmos que foram colocados no arquivo .env
 ### 🧪 Testes unitários
     1. Abra o terminal no repositório.
     2. Execute o comando: mvn test
