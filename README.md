@@ -14,6 +14,7 @@
 
 ## 📋 Requisitos mínimos
     Possuir o Docker instalado e funcionando em sua máquina
+    Possuir maven instalado e funcionando caso queira rodar os testes em sua máquina
 
 ## ⚙️ Aplicação - Como rodar
     1. Faça o clone desse repositório ou baixe a versão zip e descompacte.
