@@ -19,14 +19,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/estatisticas")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 @SecurityRequirement(name = "securityConfig")
 @Tag(description = "Endpoints responsáveis por prover estatísticas ligadas a notas, médias, quantidade de turmas, etc",
         name = "Estatísticas")

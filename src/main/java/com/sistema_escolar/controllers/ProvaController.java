@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/prova")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 @SecurityRequirement(name = "securityConfig")
 @Tag(description = "Endpoints responsáveis por operações ligadas a prova", name = "Provas")
 public class ProvaController {

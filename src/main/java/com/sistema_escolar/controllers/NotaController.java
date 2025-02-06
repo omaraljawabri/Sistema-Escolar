@@ -25,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/nota")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 @SecurityRequirement(name = "securityConfig")
 @Tag(description = "Endpoints responsáveis por avaliar uma prova e atribuir nota a ela", name = "Notas")
 public class NotaController {

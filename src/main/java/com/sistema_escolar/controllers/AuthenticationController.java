@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 @Tag(description = "Endpoints relacionados a autenticação, login e mudança de senha do usuário", name = "Autenticação")
 public class AuthenticationController {
 

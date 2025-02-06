@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/turma")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 @SecurityRequirement(name = "securityConfig")
 @Tag(description = "Endpoints responsáveis por realizar operações relacionadas com a Turma", name="Turmas")
 public class TurmaController {

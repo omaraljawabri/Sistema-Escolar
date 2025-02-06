@@ -25,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/resposta-prova")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 @SecurityRequirement(name = "securityConfig")
 @Tag(description = "Endpoints responsáveis por realizar operações relacionadas com RespostaProva", name = "Respostas Prova")
 public class RespostaProvaController {
