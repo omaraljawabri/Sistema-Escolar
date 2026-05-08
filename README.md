@@ -1,6 +1,10 @@
 # 🏫 Sistema-Escolar
  Projeto de uma API de um Sistema Escolar utilizando roles (ADMIN, PROFESSOR e ESTUDANTE) e autenticação com token JWT
 
+## Versão do Projeto
+
+ v1.0.0
+
 ## 💻 Tecnologias utilizadas
 - Java
 - Spring
