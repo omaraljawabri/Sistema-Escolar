@@ -55,7 +55,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/verificar").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/mudar-senha/requisicao").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/mudar-senha/verificar").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/turma").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/turma").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/disciplina").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma/professor", "/api/v1/turma/estudante").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma/gerar-codigo/admin").hasRole("ADMIN")
@@ -71,7 +71,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/v1/nota/prova/**").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/estatisticas/turma/**").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/estatisticas/estudante").hasRole("ESTUDANTE")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/estatisticas/geral").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/estatisticas/geral").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
