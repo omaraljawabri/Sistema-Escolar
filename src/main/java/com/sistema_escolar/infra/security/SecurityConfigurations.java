@@ -32,7 +32,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfigurations {
 
     private final SecurityFilter securityFilter;
-    private final CustomUserDetailsService customUserDetailsService;
 
     private static final String[] AUTH_WHITE_LIST = {
 
@@ -58,7 +57,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/disciplina").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma/professor", "/api/v1/turma/estudante").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/turma/gerar-codigo/admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/turma/gerar-codigo/admin").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/turma/gerar-codigo/professor").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/v1/turma/entrar").hasAnyRole("PROFESSOR", "ESTUDANTE")
                         .requestMatchers(HttpMethod.POST, "/api/v1/prova").hasRole("PROFESSOR")
@@ -68,7 +67,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/api/v1/questao").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/v1/resposta-prova/**").hasRole("ESTUDANTE")
                         .requestMatchers(HttpMethod.GET, "/api/v1/resposta-prova/**").hasRole("PROFESSOR")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/nota/prova/**").hasRole("PROFESSOR")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/nota/prova/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/estatisticas/turma/**").hasRole("PROFESSOR")
                         .requestMatchers(HttpMethod.GET, "/api/v1/estatisticas/estudante").hasRole("ESTUDANTE")
                         .requestMatchers(HttpMethod.GET, "/api/v1/estatisticas/geral").hasRole("ADMIN")
@@ -81,7 +80,7 @@ public class SecurityConfigurations {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
+    }z
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
