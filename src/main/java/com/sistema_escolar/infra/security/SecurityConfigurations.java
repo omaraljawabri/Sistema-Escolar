@@ -32,7 +32,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfigurations {
 
     private final SecurityFilter securityFilter;
-    private final CustomUserDetailsService customUserDetailsService;
 
     private static final String[] AUTH_WHITE_LIST = {
 
