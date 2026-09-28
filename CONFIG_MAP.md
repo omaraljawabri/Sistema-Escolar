@@ -58,6 +58,14 @@ Observação: Outros arquivos dentro da pasta `src` também são ICs e devem ser
 | .dockerignore                                                               | Arquivos incluídos no contexto de build Docker   | v1.0.0 |
 | .env.example                                                                | Exemplo das variáveis de ambiente                 | v1.0.0 |
 | mvnw, mvnw.cmd e .mvn/wrapper/maven-wrapper.properties                      | Maven Wrapper (versão fixa do Maven)              | v1.0.0 |
+| .github/workflows/ci-cd.yml                                                 | Pipeline de CI/CD (homologação e produção)       | v1.0.0 |
+| .github/workflows/release.yml                                               | Pipeline de release (SBOM e GitHub Release)      | v1.0.0 |
+| .github/dependabot.yml                                                      | Atualização automática de dependências            | v1.0.0 |
+| .github/scripts/deploy-render.sh                                            | Script de deploy no Render                        | v1.0.0 |
+| .github/scripts/smoke-test.sh                                               | Smoke test da API                                 | v1.0.0 |
+| .zap/rules.tsv                                                              | Regras do OWASP ZAP (DAST)                        | v1.0.0 |
+| .gitleaksignore                                                             | Ocorrências do Gitleaks já analisadas             | v1.0.0 |
+| CI.md                                                                       | Documentação da pipeline de CI/CD                 | v1.0.0 |
 | README.md                                                                   | Documentação do projeto                           | v1.0.0 |
 | LICENSE                                                                     | Licença do projeto                                | v1.0.0 |
 | .gitignore                                                                  | Arquivo de exclusão do Git                        | v1.0.0 |
