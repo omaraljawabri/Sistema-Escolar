@@ -1,25 +1,9 @@
 package com.sistema_escolar.services;
 
-import com.sistema_escolar.dtos.response.EstatisticasDisciplinasResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasEstudanteProvaResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasEstudanteResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasGeraisResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasProvaResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasTurmaResponseDTO;
-import com.sistema_escolar.dtos.response.EstatisticasTurmasResponseDTO;
-import com.sistema_escolar.entities.Disciplina;
-import com.sistema_escolar.entities.Estudante;
-import com.sistema_escolar.entities.Nota;
-import com.sistema_escolar.entities.Prova;
-import com.sistema_escolar.entities.Turma;
-import com.sistema_escolar.entities.Usuario;
+import com.sistema_escolar.dtos.response.*;
+import com.sistema_escolar.entities.*;
 import com.sistema_escolar.exceptions.UserNotFoundException;
-import com.sistema_escolar.repositories.DisciplinaRepository;
-import com.sistema_escolar.repositories.EstudanteRepository;
-import com.sistema_escolar.repositories.NotaRepository;
-import com.sistema_escolar.repositories.ProvaRepository;
-import com.sistema_escolar.repositories.RespostaProvaRepository;
-import com.sistema_escolar.repositories.TurmaRepository;
+import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

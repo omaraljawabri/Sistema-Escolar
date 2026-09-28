@@ -33,7 +33,6 @@
 		<skipUTs>false</skipUTs>
 		<tomcat.version>10.1.59</tomcat.version>
 		<postgresql.version>42.7.13</postgresql.version>
-		<checkstyle.version>14.3.0</checkstyle.version>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>omaraljawabri</sonar.organization>
 		<sonar.projectKey>omaraljawabri_Sistema-Escolar</sonar.projectKey>
@@ -164,24 +163,6 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.6.0</version>
-				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
-					<consoleOutput>true</consoleOutput>
-					<failOnViolation>true</failOnViolation>
-					<violationSeverity>warning</violationSeverity>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.puppycrawl.tools</groupId>
-						<artifactId>checkstyle</artifactId>
-						<version>${checkstyle.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

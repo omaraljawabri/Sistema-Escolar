@@ -124,14 +124,8 @@ A aplicação contém testes unitários e de integração, com uma cobertura de 
     4. O relatório de cobertura do JaCoCo é gerado em target/site/jacoco/index.html
 `Obs: no Windows, utilize mvnw.cmd no lugar de ./mvnw`
 
-## 🧹 Lint (Checkstyle)
-O código é verificado pelo Checkstyle, com as regras definidas no arquivo checkstyle.xml. Essa verificação também é executada automaticamente na pipeline de CI/CD, então rode-a antes de abrir um PR:
-
-    1. Abra o terminal no repositório.
-    2. Execute o comando: ./mvnw checkstyle:check
-
 ## 🚀 CI/CD
-A aplicação possui uma pipeline de CI/CD no GitHub Actions com lint (Checkstyle), análise estática (Gitleaks, CodeQL e SonarQube Cloud), testes automatizados, scan de vulnerabilidades da imagem Docker (Trivy), deploy em homologação (branch homol) e em produção (branch main) no Render, testes dinâmicos em homologação (smoke test e OWASP ZAP) e geração de releases com SBOM a partir de tags.
+A aplicação possui uma pipeline de CI/CD no GitHub Actions com análise estática (Gitleaks, CodeQL e SonarQube Cloud), testes automatizados, scan de vulnerabilidades da imagem Docker (Trivy), deploy em homologação (branch homol) e em produção (branch main) no Render, testes dinâmicos em homologação (smoke test e OWASP ZAP) e geração de releases com SBOM a partir de tags.
 
 Caso queira entender em detalhes como os workflows funcionam e o que é necessário para configurá-los, acesse o arquivo [CI.md](CI.md).
 

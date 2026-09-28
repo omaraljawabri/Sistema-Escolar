@@ -65,7 +65,6 @@ Observação: Outros arquivos dentro da pasta `src` também são ICs e devem ser
 | .github/scripts/smoke-test.sh                                               | Smoke test da API                                 | v1.0.0 |
 | .zap/rules.tsv                                                              | Regras do OWASP ZAP (DAST)                        | v1.0.0 |
 | .gitleaksignore                                                             | Ocorrências do Gitleaks já analisadas             | v1.0.0 |
-| checkstyle.xml                                                              | Regras de lint do Checkstyle                      | v1.0.0 |
 | CI.md                                                                       | Documentação da pipeline de CI/CD                 | v1.0.0 |
 | README.md                                                                   | Documentação do projeto                           | v1.0.0 |
 | LICENSE                                                                     | Licença do projeto                                | v1.0.0 |

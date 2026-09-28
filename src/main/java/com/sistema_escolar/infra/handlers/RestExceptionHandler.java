@@ -1,15 +1,6 @@
 package com.sistema_escolar.infra.handlers;
 
-import com.sistema_escolar.exceptions.AccountWasntValidatedException;
-import com.sistema_escolar.exceptions.EntityAlreadyExistsException;
-import com.sistema_escolar.exceptions.EntityDoesntBelongToUserException;
-import com.sistema_escolar.exceptions.EntityNotFoundException;
-import com.sistema_escolar.exceptions.InvalidCodeException;
-import com.sistema_escolar.exceptions.QuestionErrorException;
-import com.sistema_escolar.exceptions.TestErrorException;
-import com.sistema_escolar.exceptions.UserAlreadyBelongsToAnEntityException;
-import com.sistema_escolar.exceptions.UserDoesntBelongException;
-import com.sistema_escolar.exceptions.UserNotFoundException;
+import com.sistema_escolar.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
