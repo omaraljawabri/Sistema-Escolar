@@ -130,6 +130,7 @@ jobs:
   sonarqube:
     name: SonarQube Cloud (Quality Gate)
     needs: [testes-unitarios, testes-integracao]
+    if: github.base_ref == 'main' || (github.event_name != 'pull_request' && github.ref_name == 'main')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -167,6 +168,7 @@ jobs:
   build-imagem:
     name: Build da imagem e scan de vulnerabilidades
     needs: [analise-estatica, codeql, sonarqube]
+    if: ${{ !cancelled() && !failure() }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -226,7 +228,7 @@ jobs:
   deploy-homolog:
     name: Deploy em homologação
     needs: build-imagem
-    if: github.event_name != 'pull_request' && github.ref_name == 'homol'
+    if: ${{ !cancelled() && needs.build-imagem.result == 'success' && github.event_name != 'pull_request' && github.ref_name == 'homol' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment:
@@ -254,6 +256,7 @@ jobs:
   dast-homolog:
     name: DAST em homologação (OWASP ZAP)
     needs: deploy-homolog
+    if: ${{ !cancelled() && needs.deploy-homolog.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
@@ -276,7 +279,7 @@ jobs:
   deploy-producao:
     name: Deploy em produção
     needs: build-imagem
-    if: github.event_name != 'pull_request' && github.ref_name == 'main'
+    if: ${{ !cancelled() && needs.build-imagem.result == 'success' && github.event_name != 'pull_request' && github.ref_name == 'main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment:
