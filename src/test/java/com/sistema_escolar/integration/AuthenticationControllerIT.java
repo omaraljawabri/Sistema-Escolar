@@ -11,25 +11,19 @@ import com.sistema_escolar.repositories.UsuarioRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDateTime;
 
 import static com.sistema_escolar.utils.EntityUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class AuthenticationControllerIT {
+class AuthenticationControllerIT extends AbstractIntegrationTest {
 
     public static String rootUrl = "/api/v1/auth";
 
@@ -49,6 +43,7 @@ class AuthenticationControllerIT {
                 = testRestTemplate.exchange(rootUrl + "/registrar", HttpMethod.POST, new HttpEntity<>(criarEstudante()), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(emailsRecebidosPor("ciclano@example.com")).isEqualTo(1);
     }
 
     @Test
@@ -137,6 +132,7 @@ class AuthenticationControllerIT {
                 = testRestTemplate.exchange(rootUrl + "/mudar-senha/requisicao", HttpMethod.POST, new HttpEntity<>(new MudarSenhaEmailRequestDTO("fulano@example.com")), Void.class);
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(emailsRecebidosPor("fulano@example.com")).isEqualTo(1);
     }
 
     @Test
