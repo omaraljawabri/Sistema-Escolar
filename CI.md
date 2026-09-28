@@ -29,6 +29,7 @@ Executado em pull requests e pushes para `homol` e `main`, e também manualmente
   - **CodeQL**: análise estática de segurança (SAST) do próprio GitHub. Os alertas aparecem na aba *Security*
 - `sonarqube`
   - **SonarQube Cloud**: analisa bugs, vulnerabilidades, code smells, duplicação e cobertura de testes. O pipeline aguarda o resultado do **Quality Gate** e falha caso ele seja reprovado
+  - Executado apenas em pull requests para a `main` e em pushes na `main`, pois o plano gratuito do SonarQube Cloud analisa somente a branch principal e os pull requests direcionados a ela. Nos demais casos o job é ignorado e o pipeline segue normalmente. Assim, o Quality Gate funciona como barreira para a promoção de homologação para produção (PR `homol` → `main`)
 
 ### 🧪 Verificação dinâmica
 - `testes-unitarios`: executa `./mvnw test` e publica o relatório de cobertura do JaCoCo
@@ -89,6 +90,10 @@ Semanalmente, o Dependabot abre PRs para a branch `homol` com atualizações de:
 - Imagens base do `Dockerfile`
 
 Como os PRs apontam para `homol`, toda atualização passa pela homologação antes de chegar à produção.
+
+Atualizações de versão **major** das dependências Maven e das imagens Docker são ignoradas, pois costumam trazer mudanças incompatíveis e exigem uma migração planejada. Por exemplo: Spring Boot 3 → 4, springdoc 2 → 3 (que depende do Spring Boot 4) e troca da versão do Java da imagem base (21 → 24, que não é uma versão LTS). Essas atualizações devem ser feitas manualmente, em um PR próprio.
+
+`Obs: o Dependabot lê o arquivo de configuração da branch padrão (main), então alterações no dependabot.yml só passam a valer depois de chegarem à main`
 
 ## 🔐 Configuração necessária
 

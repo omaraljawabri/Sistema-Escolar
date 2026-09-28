@@ -9,6 +9,9 @@ updates:
     groups:
       dependencias-maven:
         update-types: [minor, patch]
+    ignore:
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: github-actions
     directory: /
@@ -27,3 +30,6 @@ updates:
     groups:
       imagens-docker:
         patterns: ['*']
+    ignore:
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
