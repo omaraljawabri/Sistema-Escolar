@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -57,6 +58,7 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setup(){
+        ReflectionTestUtils.setField(authenticationService, "baseUrl", "http://localhost:8080");
         when(usuarioRepository.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(criarUsuario()));
         when(usuarioRepository.findByCodigoDeVerificacao(ArgumentMatchers.anyString()))

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/questao")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:4200")
 @SecurityRequirement(name = "securityConfig")
 @Tag(description = "Endpoints responsáveis por realizar operações relacionadas a Questao", name = "Questões")
 public class QuestaoController {

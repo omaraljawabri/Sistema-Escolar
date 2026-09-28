@@ -8,14 +8,17 @@ import com.sistema_escolar.entities.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Service
 public class TokenService {
     @Value("${api.sistema-escolar.auth.token.secret}")
     private String secret;
+
+    @Value("${api.sistema-escolar.auth.token.expiration-hours}")
+    private long expirationHours;
+
     public String gerarToken(Usuario usuario){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -45,6 +48,6 @@ public class TokenService {
     }
 
     private Instant gerarTempoDeExpiracao(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return Instant.now().plus(Duration.ofHours(expirationHours));
     }
 }

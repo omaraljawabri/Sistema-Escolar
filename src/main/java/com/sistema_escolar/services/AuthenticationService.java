@@ -13,6 +13,7 @@ import com.sistema_escolar.exceptions.UserNotFoundException;
 import com.sistema_escolar.utils.enums.UserRole;
 import com.sistema_escolar.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,9 @@ public class AuthenticationService {
     private final RedefinirSenhaRepository redefinirSenhaRepository;
     private final MailService mailService;
 
+    @Value("${api.sistema-escolar.base-url}")
+    private String baseUrl;
+
     @Transactional
     public void registrarUsuario(RegistrarRequestDTO registrarRequestDTO){
         if (usuarioRepository.findByEmail(registrarRequestDTO.getEmail()).isPresent()){
@@ -41,7 +45,7 @@ public class AuthenticationService {
         LocalDateTime codeExpirationTime = LocalDateTime.now().plusHours(24);
         String password = new BCryptPasswordEncoder().encode(registrarRequestDTO.getSenha());
         salvarUsuario(registrarRequestDTO, password, verificationCode, codeExpirationTime);
-        String verificationLink = String.format("http://localhost:8080/api/v1/auth/verificar?code=%s", verificationCode);
+        String verificationLink = String.format("%s/api/v1/auth/verificar?code=%s", baseUrl, verificationCode);
         String subject = "Validação de cadastro";
         String textMessage = String.format("Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. %nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: %n%s", verificationLink);
         mailService.enviarEmail(registrarRequestDTO.getEmail(), subject, textMessage);
@@ -77,7 +81,7 @@ public class AuthenticationService {
         RedefinirSenha redefinirSenha = RedefinirSenha.builder().codigoDeVerificacao(verificationCode).tempoDeExpiracaoCodigo(LocalDateTime.now().plusHours(24))
                 .usuario(usuario).build();
         redefinirSenhaRepository.save(redefinirSenha);
-        String verificationLink = String.format("http://localhost:8080/api/v1/auth/mudar-senha/verificar?code=%s",verificationCode);
+        String verificationLink = String.format("%s/api/v1/auth/mudar-senha/verificar?code=%s", baseUrl, verificationCode);
         String subject = "Redefinição de senha";
         String textMessage = String.format("Olá, recebemos seu pedido para redefinição de senha!%nClique no link abaixo para prosseguir com o processo!%n%s",verificationLink);
         mailService.enviarEmail(mudarSenhaEmailRequestDTO.getEmail(), subject, textMessage);
