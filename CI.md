@@ -89,6 +89,10 @@ Como os PRs apontam para `homol`, toda atualização passa pela homologação an
 
 ## 🔐 Configuração necessária
 
+### Segurança do repositório (Settings → Advanced Security)
+- *Dependency graph*: habilitado (necessário para o Dependency Review)
+- *Dependabot alerts*: habilitado
+
 ### Secrets e variáveis do repositório
 - `SONAR_TOKEN` (secret do repositório e secret do Dependabot): token do SonarQube Cloud
 
