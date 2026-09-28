@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.sistema-escolar</groupId>
 	<artifactId>Sistema-Escolar</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Sistema-Escolar</name>
 	<description>Sistema de gerenciamento escolar</description>
 	<url/>
@@ -31,6 +31,9 @@
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
 		<jacoco.version>0.8.14</jacoco.version>
 		<skipUTs>false</skipUTs>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.organization>omaraljawabri</sonar.organization>
+		<sonar.projectKey>omaraljawabri_Sistema-Escolar</sonar.projectKey>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 	<dependencies>
@@ -196,6 +199,10 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.cyclonedx</groupId>
+				<artifactId>cyclonedx-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
