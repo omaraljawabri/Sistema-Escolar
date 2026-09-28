@@ -27,6 +27,8 @@ spring:
 api:
   sistema-escolar:
     base-url: ${APP_BASE_URL:http://localhost:8080}
+    mail:
+      enabled: ${MAIL_ENABLED:true}
     cors:
       allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:3000}
     auth:

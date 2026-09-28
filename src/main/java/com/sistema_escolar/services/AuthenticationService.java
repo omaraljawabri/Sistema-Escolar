@@ -41,10 +41,14 @@ public class AuthenticationService {
         if (usuarioRepository.findByEmail(registrarRequestDTO.getEmail()).isPresent()){
             throw new EntityAlreadyExistsException("Email "+usuarioRepository.findByEmail(registrarRequestDTO.getEmail()).get().getEmail()+" já existe");
         }
+        String password = new BCryptPasswordEncoder().encode(registrarRequestDTO.getSenha());
+        if (!mailService.isHabilitado()) {
+            salvarUsuario(registrarRequestDTO, password, null, null, true);
+            return;
+        }
         String verificationCode = UUID.randomUUID().toString();
         LocalDateTime codeExpirationTime = LocalDateTime.now().plusHours(24);
-        String password = new BCryptPasswordEncoder().encode(registrarRequestDTO.getSenha());
-        salvarUsuario(registrarRequestDTO, password, verificationCode, codeExpirationTime);
+        salvarUsuario(registrarRequestDTO, password, verificationCode, codeExpirationTime, false);
         String verificationLink = String.format("%s/api/v1/auth/verificar?code=%s", baseUrl, verificationCode);
         String subject = "Validação de cadastro";
         String textMessage = String.format("Olá, recebemos uma solicitação de cadastro na nossa plataforma utilizando este e-mail. %nCaso deseje validar sua conta em nossa plataforma, clique no link abaixo: %n%s", verificationLink);
@@ -101,21 +105,21 @@ public class AuthenticationService {
     }
 
     private void salvarUsuario(RegistrarRequestDTO registrarRequestDTO, String password, String verificationCode,
-                               LocalDateTime codeExpirationTime){
+                               LocalDateTime codeExpirationTime, boolean verificado){
         if (registrarRequestDTO.getRole() == UserRole.ADMIN){
             Admin admin
                     = new Admin(registrarRequestDTO.getEmail(), password, registrarRequestDTO.getRole(), verificationCode,
-                    codeExpirationTime, false, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
+                    codeExpirationTime, verificado, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
             adminRepository.save(admin);
         } else if (registrarRequestDTO.getRole() == UserRole.PROFESSOR){
             Professor professor
                     = new Professor(registrarRequestDTO.getEmail(), password, registrarRequestDTO.getRole(), verificationCode,
-                    codeExpirationTime, false, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
+                    codeExpirationTime, verificado, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
             professorRepository.save(professor);
         } else{
             Estudante estudante
                     = new Estudante(registrarRequestDTO.getEmail(), password, registrarRequestDTO.getRole(), verificationCode,
-                    codeExpirationTime, false, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
+                    codeExpirationTime, verificado, registrarRequestDTO.getNome(), registrarRequestDTO.getSobrenome());
             estudanteRepository.save(estudante);
         }
     }

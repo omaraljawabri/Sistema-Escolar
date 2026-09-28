@@ -15,10 +15,20 @@ public class MailService {
     @Value("${spring.mail.username}")
     private String emailFrom;
 
+    @Value("${api.sistema-escolar.mail.enabled}")
+    private boolean habilitado;
+
     private final JavaMailSender javaMailSender;
+
+    public boolean isHabilitado() {
+        return habilitado;
+    }
 
     @Transactional
     public void enviarEmail(String email, String subject, String textMessage){
+        if (!habilitado) {
+            return;
+        }
         try{
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
             simpleMailMessage.setFrom(emailFrom);

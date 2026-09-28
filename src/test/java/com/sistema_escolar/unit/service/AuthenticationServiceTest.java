@@ -4,6 +4,7 @@ import com.sistema_escolar.dtos.request.MudarSenhaEmailRequestDTO;
 import com.sistema_escolar.dtos.request.MudarSenhaRequestDTO;
 import com.sistema_escolar.dtos.request.RegistrarRequestDTO;
 import com.sistema_escolar.dtos.response.LoginResponseDTO;
+import com.sistema_escolar.entities.Admin;
 import com.sistema_escolar.entities.RedefinirSenha;
 import com.sistema_escolar.entities.Usuario;
 import com.sistema_escolar.exceptions.AccountWasntValidatedException;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -68,6 +70,7 @@ class AuthenticationServiceTest {
         when(redefinirSenhaRepository.findByCodigoDeVerificacao(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(criarRedefinirSenha()));
         doNothing().when(mailService).enviarEmail(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        when(mailService.isHabilitado()).thenReturn(true);
     }
 
     @Test
@@ -111,6 +114,24 @@ class AuthenticationServiceTest {
         verify(mailService, times(1))
                 .enviarEmail(Mockito.eq(criarRegisterRequestDTO().getEmail()),
                         Mockito.eq(subject), Mockito.contains("http://localhost:8080/api/v1/auth/verificar?code="));
+    }
+
+    @Test
+    @DisplayName("registrarUsuario deve cadastrar o usuário já verificado e não enviar e-mail quando o envio de e-mails estiver desabilitado")
+    void registrarUsuario_CadastraUsuarioVerificadoSemEnviarEmail_QuandoEnvioDeEmailsDesabilitado() {
+        when(usuarioRepository.findByEmail(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.empty());
+        when(mailService.isHabilitado()).thenReturn(false);
+        ArgumentCaptor<Admin> adminCaptor = ArgumentCaptor.forClass(Admin.class);
+
+        assertThatCode(() -> authenticationService.registrarUsuario(criarRegisterRequestDTO()))
+                .doesNotThrowAnyException();
+
+        verify(adminRepository, times(1)).save(adminCaptor.capture());
+        assertThat(adminCaptor.getValue().getVerificado()).isTrue();
+        assertThat(adminCaptor.getValue().getCodigoDeVerificacao()).isNull();
+        assertThat(adminCaptor.getValue().getTempoDeExpiracaoCodigo()).isNull();
+        verify(mailService, never()).enviarEmail(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
     }
 
     @Test
