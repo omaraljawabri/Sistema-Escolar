@@ -19,6 +19,21 @@ env:
   JAVA_VERSION: '21'
 
 jobs:
+  lint:
+    name: Lint (Checkstyle)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Checkstyle
+        run: ./mvnw -B checkstyle:check
+
   analise-estatica:
     name: Análise estática (segredos e dependências)
     runs-on: ubuntu-latest
@@ -43,6 +58,7 @@ jobs:
 
   codeql:
     name: CodeQL (SAST)
+    needs: lint
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -71,6 +87,7 @@ jobs:
 
   testes-unitarios:
     name: Testes unitários
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -100,6 +117,7 @@ jobs:
 
   testes-integracao:
     name: Testes de integração (Testcontainers)
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
