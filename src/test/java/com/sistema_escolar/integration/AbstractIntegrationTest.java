@@ -2,26 +2,21 @@ package com.sistema_escolar.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.lifecycle.Startables;
+
+import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "spring.flyway.clean-disabled=false",
-                "api.sistema-escolar.auth.token.secret=segredo-de-teste"
-        })
-@Import(AbstractIntegrationTest.FlywayCleanConfig.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+        properties = "api.sistema-escolar.auth.token.secret=segredo-de-teste")
 public abstract class AbstractIntegrationTest {
 
     @ServiceConnection
@@ -31,14 +26,25 @@ public abstract class AbstractIntegrationTest {
             .withExposedPorts(1025, 8025);
 
     static {
-        POSTGRES.start();
-        MAILPIT.start();
+        Startables.deepStart(POSTGRES, MAILPIT).join();
     }
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @DynamicPropertySource
     static void mailProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.mail.host", MAILPIT::getHost);
         registry.add("spring.mail.port", () -> MAILPIT.getMappedPort(1025));
+    }
+
+    @BeforeEach
+    void limparBancoDeDados() {
+        List<String> tabelas = jdbcTemplate.queryForList("""
+                select tablename from pg_tables
+                where schemaname = 'public' and tablename <> 'flyway_schema_history'
+                """, String.class);
+        jdbcTemplate.execute("truncate table " + String.join(", ", tabelas) + " restart identity cascade");
     }
 
     @BeforeEach
@@ -56,16 +62,5 @@ public abstract class AbstractIntegrationTest {
 
     private static RestClient mailpit() {
         return RestClient.create("http://" + MAILPIT.getHost() + ":" + MAILPIT.getMappedPort(8025));
-    }
-
-    @TestConfiguration(proxyBeanMethods = false)
-    static class FlywayCleanConfig {
-        @Bean
-        FlywayMigrationStrategy cleanMigrateStrategy() {
-            return flyway -> {
-                flyway.clean();
-                flyway.migrate();
-            };
-        }
     }
 }
