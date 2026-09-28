@@ -15,11 +15,11 @@ echo "Aguardando $APP_URL responder com o commit $COMMIT"
 limite=$((SECONDS + TIMEOUT_SEGUNDOS))
 while true; do
   commit_atual=$(curl -fsS --max-time 15 "${APP_URL}/actuator/info" 2>/dev/null | jq -r '.app.commit // empty' || true)
-  if [ "$commit_atual" = "$COMMIT" ]; then
+  if [[ "$commit_atual" == "$COMMIT" ]]; then
     break
   fi
-  if [ "$SECONDS" -ge "$limite" ]; then
-    echo "::error::A versão $COMMIT não ficou disponível em $APP_URL após ${TIMEOUT_SEGUNDOS}s (versão atual: ${commit_atual:-indisponível})"
+  if (( SECONDS >= limite )); then
+    echo "::error::A versão $COMMIT não ficou disponível em $APP_URL após ${TIMEOUT_SEGUNDOS}s (versão atual: ${commit_atual:-indisponível})" >&2
     exit 1
   fi
   echo "Versão atual: ${commit_atual:-indisponível}. Nova tentativa em 15s..."
