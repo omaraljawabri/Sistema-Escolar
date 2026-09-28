@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/estatisticas")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:4200")
 @SecurityRequirement(name = "securityConfig")
 @Tag(description = "Endpoints responsáveis por prover estatísticas ligadas a notas, médias, quantidade de turmas, etc",
         name = "Estatísticas")

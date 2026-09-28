@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/disciplina")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "securityConfig")
-@CrossOrigin("http://localhost:4200")
 @Tag(description = "Endpoints ligados a criação de Disciplinas", name = "Disciplinas")
 public class DisciplinaController {
 
