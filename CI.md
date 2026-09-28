@@ -78,6 +78,9 @@ Executado quando uma tag no formato `vX.Y.Z` é enviada ao repositório.
        git push origin v1.1.0
     4. Acompanhe o workflow Release na aba Actions e confira o release criado na página de Releases.
 
+## 📌 Versões das actions
+As actions de terceiros (Docker, Trivy, OWASP ZAP, Gitleaks, Syft e a de criação de releases) são referenciadas pelo **SHA completo do commit**, com a versão correspondente ao lado (ex.: `docker/login-action@dbcb8138... # v4.6.0`). Diferente de uma tag, que pode ser movida para apontar para outro código, o SHA garante que o pipeline sempre executa exatamente o código revisado, protegendo contra ataques de cadeia de suprimentos. O SonarQube Cloud reprova o Quality Gate caso alguma action de terceiros seja referenciada apenas pela tag. As actions oficiais do GitHub (`actions/*` e `github/*`) são referenciadas pela versão principal (ex.: `@v7`).
+
 ## 🤖 Dependabot (`.github/dependabot.yml`)
 
 Semanalmente, o Dependabot abre PRs para a branch `homol` com atualizações de:
