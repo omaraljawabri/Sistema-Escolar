@@ -17,6 +17,8 @@
 - Testcontainers
 - JaCoCo
 - Mailpit
+- GitHub Actions
+- Render
 
 ## 📋 Requisitos mínimos
     Possuir o Docker instalado e funcionando em sua máquina
@@ -121,3 +123,10 @@ A aplicação contém testes unitários e de integração, com uma cobertura de 
     3. Execute o comando: ./mvnw verify
     4. O relatório de cobertura do JaCoCo é gerado em target/site/jacoco/index.html
 `Obs: no Windows, utilize mvnw.cmd no lugar de ./mvnw`
+
+## 🚀 CI/CD
+A aplicação possui uma pipeline de CI/CD no GitHub Actions com análise estática (Gitleaks, CodeQL e SonarQube Cloud), testes automatizados, scan de vulnerabilidades da imagem Docker (Trivy), deploy em homologação (branch homol) e em produção (branch main) no Render, testes dinâmicos em homologação (smoke test e OWASP ZAP) e geração de releases com SBOM a partir de tags.
+
+Caso queira entender em detalhes como os workflows funcionam e o que é necessário para configurá-los, acesse o arquivo [CI.md](CI.md).
+
+`Obs: para criar uma nova release, siga o passo a passo da seção "Como criar uma release" do CI.md`
