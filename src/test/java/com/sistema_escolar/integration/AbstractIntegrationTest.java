@@ -15,11 +15,6 @@ import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-/**
- * Base dos testes de integração: sobe um PostgreSQL e um Mailpit (servidor SMTP falso)
- * via Testcontainers uma única vez para toda a suíte.
- * A cada contexto recriado (@DirtiesContext) o Flyway limpa e recria o schema.
- */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
                 "spring.flyway.clean-disabled=false",
@@ -51,9 +46,6 @@ public abstract class AbstractIntegrationTest {
         mailpit().delete().uri("/api/v1/messages").retrieve().toBodilessEntity();
     }
 
-    /**
-     * Quantidade de e-mails recebidos pelo Mailpit para o destinatário informado.
-     */
     protected long emailsRecebidosPor(String destinatario) {
         JsonNode resultado = mailpit().get()
                 .uri("/api/v1/search?query={query}", "to:" + destinatario)

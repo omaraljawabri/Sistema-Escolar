@@ -179,5 +179,4 @@ README.html
 hs_err_pid*
 replay_pid*
 
-# Variáveis de ambiente locais
 .env

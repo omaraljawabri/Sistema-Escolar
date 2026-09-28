@@ -1,6 +1,3 @@
-# syntax=docker/dockerfile:1
-
-# ---- Estágio 1: build do artefato (os testes rodam no pipeline de CI, antes deste passo) ----
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /workspace
 
@@ -12,19 +9,16 @@ COPY src/ src/
 RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -q package -DskipTests \
     && java -Djarmode=tools -jar target/*.jar extract --layers --launcher --destination extracted
 
-# ---- Estágio 2: runtime mínimo, sem JDK, sem código-fonte e sem segredos ----
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 RUN addgroup -S app && adduser -S app -G app
 
-# Camadas ordenadas da que menos muda para a que mais muda, aproveitando o cache do Docker
 COPY --from=build /workspace/extracted/dependencies/ ./
 COPY --from=build /workspace/extracted/spring-boot-loader/ ./
 COPY --from=build /workspace/extracted/snapshot-dependencies/ ./
 COPY --from=build /workspace/extracted/application/ ./
 
-# Commit que gerou a imagem, exposto em /actuator/info
 ARG APP_COMMIT=local
 ENV APP_COMMIT=${APP_COMMIT}
 
