@@ -1,5 +1,3 @@
-# Ambiente local completo: API + PostgreSQL + Mailpit (caixa de e-mails falsa em http://localhost:8025)
-# As variáveis são lidas do arquivo .env (veja .env.example)
 services:
   postgres:
     image: postgres:17-alpine
