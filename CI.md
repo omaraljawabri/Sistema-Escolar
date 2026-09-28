@@ -91,6 +91,10 @@ Semanalmente, o Dependabot abre PRs para a branch `homol` com atualizações de:
 
 Como os PRs apontam para `homol`, toda atualização passa pela homologação antes de chegar à produção.
 
+Atualizações de versão **major** das dependências Maven e das imagens Docker são ignoradas, pois costumam trazer mudanças incompatíveis e exigem uma migração planejada. Por exemplo: Spring Boot 3 → 4, springdoc 2 → 3 (que depende do Spring Boot 4) e troca da versão do Java da imagem base (21 → 24, que não é uma versão LTS). Essas atualizações devem ser feitas manualmente, em um PR próprio.
+
+`Obs: o Dependabot lê o arquivo de configuração da branch padrão (main), então alterações no dependabot.yml só passam a valer depois de chegarem à main`
+
 ## 🔐 Configuração necessária
 
 ### Segurança do repositório (Settings → Advanced Security)
