@@ -22,8 +22,6 @@ Este documento explica os workflows do GitHub Actions do projeto: o que cada um 
 Executado em pull requests e pushes para `homol` e `main`, e também manualmente pela aba *Actions* (`workflow_dispatch`).
 
 ### 🔍 Verificação estática
-- `lint`
-  - **Checkstyle**: primeiro portão do pipeline, executado em segundos em todo PR e push. Verifica regras de qualidade do código definidas no `checkstyle.xml`, como imports não utilizados ou com `*`, blocos vazios, `equals` sem `hashCode`, `switch` sem `default`, estruturas sem chaves e nomes fora do padrão Java. Regras de formatação e de Javadoc não são aplicadas. Se o lint falhar, os jobs de CodeQL e de testes nem são executados (*fail-fast*)
 - `analise-estatica`
   - **Gitleaks**: procura segredos (senhas, tokens, chaves) em todo o histórico do repositório. Ocorrências antigas já analisadas ficam registradas no arquivo `.gitleaksignore`
   - **Dependency Review** (apenas em PRs): bloqueia o PR caso ele adicione uma dependência com vulnerabilidade de severidade alta ou crítica
@@ -121,7 +119,6 @@ Cada ambiente é um *Web Service* do Render criado a partir de uma imagem existe
 `Obs: no plano gratuito, o Render desliga o serviço após 15 minutos sem acessos e leva cerca de 1 minuto para religá-lo. Por isso, o script de deploy aguarda até 15 minutos pela nova versão`
 
 ## 🛠️ Executando as verificações localmente
-    Lint: ./mvnw checkstyle:check
     Testes unitários: ./mvnw test
     Testes de integração: ./mvnw verify -DskipUTs
     Segredos no histórico: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:latest git /repo
