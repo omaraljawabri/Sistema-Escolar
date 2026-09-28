@@ -1,0 +1,5 @@
+968f95066d6318c9ab4f03ff525148138581dc7a:config.env:generic-api-key:7
+d07969beffa90ac564feab2fa5ebcada6a2e5331:src/test/java/com/sistema_escolar/utils/EntityUtils.java:jwt:32
+d07969beffa90ac564feab2fa5ebcada6a2e5331:src/test/java/com/sistema_escolar/unit/service/AuthenticationServiceTest.java:jwt:169
+3da9ab5e036afa481b393351c83dd1d9a439b00e:src/main/resources/application.properties:generic-api-key:8
+748fd814b8507a851a002596eed21b2e5faea099:src/main/resources/application.properties:generic-api-key:8
