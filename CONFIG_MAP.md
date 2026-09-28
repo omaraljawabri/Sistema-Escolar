@@ -51,7 +51,13 @@ Observação: Outros arquivos dentro da pasta `src` também são ICs e devem ser
 | docker-compose.yml                                                          | Configuração de containers  do sistema                     | v1.0.0 |
 | pom.xml                                                                     | Arquivo de build Maven           com as dependências utilizadas pelo sistema                 | v1.0.0 |
 | sonarqube/docker-compose.yml                                                | Configuração do SonarQube via container            | v1.0.0 |
-| config.env                                                                  | Variáveis de ambiente                             | v1.0.0 |
+| src/main/java/com/sistema_escolar/infra/cors/CorsConfig.java                | Configuração de CORS a partir de variáveis de ambiente | v1.0.0 |
+| src/main/resources/db/migration/V1__schema_inicial.sql                      | Migration inicial do banco de dados (Flyway)     | v1.0.0 |
+| src/test/java/com/sistema_escolar/integration/AbstractIntegrationTest.java | Base dos testes de integração com Testcontainers | v1.0.0 |
+| Dockerfile                                                                  | Build multi-stage da imagem Docker da aplicação  | v1.0.0 |
+| .dockerignore                                                               | Arquivos incluídos no contexto de build Docker   | v1.0.0 |
+| .env.example                                                                | Exemplo das variáveis de ambiente                 | v1.0.0 |
+| mvnw, mvnw.cmd e .mvn/wrapper/maven-wrapper.properties                      | Maven Wrapper (versão fixa do Maven)              | v1.0.0 |
 | README.md                                                                   | Documentação do projeto                           | v1.0.0 |
 | LICENSE                                                                     | Licença do projeto                                | v1.0.0 |
 | .gitignore                                                                  | Arquivo de exclusão do Git                        | v1.0.0 |
