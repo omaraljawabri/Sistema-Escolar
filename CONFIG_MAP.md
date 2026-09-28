@@ -47,7 +47,7 @@ Observação: Outros arquivos dentro da pasta `src` também são ICs e devem ser
 | src/main/java/com/sistema_escolar/infra/security/SecurityConfigurations.java | Configurações de segurança do sistema            | v1.0.0 |
 | src/main/java/com/sistema_escolar/repositories/DisciplinaRepository.java    | Repositório para manipulação de dados de disciplina | v1.0.0 |
 | src/main/java/com/sistema_escolar/services/DisciplinaService.java           | Serviço que implementa regras de negócio de disciplinas | v1.0.0 |
-| src/main/resources/application.properties                                  | Arquivo de configuração do Spring Boot          | v1.0.0 |
+| src/main/resources/application.yml                                         | Arquivo de configuração do Spring Boot          | v1.0.0 |
 | docker-compose.yml                                                          | Configuração de containers  do sistema                     | v1.0.0 |
 | pom.xml                                                                     | Arquivo de build Maven           com as dependências utilizadas pelo sistema                 | v1.0.0 |
 | sonarqube/docker-compose.yml                                                | Configuração do SonarQube via container            | v1.0.0 |
