@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+
+# ---- Estágio 1: build do artefato (os testes rodam no pipeline de CI, antes deste passo) ----
+FROM eclipse-temurin:21-jdk-alpine AS build
+WORKDIR /workspace
+
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -q dependency:go-offline
+
+COPY src/ src/
+RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -q package -DskipTests \
+    && java -Djarmode=tools -jar target/*.jar extract --layers --launcher --destination extracted
+
+# ---- Estágio 2: runtime mínimo, sem JDK, sem código-fonte e sem segredos ----
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+
+RUN addgroup -S app && adduser -S app -G app
+
+# Camadas ordenadas da que menos muda para a que mais muda, aproveitando o cache do Docker
+COPY --from=build /workspace/extracted/dependencies/ ./
+COPY --from=build /workspace/extracted/spring-boot-loader/ ./
+COPY --from=build /workspace/extracted/snapshot-dependencies/ ./
+COPY --from=build /workspace/extracted/application/ ./
+
+# Commit que gerou a imagem, exposto em /actuator/info
+ARG APP_COMMIT=local
+ENV APP_COMMIT=${APP_COMMIT}
+
+USER app
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
+    CMD wget -qO- "http://localhost:${PORT:-8080}/actuator/health/liveness" || exit 1
+
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "org.springframework.boot.loader.launch.JarLauncher"]
