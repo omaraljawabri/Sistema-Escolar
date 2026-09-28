@@ -1,0 +1,297 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches: [homol, main]
+  push:
+    branches: [homol, main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_NAME: ghcr.io/omaraljawabri/sistema-escolar
+  JAVA_VERSION: '21'
+
+jobs:
+  analise-estatica:
+    name: Análise estática (segredos e dependências)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dependency Review
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+
+  codeql:
+    name: CodeQL (SAST)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: java-kotlin
+          build-mode: manual
+
+      - name: Compilar
+        run: ./mvnw -B -DskipTests compile
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:java-kotlin
+
+  testes-unitarios:
+    name: Testes unitários
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Executar testes unitários
+        run: ./mvnw -B test jacoco:report
+
+      - name: Publicar cobertura
+        uses: actions/upload-artifact@v7
+        with:
+          name: cobertura-unitarios
+          path: target/site/jacoco/jacoco.xml
+          if-no-files-found: error
+
+      - name: Publicar relatórios em caso de falha
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: relatorios-testes-unitarios
+          path: target/surefire-reports/
+
+  testes-integracao:
+    name: Testes de integração (Testcontainers)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Executar testes de integração
+        run: ./mvnw -B verify -DskipUTs
+
+      - name: Publicar cobertura
+        uses: actions/upload-artifact@v7
+        with:
+          name: cobertura-integracao
+          path: target/site/jacoco/jacoco.xml
+          if-no-files-found: error
+
+      - name: Publicar relatórios em caso de falha
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: relatorios-testes-integracao
+          path: target/failsafe-reports/
+
+  sonarqube:
+    name: SonarQube Cloud (Quality Gate)
+    needs: [testes-unitarios, testes-integracao]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: cobertura-unitarios
+          path: cobertura/unitarios
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: cobertura-integracao
+          path: cobertura/integracao
+
+      - name: Análise e Quality Gate
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          ./mvnw -B test-compile
+          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -Dsonar.qualitygate.wait=true
+          -Dsonar.coverage.jacoco.xmlReportPaths=cobertura/unitarios/jacoco.xml,cobertura/integracao/jacoco.xml
+
+  build-imagem:
+    name: Build da imagem e scan de vulnerabilidades
+    needs: [analise-estatica, codeql, sonarqube]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+    outputs:
+      imagem: ${{ steps.imagem.outputs.referencia }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Definir referência da imagem
+        id: imagem
+        run: echo "referencia=${IMAGE_NAME}:sha-${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Build da imagem
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: ${{ steps.imagem.outputs.referencia }}
+          build-args: APP_COMMIT=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ steps.imagem.outputs.referencia }}
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1'
+          format: sarif
+          output: trivy.sarif
+          limit-severities-for-sarif: true
+
+      - name: Publicar resultado do Trivy na aba Security
+        if: always() && hashFiles('trivy.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy.sarif
+          category: trivy
+
+      - name: Login no GHCR
+        if: github.event_name != 'pull_request' && (github.ref_name == 'homol' || github.ref_name == 'main')
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publicar imagem no GHCR
+        if: github.event_name != 'pull_request' && (github.ref_name == 'homol' || github.ref_name == 'main')
+        run: docker push "${{ steps.imagem.outputs.referencia }}"
+
+  deploy-homolog:
+    name: Deploy em homologação
+    needs: build-imagem
+    if: github.event_name != 'pull_request' && github.ref_name == 'homol'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: homolog
+      url: ${{ vars.APP_URL }}
+    concurrency:
+      group: deploy-homolog
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Deploy no Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          APP_URL: ${{ vars.APP_URL }}
+          IMAGE: ${{ needs.build-imagem.outputs.imagem }}
+          COMMIT: ${{ github.sha }}
+        run: .github/scripts/deploy-render.sh
+
+      - name: Smoke test
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+        run: .github/scripts/smoke-test.sh
+
+  dast-homolog:
+    name: DAST em homologação (OWASP ZAP)
+    needs: deploy-homolog
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: homolog
+      url: ${{ vars.APP_URL }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: OWASP ZAP API Scan
+        uses: zaproxy/action-api-scan@v0.10.0
+        with:
+          target: ${{ vars.APP_URL }}/v3/api-docs
+          format: openapi
+          rules_file_name: .zap/rules.tsv
+          cmd_options: -I -z "-config scanner.maxScanDurationInMins=10"
+          fail_action: true
+          allow_issue_writing: false
+          artifact_name: relatorio-zap-homolog
+
+  deploy-producao:
+    name: Deploy em produção
+    needs: build-imagem
+    if: github.event_name != 'pull_request' && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: ${{ vars.APP_URL }}
+    concurrency:
+      group: deploy-producao
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Deploy no Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          APP_URL: ${{ vars.APP_URL }}
+          IMAGE: ${{ needs.build-imagem.outputs.imagem }}
+          COMMIT: ${{ github.sha }}
+        run: .github/scripts/deploy-render.sh
