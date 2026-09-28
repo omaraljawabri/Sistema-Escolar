@@ -3,7 +3,7 @@
 
 ## Versão do Projeto
 
- v1.0.0
+ v1.1.0
 
 ## 💻 Tecnologias utilizadas
 - Java 21

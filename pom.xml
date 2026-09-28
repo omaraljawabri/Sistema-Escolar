@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.sistema-escolar</groupId>
 	<artifactId>Sistema-Escolar</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<name>Sistema-Escolar</name>
 	<description>Sistema de gerenciamento escolar</description>
 	<url/>
